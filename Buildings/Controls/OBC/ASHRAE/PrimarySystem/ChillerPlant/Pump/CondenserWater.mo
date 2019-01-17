@@ -3,10 +3,10 @@ block CondenserWater "Condenser water pump control"
 
   parameter Integer staNum = 3 "Total number of chiller stages";
   parameter Integer pumNum = 2 "Total number of pumps";
-  parameter Real conWatPumSpeSet[2*staNum] = {0,1,1,2,2,2}
+  parameter Real conWatPumSpeSet[2*staNum] = {0, 0.5, 0.75, 0.6, 0.75, 0.9}
     "Condenser water pump speed setpoint, according to current chiller stage and WSE status"
     annotation (Dialog(group="Setpoint according to stage"));
-  parameter Real conWatPumOnSet[2*staNum] = {0, 0.5, 0.75, 0.6, 0.75, 0.9}
+  parameter Real conWatPumOnSet[2*staNum] = {0,1,1,2,2,2}
     "Number of condenser water pumps that should be ON, according to current chiller stage and WSE status"
     annotation (Dialog(group="Setpoint according to stage"));
   parameter Real stagingRuntime=240*60*60 "Staging runtime"
@@ -16,7 +16,7 @@ block CondenserWater "Condenser water pump control"
     annotation (Dialog(group="Equipment roration"));
 
   Buildings.Controls.OBC.CDL.Interfaces.IntegerInput uChiSta "Current chiller stage"
-    annotation (Placement(transformation(extent={{-262,10},{-222,50}}),
+    annotation (Placement(transformation(extent={{-260,50},{-220,90}}),
       iconTransformation(extent={{-140,20},{-100,60}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uWSE
     "Water side economizer status: true = ON, false = OFF"
@@ -61,6 +61,10 @@ block CondenserWater "Condenser water pump control"
     annotation (Placement(transformation(extent={{120,-70},{140,-50}})));
   Buildings.Controls.OBC.CDL.Continuous.Product pro[pumNum] "Calculate pump speed"
     annotation (Placement(transformation(extent={{180,-20},{200,0}})));
+  Buildings.Controls.OBC.CDL.Continuous.AddParameter addPar1(
+    final p=1, final k=2)
+    "Double current stage number"
+    annotation (Placement(transformation(extent={{-200,20},{-180,40}})));
 
 protected
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con1[2*staNum](
@@ -80,7 +84,7 @@ protected
     annotation (Placement(transformation(extent={{-120,-40},{-100,-20}})));
   Buildings.Controls.OBC.CDL.Conversions.IntegerToReal intToRea
     "Convert integer to real number"
-    annotation (Placement(transformation(extent={{-200,20},{-180,40}})));
+    annotation (Placement(transformation(extent={{-200,60},{-180,80}})));
   Buildings.Controls.OBC.CDL.Continuous.AddParameter addPar(final p=1, final k=1)
     "Current stage plus WSE on status"
     annotation (Placement(transformation(extent={{-160,20},{-140,40}})));
@@ -135,22 +139,26 @@ equation
   connect(uWSE, swi.u2)
     annotation (Line(points={{-242,-30},{-162,-30}},
       color={255,0,255}));
-  connect(intToRea.y, addPar.u)
-    annotation (Line(points={{-179,30},{-162,30}}, color={0,0,127}));
   connect(addPar.y, swi.u1)
     annotation (Line(points={{-139,30},{-120,30},{-120,0},{-180,0},{-180,-22},
       {-162,-22}}, color={0,0,127}));
-  connect(intToRea.y, swi.u3)
-    annotation (Line(points={{-179,30},{-172,30},{-172,-38},{-162,-38}}, color={0,0,127}));
   connect(swi.y, pumSpeSta.u)
     annotation (Line(points={{-139,-30},{-122,-30}}, color={0,0,127}));
-  connect(pumSpeSta.y, conWatPumOn.index) annotation (Line(points={{-99,-30},{-70,
-          -30},{-70,58}}, color={255,127,0}));
-  connect(pumSpeSta.y, conWatPumSpe.index) annotation (Line(points={{-99,-30},{
-          -90,-30},{-90,-80},{-70,-80},{-70,-72}}, color={255,127,0}));
-  connect(uChiSta, intToRea.u)
-    annotation (Line(points={{-242,30},{-202,30}},
+  connect(pumSpeSta.y, conWatPumOn.index)
+    annotation (Line(points={{-99,-30},{-90,-30},{-90,40},{-70,40},{-70,58}},
       color={255,127,0}));
+  connect(pumSpeSta.y, conWatPumSpe.index)
+    annotation (Line(points={{-99,-30},{-90,-30},{-90,-80},{-70,-80},{-70,-72}},
+      color={255,127,0}));
+  connect(uChiSta, intToRea.u)
+    annotation (Line(points={{-240,70},{-202,70}}, color={255,127,0}));
+  connect(intToRea.y, addPar1.u)
+    annotation (Line(points={{-179,70},{-160,70},{-160,50},{-210,50},{-210,30},
+      {-202,30}}, color={0,0,127}));
+  connect(addPar1.y, addPar.u)
+    annotation (Line(points={{-179,30},{-162,30}}, color={0,0,127}));
+  connect(addPar1.y, swi.u3)
+    annotation (Line(points={{-179,30},{-170,30},{-170,-38},{-162,-38}}, color={0,0,127}));
 
 annotation (
   defaultComponentName="conWatPum",

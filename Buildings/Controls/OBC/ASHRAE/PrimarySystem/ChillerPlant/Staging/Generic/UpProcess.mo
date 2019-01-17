@@ -3,6 +3,8 @@ block UpProcess
   "Sequences to control equipments when chiller stage up"
   parameter Integer num = 2
     "Total number of chillers, the same number applied to isolation valves, CW pumps, CHW pumps";
+  parameter Real chiDemRedFac(final min=0, final max=0) = 0.75
+    "Factor of current chiller demand when there is a stage-up command";
   parameter Modelica.SIunits.Time holChiDemTim = 300
     "Time to hold limited chiller demand";
   parameter Modelica.SIunits.Time byPasSetTim = 300
@@ -73,13 +75,12 @@ block UpProcess
   Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep1(
     final nout=num) "Replicate input "
     annotation (Placement(transformation(extent={{-120,470},{-100,490}})));
-  Buildings.Controls.OBC.CDL.Continuous.Gain gai[num](
-    each final k=0.5) "Half of current load"
+  Buildings.Controls.OBC.CDL.Continuous.Gain gai[num](each final k=chiDemRedFac)
+    "Reduce demand to a factor of current load"
     annotation (Placement(transformation(extent={{-80,390},{-60,410}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys[num](
-    each final uLow=0.54,
-    each final uHigh=0.56)
-    "Check if actual demand is more than 0.55 of demand at instant when receiving stage change signal"
+  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys[num](each final uLow=
+        chiDemRedFac + 0.5 - 0.1, each final uHigh=chiDemRedFac + 0.5 + 0.1)
+    "Check if actual demand has already reduced at instant when receiving stage change signal"
     annotation (Placement(transformation(extent={{-40,320},{-20,340}})));
   Buildings.Controls.OBC.CDL.Continuous.Division div[num]
     "Output result of first input divided by second input"
@@ -254,6 +255,15 @@ block UpProcess
     "Replicate input "
     annotation (Placement(transformation(extent={{120,450},{140,470}})));
 
+  Pump.CondenserWater conWatPum
+    annotation (Placement(transformation(extent={{-280,160},{-260,180}})));
+  CDL.Logical.Switch                        swi5
+    "Switch to current stage setpoint"
+    annotation (Placement(transformation(extent={{-160,120},{-140,140}})));
+  CDL.Interfaces.BooleanInput uWSE
+    "Water side economizer status: true = ON, false = OFF" annotation (
+      Placement(transformation(extent={{-280,70},{-240,110}}),
+        iconTransformation(extent={{-120,-30},{-100,-10}})));
 equation
   connect(uChiCur, triSam.u)
     annotation (Line(points={{-260,400},{-162,400}}, color={0,0,127}));
@@ -350,11 +360,6 @@ equation
     annotation (Line(points={{-99,50},{-62,50}}, color={255,0,255}));
   connect(mulAnd3.y, truDel1.u)
     annotation (Line(points={{-38.3,50},{-22,50}}, color={255,0,255}));
-  connect(uConWatPum, enaPum.uDevSta)
-    annotation (Line(points={{-260,120},{-102,120}}, color={255,0,255}));
-  connect(hys2.y, enaPum.uEnaNex)
-    annotation (Line(points={{81,190},{100,190},{100,160},{-120,160},{-120,112},
-      {-102,112}}, color={255,0,255}));
   connect(enaPum.yDevSta, yConWatPum)
     annotation (Line(points={{-79,120},{230,120}}, color={255,0,255}));
   connect(enaPum.yDevSta, yConWatIsoVal)
@@ -508,7 +513,7 @@ annotation (
           fillColor={210,210,210},
           fillPattern=FillPattern.Solid,
           pattern=LinePattern.None),         Rectangle(
-          extent={{-238,158},{218,82}},
+          extent={{254,134},{710,58}},
           fillColor={210,210,210},
           fillPattern=FillPattern.Solid,
           pattern=LinePattern.None),         Rectangle(
@@ -543,7 +548,7 @@ annotation (
           fillPattern=FillPattern.Solid,
           lineColor={0,0,127},
           horizontalAlignment=TextAlignment.Right,
-          textString="Limit chiller demand to 0.5 of 
+          textString="Limit chiller demand to 0.75 of 
 current load"),
           Text(
           extent={{-18,372},{214,334}},
@@ -553,7 +558,7 @@ current load"),
           lineColor={0,0,127},
           horizontalAlignment=TextAlignment.Right,
           textString="Ensure actual demand has been less than
-0.55 by more than 5 minutes"),
+0.8 by more than 5 minutes"),
           Text(
           extent={{64,278},{212,240}},
           pattern=LinePattern.None,
