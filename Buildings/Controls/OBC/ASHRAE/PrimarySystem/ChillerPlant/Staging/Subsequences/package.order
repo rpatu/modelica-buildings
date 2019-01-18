@@ -2,6 +2,7 @@ Capacities
 CapacityRequirement
 ChangeDeprecated
 ChangeOld
+ChillerRotation
 ChillerdTRef
 DownProcess
 PartLoadRatios
