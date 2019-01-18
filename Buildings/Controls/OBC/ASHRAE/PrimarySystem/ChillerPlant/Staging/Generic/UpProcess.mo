@@ -29,10 +29,6 @@ block UpProcess
     "Chiller status"
      annotation (Placement(transformation(extent={{-280,340},{-240,380}}),
        iconTransformation(extent={{-120,80},{-100,100}})));
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uConWatPum[num]
-    "Condenser water pump status"
-    annotation (Placement(transformation(extent={{-280,100},{-240,140}}),
-      iconTransformation(extent={{-120,-30},{-100,-10}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealInput uConWatIsoVal[num](
     final unit="1",
     final min=0,
@@ -54,9 +50,9 @@ block UpProcess
     final unit="m3/s") "Minimum flow setpoint"
     annotation (Placement(transformation(extent={{220,210},{240,230}}),
       iconTransformation(extent={{100,-100},{120,-80}})));
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yConWatPum[num]
-    "Condenser water pump status"
-    annotation (Placement(transformation(extent={{220,110},{240,130}}),
+  CDL.Interfaces.RealOutput                           yConWatPum[num]
+    "Condenser water pump speed"
+    annotation (Placement(transformation(extent={{220,120},{240,140}}),
       iconTransformation(extent={{100,50},{120,70}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yConWatIsoVal[num]
     "Condenser water isolation valve status"
@@ -255,15 +251,21 @@ block UpProcess
     "Replicate input "
     annotation (Placement(transformation(extent={{120,450},{140,470}})));
 
-  Pump.CondenserWater conWatPum
-    annotation (Placement(transformation(extent={{-280,160},{-260,180}})));
+  Pump.CondenserWater conWatPum(pumNum=num)
+    annotation (Placement(transformation(extent={{20,120},{40,140}})));
   CDL.Logical.Switch                        swi5
     "Switch to current stage setpoint"
-    annotation (Placement(transformation(extent={{-160,120},{-140,140}})));
+    annotation (Placement(transformation(extent={{-80,120},{-60,140}})));
   CDL.Interfaces.BooleanInput uWSE
     "Water side economizer status: true = ON, false = OFF" annotation (
-      Placement(transformation(extent={{-280,70},{-240,110}}),
+      Placement(transformation(extent={{-280,90},{-240,130}}),
         iconTransformation(extent={{-120,-30},{-100,-10}})));
+  CDL.Conversions.IntegerToReal intToRea
+    annotation (Placement(transformation(extent={{-200,140},{-180,160}})));
+  CDL.Continuous.AddParameter addPar
+    annotation (Placement(transformation(extent={{-140,140},{-120,160}})));
+  CDL.Conversions.RealToInteger reaToInt
+    annotation (Placement(transformation(extent={{-40,120},{-20,140}})));
 equation
   connect(uChiCur, triSam.u)
     annotation (Line(points={{-260,400},{-162,400}}, color={0,0,127}));
@@ -297,8 +299,8 @@ equation
   connect(con1.y,curMinSet. u)
     annotation (Line(points={{-159,260},{-122,260}},color={0,0,127}));
   connect(uChiSta, addInt.u1)
-    annotation (Line(points={{-260,460},{-200,460},{-200,240},{-170,240},
-      {-170,196},{-162,196}}, color={255,127,0}));
+    annotation (Line(points={{-260,460},{-210,460},{-210,240},{-170,240},{-170,
+          196},{-162,196}},   color={255,127,0}));
   connect(conInt.y, addInt.u2)
     annotation (Line(points={{-179,190},{-170,190},{-170,184},{-162,184}},
       color={255,127,0}));
@@ -306,8 +308,8 @@ equation
     annotation (Line(points={{-159,260},{-140,260},{-140,210},{-122,210}},
       color={0,0,127}));
   connect(uChiSta,curMinSet. index)
-    annotation (Line(points={{-260,460},{-200,460},{-200,240},{-110,240},
-      {-110,248}}, color={255,127,0}));
+    annotation (Line(points={{-260,460},{-210,460},{-210,240},{-110,240},{-110,
+          248}},   color={255,127,0}));
   connect(div.y, hys.u)
     annotation (Line(points={{41,370},{60,370},{60,352},{-60,352},{-60,330},
       {-42,330}}, color={0,0,127}));
@@ -335,8 +337,8 @@ equation
   connect(addInt.y, oldMinSet.index)
     annotation (Line(points={{-139,190},{-110,190},{-110,198}}, color={255,127,0}));
   connect(uChiSta, intLesThr.u)
-    annotation (Line(points={{-260,460},{-200,460},{-200,280},{30,280},
-      {30,230},{38,230}}, color={255,127,0}));
+    annotation (Line(points={{-260,460},{-210,460},{-210,280},{30,280},{30,230},
+          {38,230}},      color={255,127,0}));
   connect(con4.y, swi1.u1)
     annotation (Line(points={{61,260},{90,260},{90,228},{98,228}}, color={0,0,127}));
   connect(intLesThr.y, swi1.u2)
@@ -360,20 +362,12 @@ equation
     annotation (Line(points={{-99,50},{-62,50}}, color={255,0,255}));
   connect(mulAnd3.y, truDel1.u)
     annotation (Line(points={{-38.3,50},{-22,50}}, color={255,0,255}));
-  connect(enaPum.yDevSta, yConWatPum)
-    annotation (Line(points={{-79,120},{230,120}}, color={255,0,255}));
-  connect(enaPum.yDevSta, yConWatIsoVal)
-    annotation (Line(points={{-79,120},{160,120},{160,50},{230,50}},
-      color={255,0,255}));
   connect(uChi, enaChiWatIso.uDevSta)
     annotation (Line(points={{-260,360},{-220,360},{-220,-150},{-162,-150}},
       color={255,0,255}));
   connect(truDel1.y, enaChiWatIso.uEnaNex)
     annotation (Line(points={{1,50},{40,50},{40,0},{-180,0},{-180,-158},
       {-162,-158}}, color={255,0,255}));
-  connect(enaPum.yDevSta, logSwi7.u2)
-    annotation (Line(points={{-79,120},{-60,120},{-60,80},{-140,80},{-140,50},
-      {-122,50}}, color={255,0,255}));
   connect(uChi, and2.u2)
     annotation (Line(points={{-260,360},{-220,360},{-220,-188},{-82,-188}},
       color={255,0,255}));
@@ -500,6 +494,24 @@ equation
     annotation (Line(points={{-139,-70},{-120,-70},{-120,-270},{18,-270}},
       color={0,0,127}));
 
+  connect(uChiSta, intToRea.u) annotation (Line(points={{-260,460},{-210,460},{
+          -210,150},{-202,150}}, color={255,127,0}));
+  connect(hys2.y, swi5.u2) annotation (Line(points={{81,190},{100,190},{100,160},
+          {-100,160},{-100,130},{-82,130}}, color={255,0,255}));
+  connect(intToRea.y, addPar.u)
+    annotation (Line(points={{-179,150},{-142,150}}, color={0,0,127}));
+  connect(intToRea.y, swi5.u3) annotation (Line(points={{-179,150},{-160,150},{
+          -160,122},{-82,122}}, color={0,0,127}));
+  connect(addPar.y, swi5.u1) annotation (Line(points={{-119,150},{-110,150},{
+          -110,138},{-82,138}}, color={0,0,127}));
+  connect(swi5.y, reaToInt.u)
+    annotation (Line(points={{-59,130},{-42,130}}, color={0,0,127}));
+  connect(reaToInt.y, conWatPum.uChiSta) annotation (Line(points={{-19,130},{0,
+          130},{0,134},{18,134}}, color={255,127,0}));
+  connect(uWSE, conWatPum.uWSE) annotation (Line(points={{-260,110},{0,110},{0,
+          126},{18,126}}, color={255,0,255}));
+  connect(conWatPum.yConWatPum, yConWatPum) annotation (Line(points={{41,130},{
+          132,130},{132,130},{230,130}}, color={0,0,127}));
 annotation (
   defaultComponentName = "staUp",
   Diagram(coordinateSystem(preserveAspectRatio=false,

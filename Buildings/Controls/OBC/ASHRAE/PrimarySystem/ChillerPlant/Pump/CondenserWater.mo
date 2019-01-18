@@ -22,7 +22,7 @@ block CondenserWater "Condenser water pump control"
     "Water side economizer status: true = ON, false = OFF"
     annotation (Placement(transformation(extent={{-262,-50},{-222,-10}}),
       iconTransformation(extent={{-140,-60},{-100,-20}})));
-  Buildings.Controls.OBC.CDL.Interfaces.RealOutput yConWatPumSpe[pumNum](
+  Buildings.Controls.OBC.CDL.Interfaces.RealOutput yConWatPum[pumNum](
     each final min=0,
     each final max=1,
     each final unit="1") "Condenser water pump speed"
@@ -45,16 +45,13 @@ block CondenserWater "Condenser water pump control"
   Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold mulPum(
     final threshold=1.5) "Check if more than one pump should turn on"
     annotation (Placement(transformation(extent={{-20,30},{0,50}})));
-  Buildings.Controls.OBC.CDL.Continuous.LessEqualThreshold zerPum(
-    final threshold=0.5) "Check if no pump should turn on"
-    annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
+  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold zerPum(
+    final threshold=0.5) "Check if any pump should turn on"
+    annotation (Placement(transformation(extent={{-20,60},{0,80}})));
   Buildings.Controls.OBC.CDL.Logical.LogicalSwitch leaPumSta "Lead pump status"
-    annotation (Placement(transformation(extent={{80,70},{100,90}})));
-  Buildings.Controls.OBC.CDL.Logical.LogicalSwitch leaPumSta1
-    "Check if number of ON pump is less than 1"
-    annotation (Placement(transformation(extent={{40,-10},{60,10}})));
+    annotation (Placement(transformation(extent={{60,60},{80,80}})));
   Buildings.Controls.OBC.CDL.Logical.LogicalSwitch lagPumSta "Lag pump status"
-    annotation (Placement(transformation(extent={{80,30},{100,50}})));
+    annotation (Placement(transformation(extent={{60,30},{80,50}})));
   Buildings.Controls.OBC.CDL.Routing.RealReplicator reaRep(
     final nout=pumNum)
     "Replicate pump speed setpoint"
@@ -75,10 +72,10 @@ protected
     annotation (Placement(transformation(extent={{-120,60},{-100,80}})));
   Buildings.Controls.OBC.CDL.Logical.Sources.Constant onSta(
     final k=true) "Pump in ON status"
-    annotation (Placement(transformation(extent={{-20,70},{0,90}})));
+    annotation (Placement(transformation(extent={{-20,0},{0,20}})));
   Buildings.Controls.OBC.CDL.Logical.Sources.Constant offSta(
     final k=false) "Pump in OFF status"
-    annotation (Placement(transformation(extent={{-20,-50},{0,-30}})));
+    annotation (Placement(transformation(extent={{-20,-30},{0,-10}})));
   Buildings.Controls.OBC.CDL.Conversions.RealToInteger pumSpeSta
     "Convert real number to integer"
     annotation (Placement(transformation(extent={{-120,-40},{-100,-20}})));
@@ -99,32 +96,10 @@ equation
     annotation (Line(points={{-99,-60},{-82,-60}}, color={0,0,127}));
   connect(con2.y, conWatPumOn.u)
     annotation (Line(points={{-99,70},{-82,70}},  color={0,0,127}));
-  connect(conWatPumOn.y, mulPum.u)
-    annotation (Line(points={{-59,70},{-40,70},{-40,40},{-22,40}}, color={0,0,127}));
-  connect(conWatPumOn.y, zerPum.u)
-    annotation (Line(points={{-59,70},{-40,70},{-40,0},{-22,0}}, color={0,0,127}));
-  connect(leaPumSta1.y, leaPumSta.u3)
-    annotation (Line(points={{61,0},{70,0},{70,72},{78,72}}, color={255,0,255}));
-  connect(mulPum.y, leaPumSta.u2)
-    annotation (Line(points={{1,40},{40,40},{40,80},{78,80}}, color={255,0,255}));
-  connect(onSta.y, leaPumSta.u1)
-    annotation (Line(points={{1,80},{20,80},{20,88},{78,88}}, color={255,0,255}));
-  connect(zerPum.y, leaPumSta1.u2)
-    annotation (Line(points={{1,0},{38,0}}, color={255,0,255}));
-  connect(offSta.y, leaPumSta1.u1)
-    annotation (Line(points={{1,-40},{10,-40},{10,8},{38,8}}, color={255,0,255}));
-  connect(onSta.y, leaPumSta1.u3)
-    annotation (Line(points={{1,80},{20,80},{20,-8},{38,-8}}, color={255,0,255}));
-  connect(mulPum.y, lagPumSta.u2)
-    annotation (Line(points={{1,40},{78,40}}, color={255,0,255}));
-  connect(onSta.y, lagPumSta.u1)
-    annotation (Line(points={{1,80},{20,80},{20,48},{78,48}}, color={255,0,255}));
-  connect(offSta.y, lagPumSta.u3)
-    annotation (Line(points={{1,-40},{10,-40},{10,32},{78,32}}, color={255,0,255}));
   connect(leaPumSta.y, equRot.uLeaSta)
-    annotation (Line(points={{101,80},{120,80},{120,66},{138,66}}, color={255,0,255}));
+    annotation (Line(points={{81,70},{120,70},{120,66},{138,66}}, color={255,0,255}));
   connect(lagPumSta.y, equRot.uLagSta)
-    annotation (Line(points={{101,40},{120,40},{120,54},{138,54}}, color={255,0,255}));
+    annotation (Line(points={{81,40},{120,40},{120,54},{138,54}}, color={255,0,255}));
   connect(conWatPumSpe.y, reaRep.u)
     annotation (Line(points={{-59,-60},{118,-60}},color={0,0,127}));
   connect(reaRep.y, pro.u2)
@@ -134,11 +109,10 @@ equation
       color={255,0,255}));
   connect(booToRea.y, pro.u1)
     annotation (Line(points={{141,0},{160,0},{160,-4},{178,-4}}, color={0,0,127}));
-  connect(pro.y, yConWatPumSpe)
+  connect(pro.y, yConWatPum)
     annotation (Line(points={{201,-10},{212,-10},{212,0},{230,0}}, color={0,0,127}));
   connect(uWSE, swi.u2)
-    annotation (Line(points={{-242,-30},{-162,-30}},
-      color={255,0,255}));
+    annotation (Line(points={{-242,-30},{-162,-30}}, color={255,0,255}));
   connect(addPar.y, swi.u1)
     annotation (Line(points={{-139,30},{-120,30},{-120,0},{-180,0},{-180,-22},
       {-162,-22}}, color={0,0,127}));
@@ -159,6 +133,22 @@ equation
     annotation (Line(points={{-179,30},{-162,30}}, color={0,0,127}));
   connect(addPar1.y, swi.u3)
     annotation (Line(points={{-179,30},{-170,30},{-170,-38},{-162,-38}}, color={0,0,127}));
+  connect(conWatPumOn.y, zerPum.u)
+    annotation (Line(points={{-59,70},{-22,70}}, color={0,0,127}));
+  connect(zerPum.y, leaPumSta.u2)
+    annotation (Line(points={{1,70},{58,70}}, color={255,0,255}));
+  connect(conWatPumOn.y, mulPum.u)
+    annotation (Line(points={{-59,70},{-40,70},{-40,40},{-22,40}}, color={0,0,127}));
+  connect(onSta.y, leaPumSta.u1)
+    annotation (Line(points={{1,10},{20,10},{20,78},{58,78}}, color={255,0,255}));
+  connect(offSta.y, leaPumSta.u3)
+    annotation (Line(points={{1,-20},{40,-20},{40,62},{58,62}}, color={255,0,255}));
+  connect(mulPum.y, lagPumSta.u2)
+    annotation (Line(points={{1,40},{58,40}}, color={255,0,255}));
+  connect(onSta.y, lagPumSta.u1)
+    annotation (Line(points={{1,10},{20,10},{20,48},{58,48}}, color={255,0,255}));
+  connect(offSta.y, lagPumSta.u3)
+    annotation (Line(points={{1,-20},{40,-20},{40,32},{58,32}}, color={255,0,255}));
 
 annotation (
   defaultComponentName="conWatPum",
@@ -180,9 +170,9 @@ annotation (
           pattern=LinePattern.Dash,
           textString="uWSE"),
         Text(
-          extent={{18,18},{96,-20}},
+          extent={{28,18},{96,-18}},
           lineColor={0,0,127},
-          textString="yConWatPumSpe"),
+          textString="yConWatPum"),
         Text(
           extent={{-100,150},{100,110}},
           lineColor={0,0,255},
