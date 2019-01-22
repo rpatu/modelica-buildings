@@ -4,6 +4,7 @@ ChangeDeprecated
 ChangeOld
 ChillerRotation
 ChillerdTRef
+FailsafeCondition
 DownProcess
 PartLoadRatios
 UpProcess

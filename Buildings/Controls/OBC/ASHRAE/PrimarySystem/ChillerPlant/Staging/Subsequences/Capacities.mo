@@ -2,13 +2,13 @@ within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subseque
 block Capacities "Returns nominal and minimal capacities for calculating all operating part load ratios"
 
   parameter Integer numSta = 2
-  "Highest chiller stage";
+  "Total number of stages";
 
   parameter Modelica.SIunits.Power staNomCap[numSta] = {5e5, 1e6}
-  "Nominal capacity at all chiller stages, starting with stage 0";
+  "Stage nominal capacity (cumulative)";
 
   parameter Modelica.SIunits.Power minStaUnlCap[numSta] = {0.2*staNomCap[1], 0.2*staNomCap[2]}
-    "Nominal part load ratio for at all chiller stages, starting with stage 0";
+    "Stage minimal unload capacity (cumulative)";
 
   Buildings.Controls.OBC.CDL.Interfaces.IntegerInput uSta "Chiller stage"
     annotation (Placement(transformation(extent={{-200,-20},{-160,20}}),
@@ -18,20 +18,20 @@ block Capacities "Returns nominal and minimal capacities for calculating all ope
     final unit="W",
     final quantity="Power") "Nominal capacity of the current stage"
     annotation (Placement(transformation(extent={{160,70},{180,90}}),
-        iconTransformation(extent={{100,50},{120,70}})));
+        iconTransformation(extent={{100,60},{120,80}})));
 
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yStaDowNom(
     final unit="W",
     final quantity="Power") "Nominal capacity of the first stage down"
     annotation (Placement(transformation(extent={{160,-10},{180,10}}),
-        iconTransformation(extent={{100,-10},{120,10}})));
+        iconTransformation(extent={{100,-20},{120,0}})));
 
 //protected
   parameter Real small[1] = {0.001}
   "Small number to avoid division with zero";
 
   parameter Real large[1] = {staNomCap[numSta]*2}
-  "Large number for numerical consistency";
+  "Value to avoid stage up when at the highest stage";
 
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant staCap[numSta + 1](
     final k=cat(1,small, staNomCap))
@@ -44,8 +44,7 @@ block Capacities "Returns nominal and minimal capacities for calculating all ope
     annotation (Placement(transformation(extent={{-100,-90},{-80,-70}})));
 
   Buildings.Controls.OBC.CDL.Integers.Sources.Constant one(
-    final k=1)
-    "Constant integer"
+    final k=1) "Constant integer"
     annotation (Placement(transformation(extent={{-150,-30},{-130,-10}})));
 
   Buildings.Controls.OBC.CDL.Utilities.Assert staExc(
@@ -82,19 +81,37 @@ block Capacities "Returns nominal and minimal capacities for calculating all ope
 
   CDL.Interfaces.RealOutput yStaUpMin(
     final unit="W",
-    final quantity="Power")
-    "Minimum capacity of the next higher stage" annotation (Placement(
-        transformation(extent={{160,-90},{180,-70}}), iconTransformation(extent=
-           {{100,-70},{120,-50}})));
+    final quantity="Power") "Minimum capacity of the next higher stage"
+                                                annotation (Placement(
+        transformation(extent={{160,-90},{180,-70}}), iconTransformation(extent={{100,-70},
+            {120,-50}})));
 
   CDL.Routing.RealExtractor extMinUnlCap(
     final outOfRangeValue=-1,
-    final nin=numSta + 2)
-    "Extracts minimal stage capacity"
+    final nin=numSta + 2) "Extracts minimal capacity of the next higher stage"
     annotation (Placement(transformation(extent={{-60,-90},{-40,-70}})));
 
   CDL.Integers.Add addInt1 "Adds a stage"
     annotation (Placement(transformation(extent={{-20,-50},{0,-30}})));
+  CDL.Interfaces.RealOutput yStaUpNom(final unit="W", final quantity="Power")
+    "Nominal capacity of the next higher stage" annotation (Placement(
+        transformation(extent={{160,30},{180,50}}),   iconTransformation(extent={{100,20},
+            {120,40}})));
+  CDL.Routing.RealExtractor extStaUpCap(final outOfRangeValue=-1, final nin=
+        numSta + 1) "Extracts the nominal capacity of the next stage"
+    annotation (Placement(transformation(extent={{50,-30},{70,-10}})));
+  CDL.Integers.Min minInt "Maximum"
+    annotation (Placement(transformation(extent={{30,-60},{50,-40}})));
+  CDL.Integers.Sources.Constant staMax(final k=numSta + 1)
+    "Index of the maximal stage"
+    annotation (Placement(transformation(extent={{-20,-80},{0,-60}})));
+  CDL.Interfaces.RealOutput yStaMin(final unit="W", final quantity="Power")
+    "Minimum capacity of the current stage" annotation (Placement(
+        transformation(extent={{160,-50},{180,-30}}), iconTransformation(extent={{100,-90},
+            {120,-70}})));
+  CDL.Routing.RealExtractor extStaCapMin(final outOfRangeValue=-1, final nin=
+        numSta + 2) "Extracts the minimum capacity of the current stage"
+    annotation (Placement(transformation(extent={{40,-110},{60,-90}})));
 equation
   connect(extStaCap.y, lesThr.u) annotation (Line(points={{-39,110},{-22,110}},
      color={0,0,127}));
@@ -141,8 +158,24 @@ equation
           -34},{-22,-34}}, color={255,127,0}));
   connect(one.y, addInt1.u2) annotation (Line(points={{-129,-20},{-70,-20},{-70,
           -46},{-22,-46}}, color={255,127,0}));
-  connect(addInt1.y, extMinUnlCap.index) annotation (Line(points={{1,-40},{10,-40},
-          {10,-100},{-50,-100},{-50,-92}}, color={255,127,0}));
+  connect(addInt1.y, extMinUnlCap.index) annotation (Line(points={{1,-40},{12,-40},
+          {12,-100},{-50,-100},{-50,-92}}, color={255,127,0}));
+  connect(staCap.y, extStaUpCap.u) annotation (Line(points={{-79,110},{-70,110},
+          {-70,20},{20,20},{20,-20},{48,-20}}, color={0,0,127}));
+  connect(extStaUpCap.y, yStaUpNom) annotation (Line(points={{71,-20},{96,-20},{
+          96,40},{170,40}},     color={0,0,127}));
+  connect(staMax.y, minInt.u2) annotation (Line(points={{1,-70},{10,-70},{10,-56},
+          {28,-56}}, color={255,127,0}));
+  connect(addInt1.y, minInt.u1) annotation (Line(points={{1,-40},{10,-40},{10,-44},
+          {28,-44}}, color={255,127,0}));
+  connect(minInt.y, extStaUpCap.index)
+    annotation (Line(points={{51,-50},{60,-50},{60,-32}}, color={255,127,0}));
+  connect(addInt.y, extStaCapMin.index) annotation (Line(points={{-79,70},{-74,70},
+          {-74,-120},{50,-120},{50,-112}}, color={255,127,0}));
+  connect(minStaUnl.y, extStaCapMin.u) annotation (Line(points={{-79,-80},{-70,-80},
+          {-70,-110},{28,-110},{28,-100},{38,-100}}, color={0,0,127}));
+  connect(extStaCapMin.y, yStaMin) annotation (Line(points={{61,-100},{140,-100},
+          {140,-40},{170,-40}}, color={0,0,127}));
   annotation (defaultComponentName = "staCap",
         Icon(graphics={
         Rectangle(
@@ -160,7 +193,10 @@ Documentation(info="<html>
 <p>
 Based on the current chiller stage and nominal stage capacities returns the
 nominal capacity of the current and one lower stage for the purpose of 
-calculating the operative part load ratio (OPLR). 
+calculating the operative part load ratio (OPLR).
+
+fixme: if we'd like to implement skipping unavailable stages, we'd need a multiple
+extracter with an input and zip.sum.
 </p>
 </html>",
 revisions="<html>
