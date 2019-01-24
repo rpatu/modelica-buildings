@@ -248,14 +248,14 @@ block UpProcess
     annotation (Placement(transformation(extent={{-80,244},{-60,264}})));
   Buildings.Controls.OBC.CDL.Logical.And and7
     "Check if it is staging up and by pass minflow has changed"
-    annotation (Placement(transformation(extent={{-140,90},{-120,110}})));
+    annotation (Placement(transformation(extent={{-160,90},{-140,110}})));
   Buildings.Controls.OBC.CDL.Logical.Timer tim2
     "Time after changeing condenser water pump "
-    annotation (Placement(transformation(extent={{-60,-10},{-40,10}})));
+    annotation (Placement(transformation(extent={{-100,-10},{-80,10}})));
   Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys6(final uLow=10 - 1,
       final uHigh=10 + 1)
     "Check if it is 10 seconds after condenser water pump change"
-    annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
+    annotation (Placement(transformation(extent={{-60,-10},{-40,10}})));
   Buildings.Controls.OBC.CDL.Logical.Switch swi6
     "Switch to current stage setpoint"
     annotation (Placement(transformation(extent={{40,-10},{60,10}})));
@@ -275,14 +275,26 @@ block UpProcess
     annotation (Placement(transformation(extent={{20,-260},{40,-240}})));
   Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.ChillerRotation chiRot2(chiNum=num)
     "Enable chilled water isolation valve for the chiller being enabled"
-    annotation (Placement(transformation(extent={{-20,-440},{0,-420}})));
+    annotation (Placement(transformation(extent={{40,-440},{60,-420}})));
   Buildings.Controls.OBC.CDL.Logical.And and1 "Check if CW isolation valve have finished open process"
     annotation (Placement(transformation(extent={{-200,-440},{-180,-420}})));
   Buildings.Controls.OBC.CDL.Logical.Switch swi7 "Switch to current stage"
-    annotation (Placement(transformation(extent={{-120,-440},{-100,-420}})));
+    annotation (Placement(transformation(extent={{-60,-440},{-40,-420}})));
   Buildings.Controls.OBC.CDL.Conversions.RealToInteger reaToInt3 "Convert real to integer number"
-    annotation (Placement(transformation(extent={{-80,-440},{-60,-420}})));
+    annotation (Placement(transformation(extent={{-20,-440},{0,-420}})));
 
+  CDL.Logical.Or                        or3
+    "Check if it is before stage change or all other changes have been made"
+    annotation (Placement(transformation(extent={{-140,-220},{-120,-200}})));
+  CDL.Logical.Or                        or4
+    "Check if it is before stage change or all other changes have been made"
+    annotation (Placement(transformation(extent={{-80,90},{-60,110}})));
+  CDL.Logical.Or                        or5
+    "Check if it is before stage change or all other changes have been made"
+    annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
+  CDL.Logical.Or                        or6
+    "Check if it is before stage change or all other changes have been made"
+    annotation (Placement(transformation(extent={{-140,-440},{-120,-420}})));
 equation
   connect(uChiCur, triSam.u)
     annotation (Line(points={{-260,360},{-162,360}}, color={0,0,127}));
@@ -479,23 +491,20 @@ equation
   connect(and6.y, tim.u) annotation (Line(points={{-59,254},{-40,254},{-40,220},
           {-22,220}}, color={255,0,255}));
   connect(hys2.y, and7.u1) annotation (Line(points={{81,150},{100,150},{100,120},
-          {-160,120},{-160,100},{-142,100}}, color={255,0,255}));
+          {-200,120},{-200,100},{-162,100}}, color={255,0,255}));
   connect(cha.up, and7.u2) annotation (Line(points={{-159,426},{-140,426},{-140,
-          440},{-220,440},{-220,92},{-142,92}},   color={255,0,255}));
-  connect(and7.y, swi5.u2) annotation (Line(points={{-119,100},{-80,100},{-80,70},
-          {-22,70}},       color={255,0,255}));
+          440},{-220,440},{-220,92},{-162,92}},   color={255,0,255}));
   connect(swi5.y, reaToInt.u)
     annotation (Line(points={{1,70},{18,70}},   color={0,0,127}));
   connect(reaToInt.y, conWatPum.uChiSta) annotation (Line(points={{41,70},{60,70},
           {60,74},{98,74}},        color={255,127,0}));
   connect(uWSE, conWatPum.uWSE) annotation (Line(points={{-260,30},{80,30},{80,66},
           {98,66}},       color={255,0,255}));
-  connect(and7.y, tim2.u) annotation (Line(points={{-119,100},{-80,100},{-80,0},
-          {-62,0}},  color={255,0,255}));
+  connect(and7.y, tim2.u) annotation (Line(points={{-139,100},{-108,100},{-108,
+          0},{-102,0}},
+                     color={255,0,255}));
   connect(tim2.y, hys6.u)
-    annotation (Line(points={{-39,0},{-22,0}},   color={0,0,127}));
-  connect(hys6.y, swi6.u2)
-    annotation (Line(points={{1,0},{38,0}},   color={255,0,255}));
+    annotation (Line(points={{-79,0},{-62,0}},   color={0,0,127}));
   connect(addPar.y, swi6.u3) annotation (Line(points={{-119,50},{20,50},{20,-8},
           {38,-8}}, color={0,0,127}));
   connect(intToRea.y, swi6.u1) annotation (Line(points={{-179,70},{-160,70},{-160,
@@ -516,8 +525,6 @@ equation
           -242},{-122,-242}}, color={0,0,127}));
   connect(addPar.y, swi3.u3) annotation (Line(points={{-119,50},{-100,50},{-100,
           36},{-156,36},{-156,-258},{-122,-258}}, color={0,0,127}));
-  connect(and2.y, swi3.u2)
-    annotation (Line(points={{-179,-250},{-122,-250}}, color={255,0,255}));
   connect(swi3.y, reaToInt2.u)
     annotation (Line(points={{-99,-250},{-82,-250}}, color={0,0,127}));
   connect(reaToInt2.y, chiRot1.uChiSta)
@@ -536,18 +543,44 @@ equation
           {-210,-400},{-210,-430},{-202,-430}}, color={255,0,255}));
   connect(cha.up, and1.u2) annotation (Line(points={{-159,426},{-140,426},{-140,
           440},{-220,440},{-220,-438},{-202,-438}}, color={255,0,255}));
-  connect(and1.y, swi7.u2)
-    annotation (Line(points={{-179,-430},{-122,-430}}, color={255,0,255}));
-  connect(intToRea.y, swi7.u1) annotation (Line(points={{-179,70},{-160,70},{-160,
-          -422},{-122,-422}}, color={0,0,127}));
+  connect(intToRea.y, swi7.u1) annotation (Line(points={{-179,70},{-160,70},{
+          -160,-404},{-80,-404},{-80,-422},{-62,-422}},
+                              color={0,0,127}));
   connect(addPar.y, swi7.u3) annotation (Line(points={{-119,50},{-100,50},{-100,
-          36},{-156,36},{-156,-438},{-122,-438}}, color={0,0,127}));
+          36},{-156,36},{-156,-408},{-100,-408},{-100,-438},{-62,-438}},
+                                                  color={0,0,127}));
   connect(swi7.y, reaToInt3.u)
-    annotation (Line(points={{-99,-430},{-82,-430}}, color={0,0,127}));
+    annotation (Line(points={{-39,-430},{-22,-430}}, color={0,0,127}));
   connect(reaToInt3.y, chiRot2.uChiSta)
-    annotation (Line(points={{-59,-430},{-22,-430}}, color={255,127,0}));
+    annotation (Line(points={{1,-430},{38,-430}},    color={255,127,0}));
   connect(chiRot2.yChiOpeSta, yChi)
-    annotation (Line(points={{1,-430},{230,-430}}, color={255,0,255}));
+    annotation (Line(points={{61,-430},{230,-430}},color={255,0,255}));
+  connect(or3.y, swi3.u2) annotation (Line(points={{-119,-210},{-100,-210},{
+          -100,-230},{-140,-230},{-140,-250},{-122,-250}}, color={255,0,255}));
+  connect(and2.y, or3.u2) annotation (Line(points={{-179,-250},{-168,-250},{
+          -168,-218},{-142,-218}}, color={255,0,255}));
+  connect(not5.y, or3.u1) annotation (Line(points={{-39,420},{-20,420},{-20,458},
+          {-230,458},{-230,-210},{-142,-210}}, color={255,0,255}));
+  connect(and7.y, or4.u2) annotation (Line(points={{-139,100},{-108,100},{-108,
+          92},{-82,92}}, color={255,0,255}));
+  connect(not5.y, or4.u1) annotation (Line(points={{-39,420},{-20,420},{-20,458},
+          {-230,458},{-230,124},{-100,124},{-100,100},{-82,100}}, color={255,0,
+          255}));
+  connect(or4.y, swi5.u2) annotation (Line(points={{-59,100},{-40,100},{-40,70},
+          {-22,70}}, color={255,0,255}));
+  connect(or5.y, swi6.u2)
+    annotation (Line(points={{1,0},{20,0},{20,0},{38,0}}, color={255,0,255}));
+  connect(hys6.y, or5.u1)
+    annotation (Line(points={{-39,0},{-22,0}}, color={255,0,255}));
+  connect(not5.y, or5.u2) annotation (Line(points={{-39,420},{-20,420},{-20,458},
+          {-230,458},{-230,-20},{-30,-20},{-30,-8},{-22,-8}}, color={255,0,255}));
+  connect(or6.y, swi7.u2)
+    annotation (Line(points={{-119,-430},{-62,-430}}, color={255,0,255}));
+  connect(and1.y, or6.u1)
+    annotation (Line(points={{-179,-430},{-142,-430}}, color={255,0,255}));
+  connect(not5.y, or6.u2) annotation (Line(points={{-39,420},{-20,420},{-20,458},
+          {-230,458},{-230,-458},{-160,-458},{-160,-438},{-142,-438}}, color={
+          255,0,255}));
 annotation (
   defaultComponentName = "staUp",
   Diagram(coordinateSystem(preserveAspectRatio=false,
