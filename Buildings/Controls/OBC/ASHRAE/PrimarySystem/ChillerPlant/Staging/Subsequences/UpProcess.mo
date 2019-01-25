@@ -225,16 +225,15 @@ block UpProcess
   Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep2(final nout=num)
     "Replicate input "
     annotation (Placement(transformation(extent={{120,410},{140,430}})));
-
   Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWater conWatPum(pumNum=num)
     annotation (Placement(transformation(extent={{100,60},{120,80}})));
   Buildings.Controls.OBC.CDL.Logical.Switch swi5
     "Switch to current stage setpoint"
     annotation (Placement(transformation(extent={{-20,60},{0,80}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uWSE
-    "Water side economizer status: true = ON, false = OFF" annotation (
-      Placement(transformation(extent={{-280,10},{-240,50}}),
-        iconTransformation(extent={{-120,-20},{-100,0}})));
+    "Water side economizer status: true = ON, false = OFF"
+    annotation (Placement(transformation(extent={{-280,10},{-240,50}}),
+      iconTransformation(extent={{-120,-20},{-100,0}})));
   Buildings.Controls.OBC.CDL.Conversions.IntegerToReal intToRea
     annotation (Placement(transformation(extent={{-200,60},{-180,80}})));
   Buildings.Controls.OBC.CDL.Continuous.AddParameter addPar(p=-1, k=1) "Reduce one stage"
@@ -252,8 +251,9 @@ block UpProcess
   Buildings.Controls.OBC.CDL.Logical.Timer tim2
     "Time after changeing condenser water pump "
     annotation (Placement(transformation(extent={{-100,-10},{-80,10}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys6(final uLow=10 - 1,
-      final uHigh=10 + 1)
+  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys6(
+    final uLow=10 - 1,
+    final uHigh=10 + 1)
     "Check if it is 10 seconds after condenser water pump change"
     annotation (Placement(transformation(extent={{-60,-10},{-40,10}})));
   Buildings.Controls.OBC.CDL.Logical.Switch swi6
@@ -282,19 +282,19 @@ block UpProcess
     annotation (Placement(transformation(extent={{-60,-440},{-40,-420}})));
   Buildings.Controls.OBC.CDL.Conversions.RealToInteger reaToInt3 "Convert real to integer number"
     annotation (Placement(transformation(extent={{-20,-440},{0,-420}})));
-
-  CDL.Logical.Or                        or3
+  Buildings.Controls.OBC.CDL.Logical.Or or3
     "Check if it is before stage change or all other changes have been made"
     annotation (Placement(transformation(extent={{-140,-220},{-120,-200}})));
-  CDL.Logical.Or                        or4
+  Buildings.Controls.OBC.CDL.Logical.Or or4
     "Check if it is before stage change or all other changes have been made"
     annotation (Placement(transformation(extent={{-80,90},{-60,110}})));
-  CDL.Logical.Or                        or5
+  Buildings.Controls.OBC.CDL.Logical.Or or5
     "Check if it is before stage change or all other changes have been made"
     annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
-  CDL.Logical.Or                        or6
+  Buildings.Controls.OBC.CDL.Logical.Or or6
     "Check if it is before stage change or all other changes have been made"
     annotation (Placement(transformation(extent={{-140,-440},{-120,-420}})));
+
 equation
   connect(uChiCur, triSam.u)
     annotation (Line(points={{-260,360},{-162,360}}, color={0,0,127}));

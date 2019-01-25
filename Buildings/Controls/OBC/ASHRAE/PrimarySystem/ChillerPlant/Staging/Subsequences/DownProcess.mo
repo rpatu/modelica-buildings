@@ -14,12 +14,14 @@ block DownProcess
   parameter Modelica.SIunits.VolumeFlowRate minFloSet[num] = {0.0089, 0.0177}
     "Minimum flow rate at each chiller stage";
 
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uWSE
+    "Water side economizer status: true = ON, false = OFF"
+    annotation (Placement(transformation(extent={{-260,-200},{-220,-160}}),
+      iconTransformation(extent={{-120,-20},{-100,0}})));
   Buildings.Controls.OBC.CDL.Interfaces.IntegerInput uChiSta
     "Current chiller stage"
     annotation (Placement(transformation(extent={{-260,360},{-220,400}}),
-      iconTransformation(extent={{-10,-10},{10,10}},
-        rotation=0,
-        origin={-110,90})));
+      iconTransformation(extent={{-10,-10},{10,10}}, rotation=0, origin={-110,90})));
   Buildings.Controls.OBC.CDL.Interfaces.RealInput uChiCur[num](
     final quantity="ElectricCurrent",
     final unit="A") "Chiller demand measured by electric current"
@@ -60,24 +62,23 @@ block DownProcess
     final unit="m3/s") "Minimum flow setpoint"
     annotation (Placement(transformation(extent={{240,-350},{260,-330}}),
       iconTransformation(extent={{100,-100},{120,-80}})));
-
-  Buildings.Controls.OBC.CDL.Integers.Change cha
-    "Check chiller stage change status"
-    annotation (Placement(transformation(extent={{-160,370},{-140,390}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yChi[num]
     "Chiller status"
     annotation (Placement(transformation(extent={{240,330},{260,350}}),
       iconTransformation(extent={{100,60},{120,80}})));
+  Buildings.Controls.OBC.CDL.Interfaces.RealOutput yConWatPum[num]
+    "Condenser water pump speed"
+    annotation (Placement(transformation(extent={{240,-170},{260,-150}}),
+        iconTransformation(extent={{100,20},{120,40}})));
+
+
+  Buildings.Controls.OBC.CDL.Integers.Change cha
+    "Check chiller stage change status"
+    annotation (Placement(transformation(extent={{-160,370},{-140,390}})));
   Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys[num](
     final uLow=lowChiCur,
     final uHigh=lowChiCur + 0.2) "Check if the chiller current becomes zero"
     annotation (Placement(transformation(extent={{-160,260},{-140,280}})));
-  Buildings.Controls.OBC.CDL.Conversions.BooleanToInteger booToInt[num]
-    "Convert boolean intput to integer"
-    annotation (Placement(transformation(extent={{-80,290},{-60,310}})));
-  Buildings.Controls.OBC.CDL.Conversions.BooleanToInteger booToInt1[num]
-    "Convert boolean intput to integer"
-    annotation (Placement(transformation(extent={{-80,260},{-60,280}})));
   Buildings.Controls.OBC.CDL.Integers.Equal intEqu[num] "Check equality of integer inputs"
     annotation (Placement(transformation(extent={{-20,290},{0,310}})));
   Buildings.Controls.OBC.CDL.Logical.Timer tim
@@ -93,15 +94,10 @@ block DownProcess
   Buildings.Controls.OBC.CDL.Logical.And and5 "Logical and"
     annotation (Placement(transformation(extent={{100,310},{120,330}})));
   Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys2[num](
-    final uLow=0.05, final uHigh=0.1)
+    final uLow=0.05,
+    final uHigh=0.1)
     "Check if isolation valve is not closed"
     annotation (Placement(transformation(extent={{-180,-100},{-160,-80}})));
-  Buildings.Controls.OBC.CDL.Conversions.BooleanToInteger booToInt4[num]
-    "Convert boolean intput to integer"
-    annotation (Placement(transformation(extent={{-80,-70},{-60,-50}})));
-  Buildings.Controls.OBC.CDL.Conversions.BooleanToInteger booToInt5[num]
-    "Convert boolean intput to integer"
-    annotation (Placement(transformation(extent={{-80,-100},{-60,-80}})));
   Buildings.Controls.OBC.CDL.Integers.Equal intEqu2[num]
     "Check equality of integer inputs"
     annotation (Placement(transformation(extent={{-20,-90},{0,-70}})));
@@ -118,82 +114,76 @@ block DownProcess
   Buildings.Controls.OBC.CDL.Logical.Timer tim1
     "Time after fully closed CW isolation valve"
     annotation (Placement(transformation(extent={{20,-270},{40,-250}})));
-  CDL.Integers.GreaterThreshold                     intGreThr(final threshold=0)
+  Buildings.Controls.OBC.CDL.Integers.GreaterThreshold intGreThr(
+    final threshold=0)
     "Check if it is not zero stage"
     annotation (Placement(transformation(extent={{140,-350},{160,-330}})));
   Buildings.Controls.OBC.CDL.Logical.Switch swi2
     "Switch to current stage setpoint"
     annotation (Placement(transformation(extent={{200,-350},{220,-330}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys4[num](uLow=0.05, uHigh=0.1)
+  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys4[num](
+    final uLow=0.05,
+    final uHigh=0.1)
     "Check if CWP equals to the setpoints"
     annotation (Placement(transformation(extent={{-80,-220},{-60,-200}})));
   Buildings.Controls.OBC.CDL.Integers.Add addInt
     "One stage lower than current one"
     annotation (Placement(transformation(extent={{-140,-420},{-120,-400}})));
-
-  ChillerRotation                                                                               chiRot2(chiNum=
-        num, stagingRuntime=chiStaTim) "Shut off the last stage chiller"
+  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.ChillerRotation chiRot2(
+    final chiNum=num,
+    final stagingRuntime=chiStaTim) "Shut off the last stage chiller"
     annotation (Placement(transformation(extent={{-160,330},{-140,350}})));
-  CDL.Conversions.IntegerToReal intToRea
-    annotation (Placement(transformation(extent={{-160,200},{-140,220}})));
-  CDL.Continuous.AddParameter addPar(p=1, k=1)
+  Buildings.Controls.OBC.CDL.Continuous.AddParameter addPar(p=1, k=1)
     annotation (Placement(transformation(extent={{-160,140},{-140,160}})));
-  CDL.Logical.Switch swi1 "Logical switch"
+  Buildings.Controls.OBC.CDL.Logical.Switch swi1 "Logical switch"
     annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
-  CDL.Conversions.RealToInteger reaToInt
-    annotation (Placement(transformation(extent={{-40,80},{-20,100}})));
-  ChillerRotation chiIsoVal(chiNum=num, stagingRuntime=chiStaTim)
+  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.ChillerRotation chiIsoVal(
+    final chiNum=num,
+    final stagingRuntime=chiStaTim)
     "Chiller isolation valve position, it operates with the corresponded chiller"
     annotation (Placement(transformation(extent={{0,80},{20,100}})));
-  CDL.Logical.FallingEdge falEdg[num]
+  Buildings.Controls.OBC.CDL.Logical.FallingEdge falEdg[num]
     "Check if there is any device changes from ON to OFF"
     annotation (Placement(transformation(extent={{40,80},{60,100}})));
-  CDL.Continuous.Hysteresis hys1(final uLow=turOffChiWatIsoTim - 5, final uHigh=
-       turOffChiWatIsoTim + 5)
+  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys1(
+    final uLow=turOffChiWatIsoTim - 5,
+    final uHigh= turOffChiWatIsoTim + 5)
     "Check if chilled water isolation valve has been closed"
     annotation (Placement(transformation(extent={{-160,10},{-140,30}})));
-  CDL.Logical.Not                        not5 "Logical not"
+  Buildings.Controls.OBC.CDL.Logical.Not not5 "Logical not"
     annotation (Placement(transformation(extent={{-60,370},{-40,390}})));
-  CDL.Logical.Or                        or4
+  Buildings.Controls.OBC.CDL.Logical.Or or4
     "Check if it is before stage change or all other changes have been made"
     annotation (Placement(transformation(extent={{-160,80},{-140,100}})));
-  CDL.Logical.Or                        or1
+  Buildings.Controls.OBC.CDL.Logical.Or or1
     "Check if it is before stage change or all other changes have been made"
     annotation (Placement(transformation(extent={{-160,-30},{-140,-10}})));
-  CDL.Logical.Switch swi3 "Logical switch"
+  Buildings.Controls.OBC.CDL.Logical.Switch swi3 "Logical switch"
     annotation (Placement(transformation(extent={{-100,-30},{-80,-10}})));
-  ChillerRotation conWatIsoValRot(chiNum=num, stagingRuntime=chiStaTim)
+  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.ChillerRotation conWatIsoValRot(
+    final chiNum=num,
+    final stagingRuntime=chiStaTim)
     "Condenser water isolation valve position, it operates with the corresponded chiller"
     annotation (Placement(transformation(extent={{0,-30},{20,-10}})));
-  CDL.Conversions.RealToInteger reaToInt1
-    annotation (Placement(transformation(extent={{-40,-30},{-20,-10}})));
-  CDL.Logical.Or                        or2
+  Buildings.Controls.OBC.CDL.Logical.Or or2
     "Check if it is before stage change or all other changes have been made"
     annotation (Placement(transformation(extent={{-160,-170},{-140,-150}})));
-  CDL.Logical.Switch swi4 "Logical switch"
+  Buildings.Controls.OBC.CDL.Logical.Switch swi4 "Logical switch"
     annotation (Placement(transformation(extent={{-100,-170},{-80,-150}})));
-  CDL.Conversions.RealToInteger reaToInt2
-    annotation (Placement(transformation(extent={{-40,-170},{-20,-150}})));
-  Pump.CondenserWater                                                          conWatPum(pumNum=
-        num)
+  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWater conWatPum(
+    final pumNum=num)
     annotation (Placement(transformation(extent={{20,-170},{40,-150}})));
-  CDL.Interfaces.BooleanInput                        uWSE
-    "Water side economizer status: true = ON, false = OFF" annotation (
-      Placement(transformation(extent={{-260,-200},{-220,-160}}),
-        iconTransformation(extent={{-120,-20},{-100,0}})));
-  CDL.Interfaces.RealOutput yConWatPum[num] "Condenser water pump speed"
-    annotation (Placement(transformation(extent={{240,-170},{260,-150}}),
-        iconTransformation(extent={{100,20},{120,40}})));
-  CDL.Continuous.Add add2[num](k1=-1)
+  Buildings.Controls.OBC.CDL.Continuous.Add add2[num](k1=-1)
     "Calculate the difference between setpoint and current values"
     annotation (Placement(transformation(extent={{-160,-220},{-140,-200}})));
-  CDL.Continuous.Abs abs[num] "Absolate value of input"
+  Buildings.Controls.OBC.CDL.Continuous.Abs abs[num] "Absolate value of input"
     annotation (Placement(transformation(extent={{-120,-220},{-100,-200}})));
-  CDL.Logical.Switch                        swi5
+  Buildings.Controls.OBC.CDL.Logical.Switch swi5
     "Switch to current stage setpoint"
     annotation (Placement(transformation(extent={{140,-310},{160,-290}})));
+
 protected
-  Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt(
+  Buildings.Controls.OBC.Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt(
     final k=1)
     "Constant one"
     annotation (Placement(transformation(extent={{-200,-420},{-180,-400}})));
@@ -236,6 +226,26 @@ protected
   Buildings.Controls.OBC.CDL.Logical.MultiAnd mulAnd3(final nu=2)
     "Check if the disabled chiller has been really disabled"
     annotation (Placement(transformation(extent={{-40,-220},{-20,-200}})));
+  Buildings.Controls.OBC.CDL.Conversions.BooleanToInteger booToInt[num]
+    "Convert boolean intput to integer"
+    annotation (Placement(transformation(extent={{-80,290},{-60,310}})));
+  Buildings.Controls.OBC.CDL.Conversions.BooleanToInteger booToInt1[num]
+    "Convert boolean intput to integer"
+    annotation (Placement(transformation(extent={{-80,260},{-60,280}})));
+  Buildings.Controls.OBC.CDL.Conversions.BooleanToInteger booToInt4[num]
+    "Convert boolean intput to integer"
+    annotation (Placement(transformation(extent={{-80,-70},{-60,-50}})));
+  Buildings.Controls.OBC.CDL.Conversions.BooleanToInteger booToInt5[num]
+    "Convert boolean intput to integer"
+    annotation (Placement(transformation(extent={{-80,-100},{-60,-80}})));
+  Buildings.Controls.OBC.CDL.Conversions.IntegerToReal intToRea
+    annotation (Placement(transformation(extent={{-160,200},{-140,220}})));
+  Buildings.Controls.OBC.CDL.Conversions.RealToInteger reaToInt2
+    annotation (Placement(transformation(extent={{-40,-170},{-20,-150}})));
+  Buildings.Controls.OBC.CDL.Conversions.RealToInteger reaToInt
+    annotation (Placement(transformation(extent={{-40,80},{-20,100}})));
+  Buildings.Controls.OBC.CDL.Conversions.RealToInteger reaToInt1
+    annotation (Placement(transformation(extent={{-40,-30},{-20,-10}})));
 
 equation
   connect(uChiSta, cha.u)
