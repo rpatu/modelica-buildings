@@ -76,8 +76,8 @@ block Change "Stage change signal"
            {{-120,70},{-100,90}})));
   CDL.Interfaces.RealInput uOplrDow(final unit="1")
     "Operating part load ratio of the next stage down" annotation (Placement(
-        transformation(extent={{-220,30},{-180,70}}), iconTransformation(extent
-          ={{-120,70},{-100,90}})));
+        transformation(extent={{-220,30},{-180,70}}), iconTransformation(extent=
+           {{-120,70},{-100,90}})));
   CDL.Interfaces.RealInput uSplrDow(final unit="1")
     "Staging part load ratio of the next stage down"
                                                    annotation (Placement(

@@ -183,7 +183,7 @@ block DownProcess
     annotation (Placement(transformation(extent={{140,-310},{160,-290}})));
 
 protected
-  Buildings.Controls.OBC.Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt(
+  Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt(
     final k=1)
     "Constant one"
     annotation (Placement(transformation(extent={{-200,-420},{-180,-400}})));

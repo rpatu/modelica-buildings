@@ -35,8 +35,7 @@ block CondenserWater "Condenser water pump control"
     final initRoles=initRoles) "Rotate lead and lag pump assignment"
     annotation (Placement(transformation(extent={{140,50},{160,70}})));
   Buildings.Controls.OBC.CDL.Routing.RealExtractor conWatPumOn(
-    final nin=2*staNum)
-    "Number of condenser water pump should be on"
+    final nin=2*staNum) "Number of condenser water pump should be on"
     annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
  Buildings.Controls.OBC.CDL.Routing.RealExtractor conWatPumSpe(
     final nin=2*staNum)

@@ -209,8 +209,7 @@ equation
 
 annotation (
   defaultComponentName = "plaEna",
-  Diagram(coordinateSystem(preserveAspectRatio=false,
-          extent={{-200,-160},{200,160}})),
+  Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-200,-160},{200,160}})),
   Icon(graphics={
         Rectangle(
         extent={{-100,-100},{100,100}},
@@ -262,6 +261,27 @@ Block that generate chiller plant enable signals, according to
 ASHRAE RP-1711 Advanced Sequences of Operation for HVAC Systems Phase II –
 Central Plants and Hydronic Systems (Draft 4 on January 7, 2019), section 5.2.2.
 </p>
+<p>
+1. An enabling schedule should be included to allow operators to lock out the 
+chiller plant during off-hour, e.g. to allow off-hour operation of HVAC systems
+except the chiller plant. The default schedule shall be 24/7 and be adjustable.
+</p>
+<p>
+2. The plant should be enabled in the lowest stage when the plant has been
+disabled for at least <code>plaThrTim</code>, e.g. 15 minutes and: 
+</p>
+<ul>
+<li>
+Number of chiller plant requests &gt; <code>ignReq</code> (<code>ignReq</code>
+should default to 0 and adjustable), and,
+</li>
+<li>
+Outdoor air temperature is greater than chiller lockout temperature, 
+<code>TOut</code> &gt; <code>TChiLocOut</code>, and,
+</li>
+</ul>
+
+
 
 
 </html>",

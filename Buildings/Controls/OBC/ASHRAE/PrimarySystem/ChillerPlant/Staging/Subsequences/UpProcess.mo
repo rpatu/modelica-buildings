@@ -52,8 +52,8 @@ block UpProcess
     "Condenser water pump speed"
     annotation (Placement(transformation(extent={{220,60},{240,80}}),
       iconTransformation(extent={{100,20},{120,40}})));
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yConWatIsoVal[num]
-    "Condenser water isolation valve status"
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yChiHeaPreCon[num]
+    "Chiller head pressure control status"
     annotation (Placement(transformation(extent={{220,-10},{240,10}}),
       iconTransformation(extent={{100,-20},{120,0}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiWatIsoValSet[num](
@@ -513,7 +513,7 @@ equation
     annotation (Line(points={{61,0},{98,0}},   color={0,0,127}));
   connect(reaToInt1.y, chiRot.uChiSta)
     annotation (Line(points={{121,0},{158,0}},   color={255,127,0}));
-  connect(chiRot.yChiOpeSta, yConWatIsoVal)
+  connect(chiRot.yChiOpeSta,yChiHeaPreCon)
     annotation (Line(points={{181,0},{230,0}},   color={255,0,255}));
   connect(chiRot.yChiOpeSta, logSwi7.u2) annotation (Line(points={{181,0},{200,0},
           {200,-30},{-140,-30},{-140,-58},{-122,-58}},   color={255,0,255}));
@@ -584,7 +584,7 @@ equation
 annotation (
   defaultComponentName = "staUp",
   Diagram(coordinateSystem(preserveAspectRatio=false,
-    extent={{-240,-460},{220,460}}), graphics={
+    extent={{-240,-720},{220,460}}), graphics={
                                              Rectangle(
           extent={{-238,-122},{218,-278}},
           fillColor={210,210,210},
@@ -714,7 +714,8 @@ have been fully open"),
           lineColor={0,0,127},
           horizontalAlignment=TextAlignment.Right,
           textString="Start next chiller")}),
-    Icon(graphics={
+    Icon(coordinateSystem(extent={{-240,-720},{220,460}}),
+         graphics={
         Rectangle(
         extent={{-100,-100},{100,100}},
         lineColor={0,0,127},
@@ -789,24 +790,33 @@ have been fully open"),
 Documentation(info="<html>
 <p>
 Block that generates signals to control devices when there is chiller plant 
-stage-up command, according to ASHRAE RP-1711 Advanced Sequences of Operation for HVAC Systems Phase II –
-Central Plants and Hydronic Systems (Draft 4 on August 15, 2018), section 3.2.4.12.
+stage-up command, according to ASHRAE RP-1711 Advanced Sequences of Operation for 
+HVAC Systems Phase II – Central Plants and Hydronic Systems (Draft 4 on 
+January 7, 2019), section 5.2.4.18.
+It is for primary-only parallel chiller plants with headered chilled water pumps
+and headered condenser water pumps.
 </p>
 <p>Whenever there is a stage-up command (<code>uChiSta</code> increases):</p>
 <p>
-a. Command operating chillers (true elements in <code>uChi</code> vector) to 
+1. Command operating chillers (true elements in <code>uChi</code> vector) to 
 reduce demand (currents) to 75% of their load (<code>uChiCur</code>). Wait until
 actual demand becomes less than 80% up to a maximum of <code>holChiDemTim</code>
 (e.g. 5 minutes) before proceeding.
 </p>
 
 <p>
-b. Slowly change the minimum bypass controller setpoint <code>yMinFloSet</code> 
-to that appropriate for the stage as indicated below. For example, this could 
-be accomplished by resetting the setpoint X GPM/second, where X = (NewSetpoint 
-- OldSetpoint) / <code>byPasSetTim</code>. The minimum flow rate are as follows
-(based on manufactures' minimum flow rate plus 10% to ensure control variations
-do not cause flow to go below actual minimum):
+2. For plants with pony chillers, at any stage change during which a smaller is 
+diabled and a large chiller is enabled, slowly change the minimum flow bypass setpoint
+to that appropriate for the stage transition. After new setpoint is achieved, 
+wait 1 minute to allow loop to stabilize.
+</p>
+<p>
+3. For other types of plant, slowly change the minimum bypass controller setpoint 
+<code>yMinFloSet</code> to that appropriate for the stage as indicated below. 
+For example, this could be accomplished by resetting the setpoint X GPM/second, 
+where X = (NewSetpoint - OldSetpoint) / <code>byPasSetTim</code>. The minimum 
+flow rate are as follows (based on manufactures' minimum flow rate plus 10% to 
+ensure control variations do not cause flow to go below actual minimum):
 </p>
 <table summary=\"summary\" border=\"1\">
 <tr>
@@ -836,17 +846,16 @@ After new setpoint is achieved wait 1 minute to allow loop to stabilize.
 </p>
 
 <p>
-c. Start the next CW pump and/or change CW pump speed to that required of 
+4. Start the next CW pump and/or change CW pump speed to that required of 
 the new stage, refer to 
 <a href=\"modelica://Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWater\">
 Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWater</a>.
-After 10 seconds, enable head pressure control of the chiller being enabled. 
-In this sequence, it controls CW isolation/head pressure control valve <code>uConWatIsoVal</code>. 
-Wait 30 seconds.
+After 10 seconds, enable head pressure control of the chiller <code>yChiHeaPreCon</code>. 
+Then, wait 30 seconds.
 </p>
 
 <p>
-d. Slowly open CHW isolation valve of the chiller being enabled,
+5. Slowly open CHW isolation valve of the chiller being enabled,
 e.g. change the open position setpoint <code>yChiWatIsoValSet</code>
 to be nonzero. The purpose of slow-opening is to prevent sudden disruption to 
 flow through active chillers. Valve timing <code>turOnChiWatIsoTim</code> to 
@@ -854,11 +863,33 @@ be determined in the field as that required to prevent nuisance trips.
 </p>
 
 <p>
-e. Start the next stage chiller <code>uChi</code> after CHW isolation valve is fully open.
+6. Start the next stage chiller <code>uChi</code> after CHW isolation valve is fully open.
 </p>
 
 <p>
-f. Release the demand limit <code>yChiCur</code>.
+7. For any stage change during which a smaller chiller is disabled and a large
+chiller is enabled:
+</p>
+<ul>
+<li>
+Wait 5 minutes for the newly enabled chiller to prove that is operating correctly,
+then shut off the smaller chiller.
+</li>
+<li>
+When the controller of the smaller chiller being shut off indicates no request
+for chilled water flow, slowly close the chiller's CHW isolation valve to avoid
+a sudden change in flow through other operating chillers.
+</li>
+<li>
+When the controller of the smaller chiller being shut off indicates no request
+for condenser water flow, disable the chiller's head pressure control loop.
+</li>
+<li>
+Change the minimum flow bypass setpoint to that appropriate for the new stage.
+</li>
+</ul>
+<p>
+8. Release the demand limit <code>yChiCur</code>.
 </p>
 
 </html>",
