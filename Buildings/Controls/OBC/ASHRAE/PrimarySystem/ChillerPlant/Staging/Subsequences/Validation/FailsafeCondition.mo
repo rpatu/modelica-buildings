@@ -1,7 +1,6 @@
 within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.Validation;
 model FailsafeCondition "Validate failsafe condition sequence"
 
-
   Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.FailsafeCondition
     faiSafCon0
     "Failsafe condition to test for the operating part load ratio input"
@@ -13,14 +12,14 @@ model FailsafeCondition "Validate failsafe condition sequence"
 
 protected
   Buildings.Controls.OBC.CDL.Continuous.Sources.Sine oplrUp(
-    final freqHz=1/300,
     final amplitude=0.1,
-    final offset=0.4) "Operating part load ratio of the next stage up"
+    final freqHz=1/2100,
+    final offset=0.45)
+                      "Operating part load ratio of the next stage up"
     annotation (Placement(transformation(extent={{-140,60},{-120,80}})));
 
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant oplrUpMin(
-    final k=0.4)
-    "Minimum operating part load ratio of the next stage up"
+    final k=0.4) "Minimum operating part load ratio of the next stage up"
     annotation (Placement(transformation(extent={{-140,20},{-120,40}})));
 
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant TCWSup(
@@ -33,7 +32,8 @@ protected
     "Chilled water supply temperature setpoint"
     annotation (Placement(transformation(extent={{-140,-20},{-120,0}})));
 
-  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant dpChiWat(final k=64.1*6895)
+  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant dpChiWat(
+    final k=64.1*6895)
     "Chilled water differential pressure"
     annotation (Placement(transformation(extent={{-80,-60},{-60,-40}})));
 
@@ -65,15 +65,16 @@ protected
   Buildings.Controls.OBC.CDL.Continuous.Sources.Sine TCWSup1(
     final amplitude=1.5,
     final offset=273.15 + 15.5,
-    final freqHz=1/600) "Chilled water supply temperature"
+    final freqHz=1/900) "Chilled water supply temperature"
     annotation (Placement(transformation(extent={{20,-60},{40,-40}})));
 
   Buildings.Controls.OBC.CDL.Continuous.Sources.Sine dpChiWat2(
     final amplitude=6895,
-    final startTime=300,
-    final freqHz=1/1200,
-    final offset=63*6895)
-                         "Chilled water differential pressure"
+    final offset=63*6895,
+    final freqHz=1/1500,
+    final startTime=0,
+    phase=0.78539816339745)
+    "Chilled water differential pressure"
     annotation (Placement(transformation(extent={{80,-60},{100,-40}})));
 
 equation

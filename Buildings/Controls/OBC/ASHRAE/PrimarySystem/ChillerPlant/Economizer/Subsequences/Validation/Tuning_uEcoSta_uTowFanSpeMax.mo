@@ -1,5 +1,5 @@
 within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Economizer.Subsequences.Validation;
-model Tuning_uEcoSta_uTowFanSpe
+model Tuning_uEcoSta_uTowFanSpeMax
   "Validate water side economizer tuning parameter sequence"
 
   Tuning wseTun
@@ -25,9 +25,8 @@ protected
     "Water side economizer enable/disable status"
     annotation (Placement(transformation(extent={{-120,100},{-100,120}})));
 
-  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant maxTowFanSig(
-    final k=1)
-    "Cooling tower fan full load signal"
+  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant maxTowFanSpeSig0(final k=1)
+    "Maximum cooling tower fan speed signal"
     annotation (Placement(transformation(extent={{-120,40},{-100,60}})));
 
   Buildings.Controls.OBC.CDL.Logical.Sources.Pulse ecoSta1(
@@ -56,9 +55,8 @@ protected
     "Water side economizer enable/disable status"
     annotation (Placement(transformation(extent={{-120,0},{-100,20}})));
 
-  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant constTowFanSig(
-    final k=1)
-    "Cooling tower fan full load signal"
+  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant maxTowFanSpeSig2(final k=1)
+    "Maximum cooling tower fan speed signal"
     annotation (Placement(transformation(extent={{-120,-60},{-100,-40}})));
 
   CDL.Logical.Sources.Pulse ecoSta3(
@@ -67,9 +65,8 @@ protected
     "Water side economizer enable/disable status"
     annotation (Placement(transformation(extent={{20,-20},{40,0}})));
 
-  CDL.Continuous.Sources.Constant maxTowFanSig2(
-    final k=1)
-    "Cooling tower fan full load signal"
+  CDL.Continuous.Sources.Constant maxTowFanSpeSig3(final k=1)
+    "Maximum cooling tower fan speed signal"
     annotation (Placement(transformation(extent={{20,-70},{40,-50}})));
 equation
   connect(ecoSta.y,wseTun.uWseSta)  annotation (Line(points={{-99,110},{-70,110},
@@ -79,21 +76,21 @@ equation
           56},{58,56}}, color={0,0,127}));
   connect(cooTowFanSta1.y, min1.u2) annotation (Line(points={{41,28},{48,28},{48,
           44},{58,44}}, color={0,0,127}));
-  connect(min1.y, wseTun1.uTowFanSpe) annotation (Line(points={{81,50},{90,50},{
-          90,65},{98,65}}, color={0,0,127}));
+  connect(min1.y, wseTun1.uTowFanSpeMax) annotation (Line(points={{81,50},{90,
+          50},{90,65},{98,65}}, color={0,0,127}));
   connect(ecoSta1.y,wseTun1.uWseSta)  annotation (Line(points={{41,110},{70,110},
           {70,75},{98,75}}, color={255,0,255}));
   connect(ecoSta2.y,wseTun2.uWseSta)  annotation (Line(points={{-99,10},{-70,10},
           {-70,-25},{-42,-25}}, color={255,0,255}));
-  connect(constTowFanSig.y, wseTun2.uTowFanSpe) annotation (Line(points={{-99,-50},
-          {-70,-50},{-70,-35},{-42,-35}}, color={0,0,127}));
-  connect(maxTowFanSig.y, wseTun.uTowFanSpe) annotation (Line(points={{-99,50},{
-          -70,50},{-70,65},{-42,65}}, color={0,0,127}));
+  connect(maxTowFanSpeSig2.y, wseTun2.uTowFanSpeMax) annotation (Line(points={{
+          -99,-50},{-70,-50},{-70,-35},{-42,-35}}, color={0,0,127}));
+  connect(maxTowFanSpeSig0.y, wseTun.uTowFanSpeMax) annotation (Line(points={{-99,
+          50},{-70,50},{-70,65},{-42,65}}, color={0,0,127}));
   connect(ecoSta3.y,wseTun3.uWseSta)  annotation (Line(points={{41,-10},{70,-10},
           {70,-45},{98,-45}},
                             color={255,0,255}));
-  connect(wseTun3.uTowFanSpe, maxTowFanSig2.y) annotation (Line(points={{98,-55},
-          {70,-55},{70,-60},{41,-60}}, color={0,0,127}));
+  connect(wseTun3.uTowFanSpeMax, maxTowFanSpeSig3.y) annotation (Line(points={{
+          98,-55},{70,-55},{70,-60},{41,-60}}, color={0,0,127}));
 annotation (
  experiment(StopTime=14400.0, Tolerance=1e-06),
   __Dymola_Commands(file="modelica://Buildings/Resources/Scripts/Dymola/Controls/OBC/ASHRAE/PrimarySystem/ChillerPlant/Economizer/Subsequences/Validation/Tuning_uEcoSta_uTowFanSpe.mos"
@@ -137,4 +134,4 @@ prior to disable"),
 based on WSE enable duration
 prior to disable and cooling tower
 fan speed during WSE enable.")}));
-end Tuning_uEcoSta_uTowFanSpe;
+end Tuning_uEcoSta_uTowFanSpeMax;

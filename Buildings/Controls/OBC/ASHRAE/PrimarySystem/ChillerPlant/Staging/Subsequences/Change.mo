@@ -1,15 +1,11 @@
 within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences;
-block Change "Stage change signal"
+block Change "Calculates the chiller stage signal"
 
-  // fixme: pull OPRLup and OPRLdown out into chiller type staging packages
   parameter Integer numSta = 2
   "Number of stages";
 
-
   parameter Modelica.SIunits.Time delayStaCha = 15*60
   "Minimum chiller load time below or above current stage before a change is enabled";
-
-
 
   Buildings.Controls.OBC.CDL.Interfaces.IntegerInput uChiSta "Chiller stage"
     annotation (Placement(transformation(extent={{-220,160},{-180,200}}),
@@ -17,7 +13,8 @@ block Change "Stage change signal"
 
   Buildings.Controls.OBC.CDL.Interfaces.IntegerOutput y(
     final max=1,
-    final min=-1) "Chiller stage change (1 - up, -1 - down, 0 - unchanged)"
+    final min=-1)
+    "fixme change to chiller stage and loop back as input to up and down seq"
     annotation (Placement(transformation(extent=
     {{180,-10},{200,10}}), iconTransformation(extent={{100,-10},{120,10}})));
 
@@ -42,29 +39,29 @@ block Change "Stage change signal"
 
   CDL.Interfaces.RealInput uOplrUp(final unit="1")
     "Operating part load ratio of the next higher stage"
-    annotation (Placement(transformation(extent={{-220,-60},{-180,-20}}),
+    annotation (Placement(transformation(extent={{-220,-90},{-180,-50}}),
         iconTransformation(extent={{-120,70},{-100,90}})));
   CDL.Interfaces.RealInput uOplrUpMin(final unit="1")
     "Minimum operating part load ratio at the next stage up"
-    annotation (Placement(transformation(extent={{-220,-100},{-180,-60}}),
+    annotation (Placement(transformation(extent={{-220,-130},{-180,-90}}),
         iconTransformation(extent={{-120,30},{-100,50}})));
   CDL.Interfaces.RealInput dpChiWatPumSet(final unit="Pa", final quantity="PressureDifference")
     "Chilled water pump differential static pressure setpoint"
-    annotation (Placement(transformation(extent={{-220,-240},{-180,-200}}),
+    annotation (Placement(transformation(extent={{-220,-260},{-180,-220}}),
       iconTransformation(extent={{-120,-80},{-100,-60}})));
   CDL.Interfaces.RealInput dpChiWatPum(final unit="Pa", final quantity="PressureDifference")
     "Chilled water pump differential static pressure"
     annotation (Placement(
-    transformation(extent={{-220,-280},{-180,-240}}), iconTransformation(
+    transformation(extent={{-220,-300},{-180,-260}}), iconTransformation(
      extent={{-120,-100},{-100,-80}})));
   CDL.Interfaces.RealInput TChiWatSupSet(final unit="K", final quantity="ThermodynamicTemperature")
     "Chilled water supply temperature setpoint"
-    annotation (Placement(transformation(extent={{-220,-160},{-180,-120}}),
+    annotation (Placement(transformation(extent={{-220,-180},{-180,-140}}),
     iconTransformation(extent={{-120,-20},{-100,0}})));
   CDL.Interfaces.RealInput TChiWatSup(final unit="K", final quantity="ThermodynamicTemperature")
     "Chilled water return temperature"
     annotation (Placement(transformation(
-      extent={{-220,-200},{-180,-160}}), iconTransformation(extent={{-120,-40},{
+      extent={{-220,-220},{-180,-180}}), iconTransformation(extent={{-120,-40},{
             -100,-20}})));
   CDL.Interfaces.RealInput uOplr(final unit="1")
     "Operating part load ratio of the current stage" annotation (Placement(
@@ -72,17 +69,25 @@ block Change "Stage change signal"
           extent={{-120,70},{-100,90}})));
   CDL.Interfaces.RealInput uSplrUp(final unit="1")
     "Staging part load ratio of the next stage up" annotation (Placement(
-        transformation(extent={{-220,80},{-180,120}}),iconTransformation(extent=
+        transformation(extent={{-220,90},{-180,130}}),iconTransformation(extent=
            {{-120,70},{-100,90}})));
   CDL.Interfaces.RealInput uOplrDow(final unit="1")
     "Operating part load ratio of the next stage down" annotation (Placement(
-        transformation(extent={{-220,30},{-180,70}}), iconTransformation(extent=
+        transformation(extent={{-220,0},{-180,40}}),  iconTransformation(extent=
            {{-120,70},{-100,90}})));
   CDL.Interfaces.RealInput uSplrDow(final unit="1")
     "Staging part load ratio of the next stage down"
                                                    annotation (Placement(
-        transformation(extent={{-220,-10},{-180,30}}),iconTransformation(extent=
+        transformation(extent={{-220,-40},{-180,0}}), iconTransformation(extent=
            {{-120,70},{-100,90}})));
+  CDL.Interfaces.RealInput uOplrMin(final unit="1")
+    "Minimum operating part load ratio at the current stage" annotation (
+      Placement(transformation(extent={{-220,60},{-180,100}}),
+        iconTransformation(extent={{-120,30},{-100,50}})));
+  Up staUp annotation (Placement(transformation(extent={{-40,60},{-20,80}})));
+  CDL.Integers.GreaterThreshold intGreThr "Switches staging up rules"
+    annotation (Placement(transformation(extent={{-40,-120},{-20,-100}})));
+  Down staDown annotation (Placement(transformation(extent={{-40,0},{-20,20}})));
 equation
   connect(booToInt.y, addInt.u1) annotation (Line(points={{131,10},{134,10},{134,
           6},{148,6}}, color={255,127,0}));
@@ -113,7 +118,7 @@ Outputs the chiller stage change signal
 
 fixme: add a stage availability input signal, which will
 remove the stage change delay if the stage is unavailable, to
-allow for a change to the next available stage at the next instant.  
+allow for a change to the next available stage at the next instant.
 
 add WSE enable at plant enable part (input, output, predicted temperature) and at staging down from 1.
 </p>

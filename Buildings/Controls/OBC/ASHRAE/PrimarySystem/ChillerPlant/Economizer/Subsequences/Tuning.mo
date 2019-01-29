@@ -16,10 +16,10 @@ block Tuning
     annotation (Placement(transformation(extent={{-220,60},{-180,100}}),
         iconTransformation(extent={{-140,30},{-100,70}})));
 
-  Buildings.Controls.OBC.CDL.Interfaces.RealInput uTowFanSpe
-    "Cooling tower fan speed"
-    annotation (Placement(transformation(extent={{-222,-120},{-182,-80}}),
-        iconTransformation(extent={{-140,-70},{-100,-30}})));
+  Buildings.Controls.OBC.CDL.Interfaces.RealInput uTowFanSpeMax
+    "Maximum cooling tower fan speed" annotation (Placement(transformation(
+          extent={{-222,-120},{-182,-80}}), iconTransformation(extent={{-140,-70},
+            {-100,-30}})));
 
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput y(
     final max=0.5,
@@ -133,7 +133,7 @@ protected
     annotation (Placement(transformation(extent={{0,-140},{20,-120}})));
 
   Buildings.Controls.OBC.CDL.Logical.Latch lat "Latch"
-    annotation (Placement(transformation(extent={{-38,-160},{-18,-140}})));
+    annotation (Placement(transformation(extent={{-40,-160},{-20,-140}})));
 
 equation
   connect(uWseSta, tim.u)
@@ -161,7 +161,7 @@ equation
     annotation (Line(points={{-79,10},{-62,10}}, color={255,0,255}));
   connect(and1.u1, pre1.y) annotation (Line(points={{38,-42},{-30,-42},{-30,10},
           {-39,10}},  color={255,0,255}));
-  connect(uTowFanSpe, hys.u)
+  connect(uTowFanSpeMax, hys.u)
     annotation (Line(points={{-202,-100},{-162,-100}}, color={0,0,127}));
   connect(triSam.y, zerOrdHol.u)
     annotation (Line(points={{81,130},{98,130}}, color={0,0,127}));
@@ -207,7 +207,7 @@ equation
           -60},{-142,-60}},   color={255,0,255}));
   connect(hys.y, and6.u1) annotation (Line(points={{-139,-100},{-124,-100},{
           -124,-130},{-82,-130}},  color={255,0,255}));
-  connect(not1.y, and6.u2) annotation (Line(points={{-119,-60},{-110,-60},{-110,
+  connect(not1.y, and6.u2) annotation (Line(points={{-119,-60},{-90,-60},{-90,
           -138},{-82,-138}},       color={255,0,255}));
   connect(and4.u1, and6.y) annotation (Line(points={{-2,-130},{-59,-130}},
                   color={255,0,255}));
@@ -216,19 +216,20 @@ equation
   connect(hys.y, not2.u) annotation (Line(points={{-139,-100},{-132,-100},{-132,
           -160},{-122,-160}}, color={255,0,255}));
   connect(and5.u1, not2.y)
-    annotation (Line(points={{-82,-170},{-92,-170},{-92,-160},{-99,-160}},
+    annotation (Line(points={{-82,-170},{-90,-170},{-90,-160},{-99,-160}},
                                                       color={255,0,255}));
-  connect(and5.y, lat.u) annotation (Line(points={{-59,-170},{-42,-170},{-42,
-          -150},{-39,-150}}, color={255,0,255}));
-  connect(not1.y, lat.u0) annotation (Line(points={{-119,-60},{-50,-60},{-50,-156},
-          {-39,-156}},       color={255,0,255}));
-  connect(lat.y, and4.u2) annotation (Line(points={{-17,-150},{-10,-150},{-10,
+  connect(and5.y, lat.u) annotation (Line(points={{-59,-170},{-52,-170},{-52,
+          -150},{-41,-150}}, color={255,0,255}));
+  connect(not1.y, lat.u0) annotation (Line(points={{-119,-60},{-50,-60},{-50,
+          -156},{-41,-156}}, color={255,0,255}));
+  connect(lat.y, and4.u2) annotation (Line(points={{-19,-150},{-10,-150},{-10,
           -138},{-2,-138}},                  color={255,0,255}));
   connect(and1.y, triSam1.trigger)
     annotation (Line(points={{61,-50},{70,-50},{70,-31.8}},
                                                        color={255,0,255}));
-  connect(greThr.y, and1.u3) annotation (Line(points={{81,-100},{90,-100},{90,-80},
-          {8,-80},{8,-58},{38,-58}},      color={255,0,255}));
+  connect(greThr.y, and1.u3) annotation (Line(points={{81,-100},{90,-100},{90,
+          -80},{20,-80},{20,-58},{38,-58}},
+                                          color={255,0,255}));
   annotation (defaultComponentName = "wseTun",
         Icon(graphics={
         Rectangle(

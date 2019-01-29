@@ -3,5 +3,8 @@ CapacityRequirement
 ChillerdTRef
 Change
 ChangeOld
+Down
+EfficiencyCondition
 FailsafeCondition
 PartLoadRatios_uSta_chiTyp
+Up

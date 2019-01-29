@@ -1,5 +1,5 @@
 within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.Validation;
-model Change "Validates chiller stage change"
+model Change "Validates chiller stage signal"
 
   parameter Modelica.SIunits.Temperature TChiWatSupSet = 285.15
   "Chilled water supply set temperature";
