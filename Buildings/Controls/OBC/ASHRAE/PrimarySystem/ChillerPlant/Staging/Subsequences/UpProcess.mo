@@ -101,8 +101,7 @@ block UpProcess
     "Targeted minimum flow setpoint at current stage"
     annotation (Placement(transformation(extent={{-120,210},{-100,230}})));
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con1[num](
-    final k=minFloSet)
-    "Minimum flow setpoint"
+    final k=minFloSet) "Minimum flow setpoint"
     annotation (Placement(transformation(extent={{-180,210},{-160,230}})));
   Buildings.Controls.OBC.CDL.Integers.Add addInt(final k2=-1)
     "One stage lower than current one"
