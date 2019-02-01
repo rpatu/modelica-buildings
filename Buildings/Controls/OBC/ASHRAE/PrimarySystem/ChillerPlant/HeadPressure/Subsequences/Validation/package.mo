@@ -1,6 +1,6 @@
 within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.HeadPressure.Subsequences;
 package Validation "Validate subsequences for head pressure control"
-  
+
 annotation (Icon(graphics={
         Rectangle(
           lineColor={200,200,200},
