@@ -1,4 +1,4 @@
-﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP;
+﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences;
 block EnableLead_dedicated
   "Sequence for enabling lead pump of plants with dedicated condenser water pumps"
   parameter Modelica.SIunits.Time offTimThr = 180
@@ -107,7 +107,7 @@ annotation (
   Diagram(coordinateSystem(preserveAspectRatio=false)),
   Documentation(info="<html>
 <p>
-Block that enable and disable condenser water pump, for plants
+Block that enable and disable lead condenser water pump, for plants
 with dedicated condenser water pumps, 
 according to ASHRAE RP-1711 Advanced Sequences of Operation for HVAC Systems Phase II –
 Central Plants and Hydronic Systems (Draft 4 on January 7, 2019), 

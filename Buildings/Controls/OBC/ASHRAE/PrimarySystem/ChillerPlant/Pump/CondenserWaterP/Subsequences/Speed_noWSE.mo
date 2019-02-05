@@ -1,4 +1,4 @@
-﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP;
+﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences;
 block Speed_noWSE
   "Sequence for operating condenser water pumps for plants without waterside economizer"
 
@@ -7,15 +7,15 @@ block Speed_noWSE
   parameter Real conWatPumSpeSet[num+1] = {0, 0.5, 0.75}
     "Condenser water pump speed setpoint, according to number of operating chillers";
 
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChiOn[num]
-    "Chiller operating status: true = ON, false = OFF"
+  Buildings.Controls.OBC.CDL.Interfaces.IntegerInput uOpeChiNum
+    "Number of operating chillers"
     annotation (Placement(transformation(extent={{-140,-40},{-100,0}}),
       iconTransformation(extent={{-140,-20},{-100,20}})));
   Buildings.Controls.OBC.CDL.Interfaces.IntegerOutput yConWatPumNum
     "Number of operating condenser water pumps"
     annotation (Placement(transformation(extent={{100,-30},{120,-10}}),
-      iconTransformation(extent={{100,-30},{120,-10}})));
-  Buildings.Controls.OBC.CDL.Interfaces.RealOutput yConWatPumSpe
+      iconTransformation(extent={{100,-10},{120,10}})));
+  Buildings.Controls.OBC.CDL.Interfaces.RealOutput yConWatPumSpeSet
     "Condenser water pump speed"
     annotation (Placement(transformation(extent={{100,60},{120,80}}),
       iconTransformation(extent={{100,50},{120,70}})));
@@ -29,35 +29,26 @@ protected
     final nin=num + 1)
     "Condenser water pump speed"
     annotation (Placement(transformation(extent={{40,60},{60,80}})));
-  Buildings.Controls.OBC.CDL.Conversions.BooleanToInteger booToInt[num]
-    "Convert boolean input to integer output"
-    annotation (Placement(transformation(extent={{-80,-30},{-60,-10}})));
-  Buildings.Controls.OBC.CDL.Integers.MultiSum mulSumInt(final nin=num)
-    "Total number of operating chiller"
-    annotation (Placement(transformation(extent={{-40,-30},{-20,-10}})));
   Buildings.Controls.OBC.CDL.Integers.Add addInt
     annotation (Placement(transformation(extent={{20,-10},{40,10}})));
-  Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt(final k=1) "Contant one"
+  Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt(final k=1)
+    "Contant one"
     annotation (Placement(transformation(extent={{-40,10},{-20,30}})));
 
 equation
-  connect(uChiOn, booToInt.u)
-    annotation (Line(points={{-120,-20},{-82,-20}}, color={255,0,255}));
   connect(con2.y, conWatPumSpe.u)
     annotation (Line(points={{21,70},{38,70}},  color={0,0,127}));
-  connect(mulSumInt.y, yConWatPumNum)
-    annotation (Line(points={{-18.3,-20},{110,-20}}, color={255,127,0}));
-  connect(conWatPumSpe.y, yConWatPumSpe)
+  connect(conWatPumSpe.y, yConWatPumSpeSet)
     annotation (Line(points={{61,70},{110,70}}, color={0,0,127}));
-  connect(mulSumInt.y, addInt.u2)
-    annotation (Line(points={{-18.3,-20},{0,-20},{0,-6},{18,-6}},
-      color={255,127,0}));
   connect(conInt.y, addInt.u1)
     annotation (Line(points={{-19,20},{0,20},{0,6},{18,6}}, color={255,127,0}));
   connect(addInt.y, conWatPumSpe.index)
     annotation (Line(points={{41,0},{50,0},{50,58}}, color={255,127,0}));
-  connect(booToInt.y, mulSumInt.u)
-    annotation (Line(points={{-59,-20},{-42,-20}}, color={255,127,0}));
+  connect(addInt.u2, uOpeChiNum)
+    annotation (Line(points={{18,-6},{0,-6},{0,-20},{-120,-20}},
+      color={255,127,0}));
+  connect(uOpeChiNum, yConWatPumNum)
+    annotation (Line(points={{-120,-20},{110,-20}}, color={255,127,0}));
 
 annotation (
   defaultComponentName="conPumSpe",
@@ -77,15 +68,15 @@ annotation (
           pattern=LinePattern.Dash,
           textString="yConWatPumSpe"),
         Text(
-          extent={{-98,8},{-54,-8}},
-          lineColor={255,0,255},
-          pattern=LinePattern.Dash,
-          textString="uChiOn"),
-        Text(
-          extent={{36,-6},{96,-30}},
+          extent={{36,14},{96,-10}},
           lineColor={255,127,0},
           pattern=LinePattern.Dash,
-          textString="yConWatPumNum")}),
+          textString="yConWatPumNum"),
+        Text(
+          extent={{-98,12},{-38,-12}},
+          lineColor={255,127,0},
+          pattern=LinePattern.Dash,
+          textString="uOpeChiNum")}),
   Diagram(coordinateSystem(preserveAspectRatio=false)),
   Documentation(info="<html>
 <p>

@@ -1,24 +1,21 @@
-﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP;
+﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences;
 block EnableLead_headered
   "Sequence for enabling lead pump of plants with headered condenser water pumps"
-  parameter Integer num=2 "Total number of chiller CW isolation valve";
 
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uWseConIsoVal
     "WSE condenser water isolation valve status"
     annotation (Placement(transformation(extent={{-140,-40},{-100,0}}),
       iconTransformation(extent={{-140,-60},{-100,-20}})));
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChiConIsoVal[num]
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChiConIsoVal
     "Chiller condenser water isolation valve status"
-    annotation (Placement(transformation(extent={{-140,0},{-100,40}}),
-      iconTransformation(extent={{-140,20},{-100,60}})));
+      annotation (Placement(transformation(extent={{-140,0},{-100,40}}),
+        iconTransformation(extent={{-140,20},{-100,60}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yLeaPum
     "Lead pump status"
     annotation (Placement(transformation(extent={{100,-10},{120,10}}),
       iconTransformation(extent={{100,-10},{120,10}})));
 
 protected
-  Buildings.Controls.OBC.CDL.Logical.MultiOr mulOr(final nu=num+1)
-    annotation (Placement(transformation(extent={{-40,-10},{-20,10}})));
   Buildings.Controls.OBC.CDL.Logical.LogicalSwitch leaPumSta "Lead pump status"
     annotation (Placement(transformation(extent={{20,-10},{40,10}})));
   Buildings.Controls.OBC.CDL.Logical.Sources.Constant con1(final k=false)
@@ -27,20 +24,25 @@ protected
   Buildings.Controls.OBC.CDL.Logical.Sources.Constant con(final k=true)
     "Logical true"
     annotation (Placement(transformation(extent={{-40,30},{-20,50}})));
+  Buildings.Controls.OBC.CDL.Logical.Or or2 "Logical or"
+    annotation (Placement(transformation(extent={{-40,-10},{-20,10}})));
 
 equation
-  connect(uChiConIsoVal, mulOr.u[1:num])
-    annotation (Line(points={{-120,20},{-60,20},{-60,0},{-42,0}}, color={255,0,255}));
-  connect(uWseConIsoVal, mulOr.u[num+1])
-    annotation (Line(points={{-120,-20},{-60,-20},{-60,0},{-42,0}}, color={255,0,255}));
   connect(con1.y, leaPumSta.u3)
-    annotation (Line(points={{-19,-40},{0,-40},{0,-8},{18,-8}}, color={255,0,255}));
-  connect(mulOr.y, leaPumSta.u2)
-    annotation (Line(points={{-18.3,0},{18,0}}, color={255,0,255}));
+    annotation (Line(points={{-19,-40},{0,-40},{0,-8},{18,-8}},
+      color={255,0,255}));
   connect(con.y, leaPumSta.u1)
     annotation (Line(points={{-19,40},{0,40},{0,8},{18,8}}, color={255,0,255}));
   connect(leaPumSta.y, yLeaPum)
     annotation (Line(points={{41,0},{72,0},{72,0},{110,0}}, color={255,0,255}));
+  connect(or2.y, leaPumSta.u2)
+    annotation (Line(points={{-19,0},{18,0}}, color={255,0,255}));
+  connect(uWseConIsoVal, or2.u2)
+    annotation (Line(points={{-120,-20},{-60,-20},{-60,-8},{-42,-8}},
+      color={255,0,255}));
+  connect(uChiConIsoVal, or2.u1)
+    annotation (Line(points={{-120,20},{-60,20},{-60,0},{-42,0}},
+      color={255,0,255}));
 
 annotation (
   defaultComponentName="enaLeaConPum",
@@ -72,7 +74,7 @@ annotation (
    Diagram(coordinateSystem(preserveAspectRatio=false)),
    Documentation(info="<html>
 <p>
-Block that enable and disable leading condenser water pump, for plants
+Block that enable and disable lead condenser water pump, for plants
 with headered condenser water pumps, 
 according to ASHRAE RP-1711 Advanced Sequences of Operation for HVAC Systems Phase II –
 Central Plants and Hydronic Systems (Draft 4 on January 7, 2019), 

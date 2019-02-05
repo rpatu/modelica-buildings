@@ -1,4 +1,4 @@
-﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP;
+﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences;
 block Speed_hasWSE
   "Sequence for operating condenser water pumps for plants with waterside economizer"
 
@@ -22,8 +22,8 @@ block Speed_hasWSE
   Buildings.Controls.OBC.CDL.Interfaces.IntegerOutput yConWatPumNum
     "Number of operating condenser water pumps"
     annotation (Placement(transformation(extent={{100,-80},{120,-60}}),
-      iconTransformation(extent={{100,-30},{120,-10}})));
-  Buildings.Controls.OBC.CDL.Interfaces.RealOutput yConWatPumSpe
+      iconTransformation(extent={{100,-10},{120,10}})));
+  Buildings.Controls.OBC.CDL.Interfaces.RealOutput yConWatPumSpeSet
     "Condenser water pump speed"
     annotation (Placement(transformation(extent={{100,60},{120,80}}),
       iconTransformation(extent={{100,50},{120,70}})));
@@ -93,9 +93,8 @@ equation
       {30,-90},{30,-82}}, color={255,127,0}));
   connect(pumSpeSta.y, conWatPumSpe.index)
     annotation (Line(points={{21,-30},{40,-30},{40,58}}, color={255,127,0}));
-  connect(conWatPumSpe.y, yConWatPumSpe)
-    annotation (Line(points={{51,70},{78,70},{78,70},{110,70}},
-      color={0,0,127}));
+  connect(conWatPumSpe.y, yConWatPumSpeSet)
+    annotation (Line(points={{51,70},{78,70},{78,70},{110,70}}, color={0,0,127}));
   connect(yConWatPumNum, reaToInt.y)
     annotation (Line(points={{110,-70},{81,-70}}, color={255,127,0}));
   connect(conWatPumOn.y, reaToInt.u)
@@ -125,7 +124,7 @@ annotation (
           pattern=LinePattern.Dash,
           textString="uChiOn"),
         Text(
-          extent={{36,-6},{96,-30}},
+          extent={{36,14},{96,-10}},
           lineColor={255,127,0},
           pattern=LinePattern.Dash,
           textString="yConWatPumNum")}),
@@ -141,7 +140,7 @@ section 5.2.9 Condenser water pumps, part 5.2.9.5.
 
 <p>
 The number of operating condenser water pumps <code>yConWatPumNum</code> and 
-condenser water pump speed <code>yConWatPumSpe</code> shall be set by chiller 
+condenser water pump speed <code>yConWatPumSpeSet</code> shall be set by chiller 
 stage per the table below.
 </p>
 

@@ -166,7 +166,67 @@ annotation (
         extent={{-100,-100},{100,100}},
         lineColor={0,0,127},
         fillColor={255,255,255},
-        fillPattern=FillPattern.Solid)}),
+        fillPattern=FillPattern.Solid),
+        Text(
+          extent={{-96,88},{-36,74}},
+          lineColor={255,0,255},
+          pattern=LinePattern.Dash,
+          textString="uHeaPreEna"),
+        Text(
+          extent={{-98,68},{-38,54}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          textString="TConWatRet"),
+        Text(
+          extent={{-98,48},{-38,34}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          textString="TChiWatSup"),
+        Text(
+          extent={{-98,30},{-22,12}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          textString="uMaxTowSpeSet"),
+        Text(
+          extent={{-98,10},{-22,-8}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          textString="uConWatPumSpe"),
+        Text(
+          extent={{-96,-10},{-20,-28}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          textString="uConWatPumSpe_nominal"),
+        Text(
+          extent={{-98,-32},{-66,-44}},
+          lineColor={255,0,255},
+          pattern=LinePattern.Dash,
+          textString="uWSE"),
+        Text(
+          extent={{-96,-50},{-20,-68}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          textString="uHeaPreConVal"),
+        Text(
+          extent={{-96,-72},{-36,-84}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          textString="uHeaPreCon"),
+        Text(
+          extent={{22,70},{98,52}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          textString="yMaxTowSpeSet"),
+        Text(
+          extent={{22,10},{98,-8}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          textString="yHeaPreConVal"),
+        Text(
+          extent={{22,-50},{98,-68}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          textString="yConWatPumSpe")}),
   Diagram(coordinateSystem(preserveAspectRatio=false,
           extent={{-100,-140},{100,140}})),
   Documentation(info="<html>

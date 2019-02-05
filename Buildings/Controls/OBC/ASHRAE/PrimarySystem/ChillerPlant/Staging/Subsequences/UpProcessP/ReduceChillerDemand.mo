@@ -180,7 +180,7 @@ Fixme: exactly, what is demand? what is current load?
 </li>
 <li>
 Wait until actual demand &lt; 80% of current load up to a maximum of 
-<code>holChiDemTim</code> before proceeding.
+<code>holChiDemTim</code> (e.g. 5 minutes) before proceeding.
 </li>
 </ul>
 
