@@ -1,4 +1,4 @@
-﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.ChilledWater;
+﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.ChilledWater.Subsequences;
 block EnableLag_primary_dP
   "Sequences for enabling lag pump for primary-only plants using differential pressure pump speed control"
   parameter Integer num = 2 "Total number of pumps";

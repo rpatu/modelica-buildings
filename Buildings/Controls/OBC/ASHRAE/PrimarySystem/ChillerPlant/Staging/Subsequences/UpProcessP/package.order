@@ -1,3 +1,7 @@
 ReduceChillerDemand
 MinBypassSetpoint
 OpenChiIsoVal
+test
+EnableHeadControl
+SelectEnablingChiller
+EnableNextCWPump

@@ -1,4 +1,4 @@
-within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.ChilledWater;
+within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.ChilledWater.Subsequences;
 package Validation "Validate sequences for controlling chilled water pumps"
 
 annotation (Icon(graphics={

@@ -1,4 +1,4 @@
-﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.ChilledWater;
+﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.ChilledWater.Subsequences;
 block Speed_primary_remoteDp
   "Pump speed control for primary-only plants where the remote DP sensor(s) is hardwired to the plant controller"
   parameter Integer senNum = 2

@@ -174,7 +174,52 @@ annotation (
         fillPattern=FillPattern.Solid),
         Text(extent={{-120,146},{100,108}},
           lineColor={0,0,255},
-          textString="%name")}),
+          textString="%name"),
+        Text(
+          extent={{-98,50},{-50,34}},
+          lineColor={255,0,255},
+          pattern=LinePattern.Dash,
+          textString="uLeaChiOn"),
+        Text(
+          extent={{-98,8},{-32,-8}},
+          lineColor={255,0,255},
+          pattern=LinePattern.Dash,
+          textString="uLeaConWatReq"),
+        Text(
+          extent={{-98,-34},{-74,-44}},
+          lineColor={255,0,255},
+          pattern=LinePattern.Dash,
+          textString="uWSE"),
+        Text(
+          extent={{-98,-74},{-40,-86}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          textString="uConWatPumSpe"),
+        Text(
+          extent={{-96,88},{-60,76}},
+          lineColor={255,127,0},
+          pattern=LinePattern.Dash,
+          textString="uChiSta"),
+        Text(
+          extent={{30,-22},{98,-34}},
+          lineColor={255,127,0},
+          pattern=LinePattern.Dash,
+          textString="yConWatPumNum"),
+        Text(
+          extent={{52,-80},{98,-98}},
+          lineColor={255,0,255},
+          pattern=LinePattern.Dash,
+          textString="yPumSpeChe"),
+        Text(
+          extent={{58,100},{98,82}},
+          lineColor={255,0,255},
+          pattern=LinePattern.Dash,
+          textString="yLeaPum"),
+        Text(
+          extent={{26,38},{98,24}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          textString="yConWatPumSpeSet")}),
   Diagram(coordinateSystem(preserveAspectRatio=false,
           extent={{-120,-120},{120,120}})),
   Documentation(info="<html>

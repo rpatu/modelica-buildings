@@ -1,4 +1,4 @@
-﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.ChilledWater;
+﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.ChilledWater.Subsequences;
 block EnableLead_dedicated
   "Sequence for enabling lead pump of plants with dedicated primary chilled water pumps"
   parameter Modelica.SIunits.Time offTimThr = 180

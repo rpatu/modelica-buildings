@@ -8,7 +8,6 @@ block Controller
   parameter Modelica.SIunits.VolumeFlowRate minFloSet[num] = {0, 0.0089, 0.0177}
     "Minimum flow rate at each chiller stage";
 
-
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uStaUp "Indicate if there is stage up"
     annotation (Placement(transformation(extent={{-300,120},{-260,160}}),
       iconTransformation(extent={{-120,20},{-100,40}})));
@@ -37,11 +36,12 @@ block Controller
     "Chilled water minimum flow bypass valve position"
     annotation (Placement(transformation(extent={{260,210},{280,230}}),
       iconTransformation(extent={{100,-10},{120,10}})));
+  Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiWatBypSet(
+    final unit="m3/s")
+    "Chilled water minimum flow bypass setpoint"
+    annotation (Placement(transformation(extent={{260,-70},{280,-50}}),
+      iconTransformation(extent={{100,-10},{120,10}})));
 
-  CDL.Logical.Sources.Constant con1(k=true) "Constant true"
-    annotation (Placement(transformation(extent={{162,-194},{182,-174}})));
-  CDL.Logical.Sources.Constant con4(k=true) "Constant false"
-    annotation (Placement(transformation(extent={{162,-250},{182,-230}})));
 protected
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con[num](
     final k=minFloSet)
@@ -218,6 +218,9 @@ equation
     annotation (Line(points={{-280,170},{230,170},{230,208}}, color={0,0,127}));
   connect(valPos.y, yValPos)
     annotation (Line(points={{241,220},{250,220},{250,220},{270,220}},
+      color={0,0,127}));
+  connect(byPasSet.y, yChiWatBypSet)
+    annotation (Line(points={{181,-60},{222,-60},{222,-60},{270,-60}},
       color={0,0,127}));
 
 annotation (
