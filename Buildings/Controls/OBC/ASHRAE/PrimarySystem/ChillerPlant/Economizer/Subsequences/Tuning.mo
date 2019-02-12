@@ -18,8 +18,8 @@ block Tuning
 
   Buildings.Controls.OBC.CDL.Interfaces.RealInput uTowFanSpeMax
     "Maximum cooling tower fan speed" annotation (Placement(transformation(
-          extent={{-220,-120},{-180,-80}}), iconTransformation(extent={{-140,-70},
-            {-100,-30}})));
+    extent={{-220,-120},{-180,-80}}), iconTransformation(extent={{-140,-70},
+      {-100,-30}})));
 
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput y(
     final max=0.5,
@@ -245,10 +245,10 @@ equation
           extent={{-180,-220},{180,180}})),
 Documentation(info="<html>
 <p>
-Waterside economizer outlet temperature prediction tuning parameter subsequence 
+Waterside economizer outlet temperature prediction tuning parameter subsequence
 per OBC Chilled Water Plant Sequence of Operation, section 3.2.3.3. The parameter
 is increased or decreased in a <code>step</code> depending on how long the
-the economizer remained enabled and the values of the cooling tower fan speed signal 
+the economizer remained enabled and the values of the cooling tower fan speed signal
 <code>uTowFanSpe</code> during that period.
 </p>
 </html>",

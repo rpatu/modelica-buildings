@@ -1,12 +1,10 @@
 Capacities
 CapacityRequirement
 Change
-ChangeOld
-ChillerRotation
 Down
+DownProcess
 EfficiencyCondition
 FailsafeCondition
-DownProcess
 PartLoadRatios
 Up
 UpProcess

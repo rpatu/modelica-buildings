@@ -2,17 +2,18 @@ within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Generic;
 block EquipmentRotationTwo
   "Lead-lag or lead-standby equipment rotation for two devices or two groups of devices"
 
-  parameter Boolean lag = true
-    "true = lead/lag, false = lead/standby";
-
   parameter Integer num = 2
     "Total number of devices, such as chillers, isolation valves, CW pumps, or CHW pumps";
 
-  parameter Real stagingRuntime(unit = "s") = 240 * 60 * 60
-    "Staging runtime";
+  parameter Boolean lag = true
+    "true = lead/lag, false = lead/standby";
 
-  parameter Boolean initRoles[:] = {if i==1 then true else false for i in 1:num}
-    "Initial roles: true = lead, false = lag/standby";
+  parameter Boolean initRoles[num] = {true, false}
+    "Initial roles: true = lead, false = lag/standby"
+    annotation (Evaluate=true,Dialog(tab="Advanced", group="Initiation"));
+
+  parameter Modelica.SIunits.Time stagingRuntime = 240 * 60 * 60
+    "Staging runtime for each device";
 
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uLeaSta
     "Lead device status"
@@ -35,16 +36,19 @@ block EquipmentRotationTwo
         iconTransformation(extent={{100,-70},{120,-50}})));
 
   Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr[num](
-    final threshold=stagingRuntime)
+    final threshold=stagingRuntimes)
     "Staging runtime hysteresis"
     annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
 
   Buildings.Controls.OBC.CDL.Logical.Timer tim[num](
-    final reset=false)
+    final reset={false,false})
     "Measures time spent loaded at the current role (lead or lag)"
     annotation (Placement(transformation(extent={{-120,20},{-100,40}})));
 
 protected
+  parameter Modelica.SIunits.Time stagingRuntimes[num] = fill(stagingRuntime, num)
+    "Staging runtimes array";
+
   Buildings.Controls.OBC.CDL.Routing.BooleanReplicator repLead(
     final nout=num) "Replicates lead signal"
     annotation (Placement(transformation(extent={{-170,30},{-150,50}})));
@@ -86,7 +90,7 @@ protected
   CDL.Logical.LogicalSwitch logSwi1[num] "Switch"
     annotation (Placement(transformation(extent={{-140,-70},{-120,-50}})));
 
-  CDL.Logical.Sources.Constant staSta[num](final k=false) if not lag
+  CDL.Logical.Sources.Constant staSta[num](final k={false, false}) if not lag
     "Standby status"
     annotation (Placement(transformation(extent={{-180,-110},{-160,-90}})));
 
@@ -113,15 +117,14 @@ equation
   connect(tim.u0, falEdg1.y) annotation (Line(points={{-122,22},{-140,22},{-140,
           60},{40,60},{40,40},{21,40}}, color={255,0,255}));
   connect(pre.y, and3.u3) annotation (Line(points={{161,-50},{170,-50},{170,-70},
-          {-30,-70},{-30,-8},{-22,-8}},        color={255,0,255}));
+          {-30,-70},{-30,-8},{-22,-8}}, color={255,0,255}));
   connect(tim.y, greEquThr.u)
     annotation (Line(points={{-99,30},{-82,30}}, color={0,0,127}));
   connect(pre.y, falEdg1.u)
     annotation (Line(points={{161,-50},{170,-50},{170,
           20},{-20,20},{-20,40},{-2,40}}, color={255,0,255}));
   connect(logSwi.y, yDevRol)
-    annotation (Line(points={{121,-30},{210,-30}},
-                       color={255,0,255}));
+    annotation (Line(points={{121,-30},{210,-30}},color={255,0,255}));
   connect(pre.y, logSwi1.u2) annotation (Line(points={{161,-50},{170,-50},{170,-80},
           {-152,-80},{-152,-60},{-142,-60}}, color={255,0,255}));
   connect(logSwi1.u1, repLead.y) annotation (Line(points={{-142,-52},{-142,40},{
@@ -172,17 +175,17 @@ equation
           textString="%name")}),
   Documentation(info="<html>
 <p>
-This block rotates equipment, such as chillers, pumps or valves, in order 
-to ensure equal wear and tear. It can be used for lead/lag and 
-lead/standby operation, as specified in &quot;ASHRAE Fundamentals of Chilled Water Plant Design and Control SDL&quot;, 
+This block rotates equipment, such as chillers, pumps or valves, in order
+to ensure equal wear and tear. It can be used for lead/lag and
+lead/standby operation, as specified in &quot;ASHRAE Fundamentals of Chilled Water Plant Design and Control SDL&quot;,
 Chapter 7, App B, 1.01, A.4.  The output vector <code>yDevRol<\code> indicates the lead/lag (or lead/standby) status
 of the devices, while the <code>yDevSta<\code> indicates the on/off status of each device. The index of
 output vectors and <code>initRoles<\code> parameter indicates the physical device.
 Default initial lead role is assigned to the device associated
-with the first index in the input vector. The block measures the <code>stagingRuntime<\code> 
+with the first index in the input vector. The block measures the <code>stagingRuntime<\code>
 for each device and switches the lead role to the next higher index
-as its <code>stagingRuntime<\code> expires. This block can be used for 2 devices. 
-If using more than 2 devices, see 
+as its <code>stagingRuntime<\code> expires. This block can be used for 2 devices.
+If using more than 2 devices, see
 <a href=\"modelica://Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Generic.EquipmentRotationMult\">
 Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Generic.EquipmentRotationMult</a>.
 </p>
