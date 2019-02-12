@@ -1,6 +1,5 @@
-﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.UpProcessP;
-block ReduceChillerDemand
-  "Sequence for reducing operating chiller demand"
+﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.UpProcessP.Subsequences;
+block ReduceChillerDemand "Sequence for reducing operating chiller demand"
 
   parameter Integer num = 2 "Total number of chillers in the plant";
   parameter Real chiDemRedFac = 0.75
@@ -8,10 +7,10 @@ block ReduceChillerDemand
   parameter Modelica.SIunits.Time holChiDemTim = 300
     "Time of actual demand less than center percentage of currnet load";
 
-  Buildings.Controls.OBC.CDL.Interfaces.RealInput uChiCur[num](
-    each final quantity="ElectricCurrent",
-    each final unit="A") "Chiller demand measured by electric current"
-    annotation (Placement(transformation(extent={{-200,10},{-160,50}}),
+  Buildings.Controls.OBC.CDL.Interfaces.RealInput uChiLoa[num](
+    each final quantity="HeatFlowRate",
+    each final unit="W") "Current chiller load"
+    annotation (Placement(transformation(extent={{-200,60},{-160,100}}),
       iconTransformation(extent={{-140,-20},{-100,20}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChi[num]
     "Chiller status: true=ON"
@@ -21,10 +20,10 @@ block ReduceChillerDemand
     "Stage up status: true=stage-up"
     annotation (Placement(transformation(extent={{-200,90},{-160,130}}),
       iconTransformation(extent={{-140,40},{-100,80}})));
-  Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiCur[num](
-    each final quantity="ElectricCurrent",
-    each final unit="A") "Current setpoint to chillers"
-    annotation (Placement(transformation(extent={{160,70},{180,90}}),
+  Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiDem[num](
+    each final quantity="HeatFlowRate",
+    each final unit="W") "Chiller demand setpoint"
+    annotation (Placement(transformation(extent={{160,30},{180,50}}),
       iconTransformation(extent={{100,30},{120,50}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yChiDemRed
     "Indicate if the chiller demand reduction process has finished"
@@ -34,18 +33,18 @@ block ReduceChillerDemand
 protected
   Buildings.Controls.OBC.CDL.Discrete.TriggeredSampler triSam[num]
     "Triggered sampler to sample current chiller demand"
-    annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
+    annotation (Placement(transformation(extent={{0,70},{20,90}})));
   Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep(
     final nout=num)
     "Replicate boolean input "
-    annotation (Placement(transformation(extent={{-140,100},{-120,120}})));
+    annotation (Placement(transformation(extent={{-60,100},{-40,120}})));
   Buildings.Controls.OBC.CDL.Logical.Switch swi4[num]
     "Current setpoint to chillers"
-    annotation (Placement(transformation(extent={{80,70},{100,90}})));
+    annotation (Placement(transformation(extent={{120,30},{140,50}})));
   Buildings.Controls.OBC.CDL.Continuous.Gain gai[num](
     each final k=chiDemRedFac)
     "Reduce demand to a factor of current load"
-    annotation (Placement(transformation(extent={{-20,20},{0,40}})));
+    annotation (Placement(transformation(extent={{60,70},{80,90}})));
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con[num](
     each final k=0.2)
     "Constant value to avoid zero as the denominator"
@@ -70,36 +69,39 @@ protected
     final delayTime=holChiDemTim)
     "Wait a giving time before proceeding"
     annotation (Placement(transformation(extent={{100,-110},{120,-90}})));
+  Buildings.Controls.OBC.CDL.Logical.Edge edg
+    "Rising edge, output true at the moment when input turns from false to true"
+    annotation (Placement(transformation(extent={{-100,100},{-80,120}})));
+  Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep1(final nout=num)
+    "Replicate boolean input "
+    annotation (Placement(transformation(extent={{-80,40},{-60,60}})));
 
 equation
-  connect(uStaUp, booRep.u)
-    annotation (Line(points={{-180,110},{-142,110}}, color={255,0,255}));
   connect(booRep.y, triSam.trigger)
-    annotation (Line(points={{-119,110},{-100,110},{-100,10},{-70,10},
-      {-70,18.2}}, color={255,0,255}));
-  connect(uChiCur, triSam.u)
-    annotation (Line(points={{-180,30},{-82,30}}, color={0,0,127}));
-  connect(triSam.y, gai.u)
-    annotation (Line(points={{-59,30},{-22,30}}, color={0,0,127}));
-  connect(uChiCur, swi4.u3)
-    annotation (Line(points={{-180,30},{-120,30},{-120,72},{78,72}}, color={0,0,127}));
-  connect(gai.y, swi4.u1)
-    annotation (Line(points={{1,30},{60,30},{60,88},{78,88}},color={0,0,127}));
-  connect(booRep.y, swi4.u2)
-    annotation (Line(points={{-119,110},{-100,110},{-100,80},{78,80}},
+    annotation (Line(points={{-39,110},{-20,110},{-20,60},{10,60},{10,68.2}},
       color={255,0,255}));
+  connect(uChiLoa, triSam.u)
+    annotation (Line(points={{-180,80},{-2,80}}, color={0,0,127}));
+  connect(triSam.y, gai.u)
+    annotation (Line(points={{21,80},{58,80}}, color={0,0,127}));
+  connect(uChiLoa, swi4.u3)
+    annotation (Line(points={{-180,80},{-140,80},{-140,32},{118,32}},color={0,0,127}));
+  connect(gai.y, swi4.u1)
+    annotation (Line(points={{81,80},{100,80},{100,48},{118,48}},
+      color={0,0,127}));
   connect(uChi, swi.u2)
     annotation (Line(points={{-180,-50},{-82,-50}}, color={255,0,255}));
   connect(con.y, swi.u3)
     annotation (Line(points={{-119,-100},{-100,-100},{-100,-58},{-82,-58}},
       color={0,0,127}));
   connect(triSam.y, swi.u1)
-    annotation (Line(points={{-59,30},{-40,30},{-40,-10},{-100,-10},
-      {-100,-42},{-82,-42}}, color={0,0,127}));
+    annotation (Line(points={{21,80},{40,80},{40,0},{-100,0},{-100,-42},{-82,-42}},
+      color={0,0,127}));
   connect(swi.y, div.u2)
-    annotation (Line(points={{-59,-50},{-40,-50},{-40,-56},{-22,-56}}, color={0,0,127}));
-  connect(uChiCur, div.u1)
-    annotation (Line(points={{-180,30},{-120,30},{-120,-30},{-40,-30},
+    annotation (Line(points={{-59,-50},{-40,-50},{-40,-56},{-22,-56}},
+      color={0,0,127}));
+  connect(uChiLoa, div.u1)
+    annotation (Line(points={{-180,80},{-140,80},{-140,-20},{-40,-20},
       {-40,-44},{-22,-44}}, color={0,0,127}));
   connect(div.y, hys.u)
     annotation (Line(points={{1,-50},{20,-50},{20,-70},{-40,-70},
@@ -110,10 +112,20 @@ equation
     annotation (Line(points={{41,-100},{58,-100}}, color={255,0,255}));
   connect(mulAnd.y, truDel.u)
     annotation (Line(points={{81.7,-100},{98,-100}}, color={255,0,255}));
-  connect(swi4.y, yChiCur)
-    annotation (Line(points={{101,80},{170,80}}, color={0,0,127}));
+  connect(swi4.y,yChiDem)
+    annotation (Line(points={{141,40},{170,40}}, color={0,0,127}));
   connect(truDel.y, yChiDemRed)
     annotation (Line(points={{121,-100},{170,-100}}, color={255,0,255}));
+  connect(uStaUp, edg.u)
+    annotation (Line(points={{-180,110},{-102,110}}, color={255,0,255}));
+  connect(edg.y, booRep.u)
+    annotation (Line(points={{-79,110},{-62,110}},   color={255,0,255}));
+  connect(uStaUp, booRep1.u)
+    annotation (Line(points={{-180,110},{-120,110},{-120,50},{-82,50}},
+      color={255,0,255}));
+  connect(booRep1.y, swi4.u2)
+    annotation (Line(points={{-59,50},{-40,50},{-40,40},{118,40}},
+      color={255,0,255}));
 
 annotation (
   defaultComponentName="chiDemRed",
@@ -175,8 +187,7 @@ When there is a stage-up command,
 <ul>
 <li>
 Command operating chillers to reduce demand to <code>chiDemRedFac</code> of 
-their current load, e.g. 75%.  
-Fixme: exactly, what is demand? what is current load?
+their current load, e.g. 75%.
 </li>
 <li>
 Wait until actual demand &lt; 80% of current load up to a maximum of 

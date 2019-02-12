@@ -7,9 +7,9 @@ block EnableChiIsoVal
   parameter Modelica.SIunits.Time chaChiWatIsoTim = 300
     "Time to slowly change isolation valve";
   parameter Real iniValPos = 0
-    "Initial valve position, if it is in stage-up process, then the value is 0";
+    "Initial valve position, if it is in stage-up process, the value should be 0";
   parameter Real endValPos = 1
-    "Ending valve position, if it is in stage-up process, then the value is 1";
+    "Ending valve position, if it is in stage-up process, the value should be 1";
 
   Buildings.Controls.OBC.CDL.Interfaces.RealInput uChiWatIsoVal[num](
     each final unit="1",

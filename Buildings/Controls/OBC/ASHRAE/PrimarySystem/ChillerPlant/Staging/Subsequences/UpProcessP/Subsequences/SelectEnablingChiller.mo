@@ -1,6 +1,5 @@
-within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.UpProcessP;
-block SelectEnablingChiller
-  "Sequence for selecting chiller to be enabled"
+within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.UpProcessP.Subsequences;
+block SelectEnablingChiller "Sequence for selecting chiller to be enabled"
   parameter Integer num = 2 "Total number of chillers";
 
   Buildings.Controls.OBC.CDL.Interfaces.IntegerInput uChiPri[num]

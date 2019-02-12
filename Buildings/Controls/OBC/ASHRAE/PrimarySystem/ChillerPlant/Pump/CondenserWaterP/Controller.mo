@@ -19,8 +19,7 @@ block Controller "Condenser water pump controller"
     annotation (Placement(transformation(extent={{-160,50},{-120,90}}),
       iconTransformation(extent={{-140,60},{-100,100}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uWSE if
-       hasWSE
-    "Water side economizer status: true = ON, false = OFF"
+       hasWSE "Water side economizer status: true = ON, false = OFF"
     annotation (Placement(transformation(extent={{-160,-50},{-120,-10}}),
       iconTransformation(extent={{-140,-60},{-100,-20}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uLeaChiOn
@@ -34,8 +33,7 @@ block Controller "Condenser water pump controller"
   Buildings.Controls.OBC.CDL.Interfaces.RealInput uConWatPumSpe(
     final min=0,
     final max=1,
-    final unit="1")
-    "Current condenser water pump speed"
+    final unit="1") "Current condenser water pump speed"
     annotation (Placement(transformation(extent={{-160,-120},{-120,-80}}),
       iconTransformation(extent={{-140,-100},{-100,-60}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yLeaPum
@@ -51,7 +49,7 @@ block Controller "Condenser water pump controller"
     annotation (Placement(transformation(extent={{120,-50},{140,-30}}),
       iconTransformation(extent={{100,-40},{120,-20}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yPumSpeChe
-    "Equality status between pump speed setpoint and the operating speed"
+    "Flag to indicate if pump speed achieve setpoint"
     annotation (Placement(transformation(extent={{120,-90},{140,-70}}),
         iconTransformation(extent={{100,-100},{120,-80}})));
 
