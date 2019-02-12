@@ -10,5 +10,8 @@ DownProcess
 PartLoadRatios
 Up
 UpProcess
+EnableChiIsoVal
+EnableHeadControl
+ResetMinBypassSetpoint
 UpProcessP
 Validation

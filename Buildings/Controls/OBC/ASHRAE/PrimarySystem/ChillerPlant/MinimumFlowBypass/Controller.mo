@@ -4,224 +4,88 @@ block Controller
 
   parameter Integer num = 3
     "Total number of stages, zero stage should be seem as one stage";
-  parameter Modelica.SIunits.Time byPasSetTim;
+  parameter Modelica.SIunits.Time byPasSetTim = 300
+    "Time to reset minimum by-pass flow";
   parameter Modelica.SIunits.VolumeFlowRate minFloSet[num] = {0, 0.0089, 0.0177}
     "Minimum flow rate at each chiller stage";
 
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uStaUp "Indicate if there is stage up"
-    annotation (Placement(transformation(extent={{-300,120},{-260,160}}),
+    annotation (Placement(transformation(extent={{-140,0},{-100,40}}),
       iconTransformation(extent={{-120,20},{-100,40}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uOnOff
     "Indicate if the stage require one chiller to be enabled while another is disabled"
-    annotation (Placement(transformation(extent={{-300,-90},{-260,-50}}),
+    annotation (Placement(transformation(extent={{-140,-86},{-100,-46}}),
       iconTransformation(extent={{-120,-70},{-100,-50}})));
   Buildings.Controls.OBC.CDL.Interfaces.IntegerInput uSta "Current stage index"
-    annotation (Placement(transformation(extent={{-300,20},{-260,60}}),
+    annotation (Placement(transformation(extent={{-140,-60},{-100,-20}}),
+      iconTransformation(extent={{-120,-10},{-100,10}})));
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uUpsDevSta
+    "Status of resetting status of device before reset minimum bypass flow setpoint"
+    annotation (Placement(transformation(extent={{-140,-30},{-100,10}}),
       iconTransformation(extent={{-120,-40},{-100,-20}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uStaDow
     "Indicate if there is stage down"
-    annotation (Placement(transformation(extent={{-300,-240},{-260,-200}}),
+    annotation (Placement(transformation(extent={{-140,-110},{-100,-70}}),
       iconTransformation(extent={{-120,-100},{-100,-80}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChiWatPum
     "Indicate if there is any chilled water pump is proven on: true=ON, false=OFF"
-    annotation (Placement(transformation(extent={{-300,180},{-260,220}}),
+    annotation (Placement(transformation(extent={{-140,60},{-100,100}}),
       iconTransformation(extent={{-120,80},{-100,100}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealInput VBypas_flow(
     final min=0,
     final unit="m3/s",
     quantity="VolumeFlowRate") "Measured bypass flow rate"
-    annotation (Placement(transformation(extent={{-300,150},{-260,190}}),
+    annotation (Placement(transformation(extent={{-140,30},{-100,70}}),
       iconTransformation(extent={{-120,50},{-100,70}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yValPos
     "Chilled water minimum flow bypass valve position"
-    annotation (Placement(transformation(extent={{260,210},{280,230}}),
-      iconTransformation(extent={{100,-10},{120,10}})));
-  Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiWatBypSet(
-    final unit="m3/s")
-    "Chilled water minimum flow bypass setpoint"
-    annotation (Placement(transformation(extent={{260,-70},{280,-50}}),
+    annotation (Placement(transformation(extent={{102,70},{122,90}}),
       iconTransformation(extent={{100,-10},{120,10}})));
 
 protected
-  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con[num](
-    final k=minFloSet)
-    "Minimum bypass flow setpoint at each stage, equal to the sum of minimum chilled water flowrate of the chillers being enabled at the stage"
-    annotation (Placement(transformation(extent={{-220,50},{-200,70}})));
-  Buildings.Controls.OBC.CDL.Routing.RealExtractor curMinSet(final nin=num)
-    "Targeted minimum flow setpoint at current stage"
-    annotation (Placement(transformation(extent={{-120,50},{-100,70}})));
-  Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt(final k=1)
-    "Constant one"
-    annotation (Placement(transformation(extent={{-220,-180},{-200,-160}})));
-  Buildings.Controls.OBC.CDL.Integers.Add addInt
-    "One stage lower than current one"
-    annotation (Placement(transformation(extent={{-180,-200},{-160,-180}})));
-  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con3(
-    final k=byPasSetTim)
-    "Duration time to change old setpoint to new setpoint"
-    annotation (Placement(transformation(extent={{-60,90},{-40,110}})));
-  Buildings.Controls.OBC.CDL.Continuous.Line upSet
-    "Minimum flow setpoint when there is stage up command"
-    annotation (Placement(transformation(extent={{80,30},{100,50}})));
-  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con2(final k=0)
-    "Constant zero"
-    annotation (Placement(transformation(extent={{0,90},{20,110}})));
-  Buildings.Controls.OBC.CDL.Logical.Timer tim
-    "Time after suppress chiller demand"
-    annotation (Placement(transformation(extent={{0,130},{20,150}})));
-  Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt1(final k=-1)
-    "Constant one"
-    annotation (Placement(transformation(extent={{-220,0},{-200,20}})));
-  Buildings.Controls.OBC.CDL.Integers.Add addInt1
-    "One stage lower than current one"
-    annotation (Placement(transformation(extent={{-180,-20},{-160,0}})));
-  Buildings.Controls.OBC.CDL.Routing.RealExtractor lowMinSet(final nin=num)
-    "Minimum flow setpoint at previous low stage"
-    annotation (Placement(transformation(extent={{-120,10},{-100,30}})));
-  Buildings.Controls.OBC.CDL.Routing.RealExtractor uppMinSet(final nin=num)
-    "Minimum flow setpoint at previous upper stage"
-    annotation (Placement(transformation(extent={{-120,-170},{-100,-150}})));
-  Buildings.Controls.OBC.CDL.Continuous.Line dowSet
-    "Minimum flow setpoint when there is stage down command"
-    annotation (Placement(transformation(extent={{80,-150},{100,-130}})));
-  Buildings.Controls.OBC.CDL.Logical.Timer tim1
-    "Time after suppress chiller demand"
-    annotation (Placement(transformation(extent={{0,-230},{20,-210}})));
-  Buildings.Controls.OBC.CDL.Logical.Switch swi
-    annotation (Placement(transformation(extent={{20,-40},{40,-20}})));
-  Buildings.Controls.OBC.CDL.Continuous.Add add2
-    annotation (Placement(transformation(extent={{-40,-20},{-20,0}})));
-  Buildings.Controls.OBC.CDL.Logical.Switch swi1
-    annotation (Placement(transformation(extent={{20,-120},{40,-100}})));
-  Buildings.Controls.OBC.CDL.Continuous.Add add1
-    annotation (Placement(transformation(extent={{-40,-100},{-20,-80}})));
-  Buildings.Controls.OBC.CDL.Logical.Switch byPasSet
-    "Minimum flow bypass setpoint"
-    annotation (Placement(transformation(extent={{160,-70},{180,-50}})));
   Buildings.Controls.OBC.CDL.Continuous.LimPID valPos(
     final yMax=1,
     final yMin=0,
     final reset=Buildings.Controls.OBC.CDL.Types.Reset.Parameter,
     final y_reset=1) "By pass valve position"
-    annotation (Placement(transformation(extent={{220,210},{240,230}})));
+    annotation (Placement(transformation(extent={{40,70},{60,90}})));
   Buildings.Controls.OBC.CDL.Logical.Not not1
-    annotation (Placement(transformation(extent={{-220,190},{-200,210}})));
+    annotation (Placement(transformation(extent={{-60,70},{-40,90}})));
+  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.MinimumFlowBypass.Subsequences.FlowSetpoint minBypSet(
+    final num=num,
+    final byPasSetTim=byPasSetTim,
+    final minFloSet=minFloSet) "Minimum by-pass flow setpoint"
+    annotation (Placement(transformation(extent={{-20,10},{0,30}})));
 
 equation
-  connect(curMinSet.u, con.y)
-    annotation (Line(points={{-122,60},{-199,60}}, color={0,0,127}));
-  connect(con.y, lowMinSet.u)
-    annotation (Line(points={{-199,60},{-140,60},{-140,20},{-122,20}},
-      color={0,0,127}));
-  connect(addInt1.y, lowMinSet.index)
-    annotation (Line(points={{-159,-10},{-110,-10},{-110,8}}, color={255,127,0}));
-  connect(con2.y, upSet.x1)
-    annotation (Line(points={{21,100},{50,100},{50,48},{78,48}},
-      color={0,0,127}));
-  connect(lowMinSet.y, upSet.f1)
-    annotation (Line(points={{-99,20},{-80,20},{-80,44},{78,44}},
-      color={0,0,127}));
-  connect(tim.y, upSet.u)
-    annotation (Line(points={{21,140},{40,140},{40,40},{78,40}},
-      color={0,0,127}));
-  connect(con3.y, upSet.x2)
-    annotation (Line(points={{-39,100},{-10,100},{-10,36},{78,36}},
-      color={0,0,127}));
-  connect(addInt.y, uppMinSet.index)
-    annotation (Line(points={{-159,-190},{-110,-190},{-110,-172}},
-      color={255,127,0}));
-  connect(uppMinSet.y, dowSet.f1)
-    annotation (Line(points={{-99,-160},{-80,-160},{-80,-136},{78,-136}},
-      color={0,0,127}));
-  connect(uStaDow, tim1.u)
-    annotation (Line(points={{-280,-220},{-2,-220}}, color={255,0,255}));
-  connect(conInt1.y, addInt1.u1)
-    annotation (Line(points={{-199,10},{-190,10},{-190,-4},{-182,-4}},
-      color={255,127,0}));
-  connect(uSta, addInt1.u2)
-    annotation (Line(points={{-280,40},{-240,40},{-240,-16},{-182,-16}},
-      color={255,127,0}));
-  connect(uSta, curMinSet.index)
-    annotation (Line(points={{-280,40},{-110,40},{-110,48}}, color={255,127,0}));
-  connect(uStaUp, tim.u)
-    annotation (Line(points={{-280,140},{-2,140}}, color={255,0,255}));
-  connect(curMinSet.y, add2.u1)
-    annotation (Line(points={{-99,60},{-60,60},{-60,-4},{-42,-4}},
-      color={0,0,127}));
-  connect(lowMinSet.y, add2.u2)
-    annotation (Line(points={{-99,20},{-80,20},{-80,-16},{-42,-16}},
-      color={0,0,127}));
-  connect(uOnOff, swi.u2)
-    annotation (Line(points={{-280,-70},{-220,-70},{-220,-30},{18,-30}},
-      color={255,0,255}));
-  connect(add2.y, swi.u1)
-    annotation (Line(points={{-19,-10},{0,-10},{0,-22},{18,-22}},
-      color={0,0,127}));
-  connect(curMinSet.y, swi.u3)
-    annotation (Line(points={{-99,60},{-60,60},{-60,-38},{18,-38}},
-      color={0,0,127}));
-  connect(swi.y, upSet.f2)
-    annotation (Line(points={{41,-30},{60,-30},{60,32},{78,32}}, color={0,0,127}));
-  connect(con.y, uppMinSet.u)
-    annotation (Line(points={{-199,60},{-140,60},{-140,-160},{-122,-160}},
-      color={0,0,127}));
-  connect(uOnOff, swi1.u2)
-    annotation (Line(points={{-280,-70},{-220,-70},{-220,-110},{18,-110}},
-      color={255,0,255}));
-  connect(curMinSet.y, add1.u1)
-    annotation (Line(points={{-99,60},{-60,60},{-60,-84},{-42,-84}},
-      color={0,0,127}));
-  connect(uppMinSet.y, add1.u2)
-    annotation (Line(points={{-99,-160},{-80,-160},{-80,-96},{-42,-96}},
-      color={0,0,127}));
-  connect(add1.y, swi1.u1)
-    annotation (Line(points={{-19,-90},{0,-90},{0,-102},{18,-102}},
-      color={0,0,127}));
-  connect(curMinSet.y, swi1.u3)
-    annotation (Line(points={{-99,60},{-60,60},{-60,-118},{18,-118}},
-      color={0,0,127}));
-  connect(con2.y, dowSet.x1)
-    annotation (Line(points={{21,100},{50,100},{50,-132},{78,-132}},
-      color={0,0,127}));
-  connect(con3.y, dowSet.x2)
-    annotation (Line(points={{-39,100},{-10,100},{-10,-144},{78,-144}},
-      color={0,0,127}));
-  connect(swi1.y, dowSet.f2)
-    annotation (Line(points={{41,-110},{60,-110},{60,-148},{78,-148}},
-      color={0,0,127}));
-  connect(uSta, addInt.u2)
-    annotation (Line(points={{-280,40},{-240,40},{-240,-196},{-182,-196}},
-      color={255,127,0}));
-  connect(conInt.y, addInt.u1)
-    annotation (Line(points={{-199,-170},{-190,-170},{-190,-184},{-182,-184}},
-      color={255,127,0}));
-  connect(tim1.y, dowSet.u)
-    annotation (Line(points={{21,-220},{40,-220},{40,-140},{78,-140}},
-      color={0,0,127}));
-  connect(upSet.y, byPasSet.u1)
-    annotation (Line(points={{101,40},{140,40},{140,-52},{158,-52}},
-      color={0,0,127}));
-  connect(dowSet.y, byPasSet.u3)
-    annotation (Line(points={{101,-140},{140,-140},{140,-68},{158,-68}},
-      color={0,0,127}));
-  connect(uStaUp, byPasSet.u2)
-    annotation (Line(points={{-280,140},{-20,140},{-20,120},{120,120},{120,-60},
-      {158,-60}}, color={255,0,255}));
   connect(uChiWatPum, not1.u)
-    annotation (Line(points={{-280,200},{-222,200}}, color={255,0,255}));
-  connect(not1.y, valPos.trigger)
-    annotation (Line(points={{-199,200},{222,200},{222,208}}, color={255,0,255}));
-  connect(byPasSet.y, valPos.u_s)
-    annotation (Line(points={{181,-60},{200,-60},{200,220},{218,220}},
-      color={0,0,127}));
+    annotation (Line(points={{-120,80},{-62,80}}, color={255,0,255}));
   connect(VBypas_flow, valPos.u_m)
-    annotation (Line(points={{-280,170},{230,170},{230,208}}, color={0,0,127}));
+    annotation (Line(points={{-120,50},{50,50},{50,68}}, color={0,0,127}));
   connect(valPos.y, yValPos)
-    annotation (Line(points={{241,220},{250,220},{250,220},{270,220}},
+    annotation (Line(points={{61,80},{112,80}},
       color={0,0,127}));
-  connect(byPasSet.y, yChiWatBypSet)
-    annotation (Line(points={{181,-60},{222,-60},{222,-60},{270,-60}},
+  connect(minBypSet.yChiWatBypSet, valPos.u_s)
+    annotation (Line(points={{1,20},{20,20},{20,80},{38,80}},
       color={0,0,127}));
+  connect(uStaUp, minBypSet.uStaUp)
+    annotation (Line(points={{-120,20},{-80,20},{-80,28},{-22,28}},
+      color={255,0,255}));
+  connect(uSta, minBypSet.uSta)
+    annotation (Line(points={{-120,-40},{-68,-40},{-68,20},{-22,20}},
+      color={255,127,0}));
+  connect(uOnOff, minBypSet.uOnOff)
+    annotation (Line(points={{-120,-66},{-60,-66},{-60,16},{-22,16}},
+      color={255,0,255}));
+  connect(uStaDow, minBypSet.uStaDow)
+    annotation (Line(points={{-120,-90},{-40,-90},{-40,12},{-22,12}},
+      color={255,0,255}));
+  connect(not1.y, valPos.trigger)
+    annotation (Line(points={{-39,80},{0,80},{0,60},{42,60},{42,68}},
+      color={255,0,255}));
+  connect(minBypSet.uUpsDevSta, uUpsDevSta)
+    annotation (Line(points={{-22,24},{-74,24},{-74,-10},{-120,-10}},
+      color={255,0,255}));
 
 annotation (
   defaultComponentName="minBypValCon",
@@ -251,10 +115,10 @@ annotation (
           pattern=LinePattern.Dash,
           textString="uStaUp"),
         Text(
-          extent={{-96,-22},{-58,-36}},
+          extent={{-96,8},{-70,-6}},
           lineColor={255,127,0},
           pattern=LinePattern.Dash,
-          textString="uStaUp"),
+          textString="uSta"),
         Text(
           extent={{-96,-52},{-58,-66}},
           lineColor={255,0,255},
@@ -269,9 +133,14 @@ annotation (
           extent={{56,10},{100,-4}},
           lineColor={0,0,127},
           pattern=LinePattern.Dash,
-          textString="yValPos")}),
+          textString="yValPos"),
+        Text(
+          extent={{-98,-20},{-42,-36}},
+          lineColor={255,0,255},
+          pattern=LinePattern.Dash,
+          textString="uUpsDevSta")}),
   Diagram(coordinateSystem(preserveAspectRatio=false,
-          extent={{-260,-240},{260,240}})),
+          extent={{-100,-100},{100,100}})),
   Documentation(info="<html>
 <p>
 Block that controls chilled water minimum flow bypass valve for primary-only
