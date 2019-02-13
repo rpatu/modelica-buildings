@@ -2,11 +2,11 @@
 block Controller
   "Controller for chilled water minimum flow bypass valve"
 
-  parameter Integer num = 3
+  parameter Integer nSta = 3
     "Total number of stages, zero stage should be seem as one stage";
   parameter Modelica.SIunits.Time byPasSetTim = 300
     "Time to reset minimum by-pass flow";
-  parameter Modelica.SIunits.VolumeFlowRate minFloSet[num] = {0, 0.0089, 0.0177}
+  parameter Modelica.SIunits.VolumeFlowRate minFloSet[nSta] = {0, 0.0089, 0.0177}
     "Minimum flow rate at each chiller stage";
 
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uStaUp "Indicate if there is stage up"
@@ -52,7 +52,7 @@ protected
   Buildings.Controls.OBC.CDL.Logical.Not not1
     annotation (Placement(transformation(extent={{-60,70},{-40,90}})));
   Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.MinimumFlowBypass.Subsequences.FlowSetpoint minBypSet(
-    final num=num,
+    final nSta=nSta,
     final byPasSetTim=byPasSetTim,
     final minFloSet=minFloSet) "Minimum by-pass flow setpoint"
     annotation (Placement(transformation(extent={{-20,10},{0,30}})));

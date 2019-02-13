@@ -7,9 +7,8 @@ EfficiencyCondition
 FailsafeCondition
 PartLoadRatios
 Up
-UpProcess
 EnableChiIsoVal
 EnableHeadControl
 ResetMinBypassSetpoint
-UpProcessP
+UpProcess
 Validation

@@ -2,7 +2,7 @@
 block EnableHeadControl
   "Sequences for enabling head pressure control for the chiller being enabled"
 
-  parameter Integer num "Total number of chiller";
+  parameter Integer nChi "Total number of chiller";
   parameter Modelica.SIunits.Time thrTimEnb=10
     "Threshold time to enable head pressure control after condenser water pump being reset";
   parameter Modelica.SIunits.Time waiTim = 30
@@ -18,7 +18,7 @@ block EnableHeadControl
     "Status of resetting status of device before enabling or disabling head pressure control"
     annotation (Placement(transformation(extent={{-180,100},{-140,140}}),
       iconTransformation(extent={{-140,60},{-100,100}})));
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChiHeaCon[num]
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChiHeaCon[nChi]
     "Chillers head pressure control status"
     annotation (Placement(transformation(extent={{-180,-90},{-140,-50}}),
       iconTransformation(extent={{-140,-100},{-100,-60}})));
@@ -26,7 +26,7 @@ block EnableHeadControl
     "Indicate if there is stage change"
     annotation (Placement(transformation(extent={{-180,52},{-140,92}}),
       iconTransformation(extent={{-140,20},{-100,60}})));
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yChiHeaCon[num]
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yChiHeaCon[nChi]
     "Chiller head pressure control enabling status"
     annotation (Placement(transformation(extent={{220,-20},{240,0}}),
       iconTransformation(extent={{100,-70},{120,-50}})));
@@ -50,20 +50,20 @@ protected
     final uHigh=thrTimEnb + 1)
     "Check if it is 10 seconds after condenser water pump achieves its new setpoint"
     annotation (Placement(transformation(extent={{40,70},{60,90}})));
-  Buildings.Controls.OBC.CDL.Discrete.TriggeredSampler triSam[num]
+  Buildings.Controls.OBC.CDL.Discrete.TriggeredSampler triSam[nChi]
     "Record the old chiller head pressure control status"
     annotation (Placement(transformation(extent={{-20,-100},{0,-80}})));
-  Buildings.Controls.OBC.CDL.Conversions.BooleanToReal booToRea[num]
+  Buildings.Controls.OBC.CDL.Conversions.BooleanToReal booToRea[nChi]
     "Convert boolean input to real output"
     annotation (Placement(transformation(extent={{-120,-80},{-100,-60}})));
-  Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep(final nout=num)
+  Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep(final nout=nChi)
     "Replicate boolean input"
     annotation (Placement(transformation(extent={{-60,-130},{-40,-110}})));
   Buildings.Controls.OBC.CDL.Logical.And and2 "Logical and"
     annotation (Placement(transformation(extent={{-120,70},{-100,90}})));
   Buildings.Controls.OBC.CDL.Logical.Not not1 "Logical not"
     annotation (Placement(transformation(extent={{-120,30},{-100,50}})));
-  Buildings.Controls.OBC.CDL.Logical.Switch swi[num] "Logical switch"
+  Buildings.Controls.OBC.CDL.Logical.Switch swi[nChi] "Logical switch"
     annotation (Placement(transformation(extent={{140,-20},{160,0}})));
   Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys1(
     final uLow=thrTimEnb + waiTim - 1,
@@ -71,31 +71,31 @@ protected
     "Check if it is 10 seconds after condenser water pump achieves its new setpoint and have waited another 30 seconds"
     annotation (Placement(transformation(extent={{40,100},{60,120}})));
   Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep1(
-    final nout=num) "Replicate boolean input"
+    final nout=nChi) "Replicate boolean input"
     annotation (Placement(transformation(extent={{80,70},{100,90}})));
-  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr[num](
-    final threshold=0.5)
+  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr[nChi](
+    each final threshold=0.5)
     "Convert real input to boolean output"
     annotation (Placement(transformation(extent={{180,-20},{200,0}})));
   Buildings.Controls.OBC.CDL.Logical.Not not2 "Logical not"
     annotation (Placement(transformation(extent={{-20,-70},{0,-50}})));
-  Buildings.Controls.OBC.CDL.Logical.Switch swi1[num] "Logical switch"
+  Buildings.Controls.OBC.CDL.Logical.Switch swi1[nChi] "Logical switch"
     annotation (Placement(transformation(extent={{80,-70},{100,-50}})));
-  Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep2(final nout=num)
+  Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep2(final nout=nChi)
     "Replicate boolean input"
     annotation (Placement(transformation(extent={{20,-70},{40,-50}})));
-  Buildings.Controls.OBC.CDL.Routing.IntegerReplicator intRep(final nout=num)
+  Buildings.Controls.OBC.CDL.Routing.IntegerReplicator intRep(final nout=nChi)
     "Replicate integer input"
     annotation (Placement(transformation(extent={{-120,-20},{-100,0}})));
-  Buildings.Controls.OBC.CDL.Integers.Equal intEqu[num]
+  Buildings.Controls.OBC.CDL.Integers.Equal intEqu[nChi]
     "Check next enabling isolation valve"
     annotation (Placement(transformation(extent={{-60,-20},{-40,0}})));
-  Buildings.Controls.OBC.CDL.Logical.Switch swi2[num] "Logical switch"
+  Buildings.Controls.OBC.CDL.Logical.Switch swi2[nChi] "Logical switch"
     annotation (Placement(transformation(extent={{80,-20},{100,0}})));
-  Buildings.Controls.OBC.CDL.Conversions.BooleanToReal booToRea1[num]
+  Buildings.Controls.OBC.CDL.Conversions.BooleanToReal booToRea1[nChi]
     "Convert boolean input to real output"
     annotation (Placement(transformation(extent={{80,20},{100,40}})));
-  Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep3(final nout=num)
+  Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep3(final nout=nChi)
     "Replicate boolean input"
     annotation (Placement(transformation(extent={{40,20},{60,40}})));
   Buildings.Controls.OBC.CDL.Logical.LogicalSwitch logSwi "Logical switch"

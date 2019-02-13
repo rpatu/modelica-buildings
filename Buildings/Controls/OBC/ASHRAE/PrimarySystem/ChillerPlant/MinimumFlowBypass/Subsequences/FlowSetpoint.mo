@@ -1,11 +1,11 @@
 ﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.MinimumFlowBypass.Subsequences;
 block FlowSetpoint "Chilled water minimum flow bypass setpoint"
 
-  parameter Integer num = 3
+  parameter Integer nSta = 3
     "Total number of stages, zero stage should be seem as one stage";
   parameter Modelica.SIunits.Time byPasSetTim = 300
     "Time to reset minimum by-pass flow";
-  parameter Modelica.SIunits.VolumeFlowRate minFloSet[num] = {0, 0.0089, 0.0177}
+  parameter Modelica.SIunits.VolumeFlowRate minFloSet[nSta] = {0, 0.0089, 0.0177}
     "Minimum flow rate at each chiller stage";
 
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uStaUp "Indicate if there is stage up"
@@ -32,11 +32,11 @@ block FlowSetpoint "Chilled water minimum flow bypass setpoint"
       iconTransformation(extent={{100,-10},{120,10}})));
 
 protected
-  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con[num](
-    final k=minFloSet)
+  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con[nSta](
+    each final k=minFloSet)
     "Minimum bypass flow setpoint at each stage, equal to the sum of minimum chilled water flowrate of the chillers being enabled at the stage"
     annotation (Placement(transformation(extent={{-220,90},{-200,110}})));
-  Buildings.Controls.OBC.CDL.Routing.RealExtractor curMinSet(final nin=num)
+  Buildings.Controls.OBC.CDL.Routing.RealExtractor curMinSet(final nin=nSta)
     "Targeted minimum flow setpoint at current stage"
     annotation (Placement(transformation(extent={{-120,90},{-100,110}})));
   Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt(final k=1)
@@ -64,10 +64,10 @@ protected
   Buildings.Controls.OBC.CDL.Integers.Add addInt1
     "One stage lower than current one"
     annotation (Placement(transformation(extent={{-180,20},{-160,40}})));
-  Buildings.Controls.OBC.CDL.Routing.RealExtractor lowMinSet(final nin=num)
+  Buildings.Controls.OBC.CDL.Routing.RealExtractor lowMinSet(final nin=nSta)
     "Minimum flow setpoint at previous low stage"
     annotation (Placement(transformation(extent={{-120,50},{-100,70}})));
-  Buildings.Controls.OBC.CDL.Routing.RealExtractor uppMinSet(final nin=num)
+  Buildings.Controls.OBC.CDL.Routing.RealExtractor uppMinSet(final nin=nSta)
     "Minimum flow setpoint at previous upper stage"
     annotation (Placement(transformation(extent={{-120,-120},{-100,-100}})));
   Buildings.Controls.OBC.CDL.Continuous.Line dowSet
@@ -207,8 +207,8 @@ equation
     annotation (Line(points={{161,160},{170,160},{170,168},{198,168}},
       color={255,0,255}));
   connect(not2.y,and4. u2)
-    annotation (Line(points={{-139,-180},{130,-180},{130,60},{170,60},{170,160},
-          {198,160}},        color={255,0,255}));
+    annotation (Line(points={{-139,-180},{130,-180},{130,60},{170,60},
+      {170,160}, {198,160}},  color={255,0,255}));
   connect(and4.y, byPasSet1.u2)
     annotation (Line(points={{221,160},{240,160},{240,60},{180,60},{180,20},
       {198,20}},  color={255,0,255}));

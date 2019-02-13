@@ -2,7 +2,7 @@
 block EnableChiIsoVal
   "Sequence of enable or disable chilled water isolation valve"
 
-  parameter Integer num = 2
+  parameter Integer nChi = 2
     "Total number of chiller, which is also the total number of chilled water isolation valve";
   parameter Modelica.SIunits.Time chaChiWatIsoTim = 300
     "Time to slowly change isolation valve";
@@ -11,7 +11,7 @@ block EnableChiIsoVal
   parameter Real endValPos = 1
     "Ending valve position, if it is in stage-up process, the value should be 1";
 
-  Buildings.Controls.OBC.CDL.Interfaces.RealInput uChiWatIsoVal[num](
+  Buildings.Controls.OBC.CDL.Interfaces.RealInput uChiWatIsoVal[nChi](
     each final unit="1",
     each final min=0,
     each final max=1) "Chilled water isolation valve position"
@@ -26,10 +26,10 @@ block EnableChiIsoVal
     annotation (Placement(transformation(extent={{-200,-10},{-160,30}}),
       iconTransformation(extent={{-140,60},{-100,100}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uStaCha
-    "Indicate if there is a stage up or stage down command" annotation (
-      Placement(transformation(extent={{-200,-198},{-160,-158}}),
-        iconTransformation(extent={{-140,-100},{-100,-60}})));
-  Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiWatIsoVal[num](
+    "Indicate if there is a stage up or stage down command"
+    annotation (Placement(transformation(extent={{-200,-198},{-160,-158}}),
+      iconTransformation(extent={{-140,-100},{-100,-60}})));
+  Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiWatIsoVal[nChi](
     each final unit="1",
     each final min=0,
     each final max=1) "Chiller chilled water isolation valve position"
@@ -65,57 +65,57 @@ protected
   Buildings.Controls.OBC.CDL.Logical.Latch lat
     "Logical latch, maintain ON signal until condition changes"
     annotation (Placement(transformation(extent={{20,-180},{40,-160}})));
-  Buildings.Controls.OBC.CDL.Discrete.TriggeredSampler triSam[num]
+  Buildings.Controls.OBC.CDL.Discrete.TriggeredSampler triSam[nChi]
     "Record the old chiller chilled water isolation valve status"
     annotation (Placement(transformation(extent={{-80,-110},{-60,-90}})));
-  Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep(final nout=num)
+  Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep(final nout=nChi)
     "Replicate boolean input"
     annotation (Placement(transformation(extent={{20,-150},{40,-130}})));
   Buildings.Controls.OBC.CDL.Logical.And and2 "Logical and"
     annotation (Placement(transformation(extent={{-40,-180},{-20,-160}})));
   Buildings.Controls.OBC.CDL.Logical.Not not1 "Logical not"
     annotation (Placement(transformation(extent={{-40,-210},{-20,-190}})));
-  Buildings.Controls.OBC.CDL.Logical.Switch swi[num] "Logical switch"
+  Buildings.Controls.OBC.CDL.Logical.Switch swi[nChi] "Logical switch"
     annotation (Placement(transformation(extent={{120,-50},{140,-30}})));
-  Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep1(final nout=num)
+  Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep1(final nout=nChi)
     "Replicate boolean input"
     annotation (Placement(transformation(extent={{60,-180},{80,-160}})));
-  Buildings.Controls.OBC.CDL.Logical.Not not2[num] "Logical not"
+  Buildings.Controls.OBC.CDL.Logical.Not not2[nChi] "Logical not"
     annotation (Placement(transformation(extent={{-20,-90},{0,-70}})));
-  Buildings.Controls.OBC.CDL.Logical.Switch swi1[num] "Logical switch"
+  Buildings.Controls.OBC.CDL.Logical.Switch swi1[nChi] "Logical switch"
     annotation (Placement(transformation(extent={{60,-70},{80,-50}})));
-  Buildings.Controls.OBC.CDL.Logical.Switch swi2[num] "Logical switch"
+  Buildings.Controls.OBC.CDL.Logical.Switch swi2[nChi] "Logical switch"
     annotation (Placement(transformation(extent={{60,0},{80,20}})));
-  Buildings.Controls.OBC.CDL.Integers.Equal intEqu[num]
+  Buildings.Controls.OBC.CDL.Integers.Equal intEqu[nChi]
     "Check next enabling isolation valve"
     annotation (Placement(transformation(extent={{-20,0},{0,20}})));
-  Buildings.Controls.OBC.CDL.Routing.IntegerReplicator intRep(final nout=num)
+  Buildings.Controls.OBC.CDL.Routing.IntegerReplicator intRep(final nout=nChi)
     "Replicate integer input"
     annotation (Placement(transformation(extent={{-80,0},{-60,20}})));
-  Buildings.Controls.OBC.CDL.Routing.RealReplicator reaRep(final nout=num)
+  Buildings.Controls.OBC.CDL.Routing.RealReplicator reaRep(final nout=nChi)
     "Replicate real input"
     annotation (Placement(transformation(extent={{80,70},{100,90}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys3[num](
+  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys3[nChi](
     each final uLow=0.025,
     each final uHigh=0.05)
     "Check if isolation valve is enabled"
     annotation (Placement(transformation(extent={{-120,200},{-100,220}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys4[num](
+  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys4[nChi](
     each final uLow=0.925,
     each final uHigh=0.975)
     "Check if isolation valve is open more than 95%"
     annotation (Placement(transformation(extent={{-120,140},{-100,160}})));
-  Buildings.Controls.OBC.CDL.Logical.Not not3[num] "Logical not"
+  Buildings.Controls.OBC.CDL.Logical.Not not3[nChi] "Logical not"
     annotation (Placement(transformation(extent={{-40,170},{-20,190}})));
-  Buildings.Controls.OBC.CDL.Logical.Not not4[num] "Logical not"
+  Buildings.Controls.OBC.CDL.Logical.Not not4[nChi] "Logical not"
     annotation (Placement(transformation(extent={{-40,140},{-20,160}})));
-  Buildings.Controls.OBC.CDL.Logical.And and4[num] "Logical and"
+  Buildings.Controls.OBC.CDL.Logical.And and4[nChi] "Logical and"
     annotation (Placement(transformation(extent={{0,170},{20,190}})));
-  Buildings.Controls.OBC.CDL.Logical.And and3[num] "Logical and"
+  Buildings.Controls.OBC.CDL.Logical.And and3[nChi] "Logical and"
     annotation (Placement(transformation(extent={{0,200},{20,220}})));
-  Buildings.Controls.OBC.CDL.Logical.Or  or2[num] "Logicla or"
+  Buildings.Controls.OBC.CDL.Logical.Or  or2[nChi] "Logicla or"
     annotation (Placement(transformation(extent={{40,200},{60,220}})));
-  Buildings.Controls.OBC.CDL.Logical.MultiAnd mulAnd1(final nu=num)
+  Buildings.Controls.OBC.CDL.Logical.MultiAnd mulAnd1(final nu=nChi)
     annotation (Placement(transformation(extent={{80,200},{100,220}})));
   Buildings.Controls.OBC.CDL.Logical.And and5
     "Check if the isolation valve has been fully open"
