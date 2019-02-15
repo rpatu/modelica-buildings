@@ -1,18 +1,19 @@
 within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Generic;
-block EquipmentRotationMult
-  "Defines lead-lag or lead-standby equipment rotation for any number of devices or groups of devices"
+block EquipmentRotationMultiple
+  "Defines lead-lag or lead-standby equipment rotation for any number of devices or groups of devices
+  where the lag load is the same for all lag devices."
 
   parameter Boolean lag = true
     "true = lead/lag, false = lead/standby";
 
-  parameter Boolean initRoles[num] = {if i==1 then true else false for i in 1:num}
+  parameter Boolean initRoles[nDev] = {if i==1 then true else false for i in 1:nDev}
     "Sets initial roles: true = lead, false = lag or standby"
     annotation (Evaluate=true,Dialog(tab="Advanced", group="Initiation"));
 
-  parameter Integer num = 3
-    "Total number of devices, such as chillers, isolation valves, CW pumps, or CHW pumps";
+  parameter Integer nDev = 3
+    "Total nDevber of devices, such as chillers, isolation valves, CW pumps, or CHW pumps";
 
-  parameter Modelica.SIunits.Time stagingRuntime = 240 * 60 * 60
+  parameter Modelica.SIunits.Time stagingRuntime(displayUnit = "h") = 240 * 60 * 60
     "Staging runtime for each device";
 
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uLeaSta
@@ -26,115 +27,115 @@ block EquipmentRotationMult
     transformation(extent={{-260,-120},{-220,-80}}), iconTransformation(
     extent={{-140,-80},{-100,-40}})));
 
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yDevSta[num]
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yDevSta[nDev]
     "Device status (index represents the physical device)" annotation (
       Placement(transformation(extent={{240,-50},{260,-30}}),
       iconTransformation(extent={{100,50},{120,70}})));
 
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yDevRol[num]
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yDevRol[nDev]
     "Device role: true = lead, false = lag or standby"
     annotation (Placement(transformation(extent={{240,-10},{260,10}}),
         iconTransformation(extent={{100,-70},{120,-50}})));
 
-  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr[num](
+  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr[nDev](
     final threshold=stagingRuntimes)
     "Stagin runtime hysteresis"
     annotation (Placement(transformation(extent={{-60,50},{-40,70}})));
 
-  Buildings.Controls.OBC.CDL.Logical.Timer tim[num](
-    final reset=fill(false, num))
+  Buildings.Controls.OBC.CDL.Logical.Timer tim[nDev](
+    final reset=fill(false, nDev))
     "Measures time spent loaded at the current role (lead or lag)"
     annotation (Placement(transformation(extent={{-100,50},{-80,70}})));
 
 protected
-  parameter Modelica.SIunits.Time stagingRuntimes[num] = fill(stagingRuntime, num)
+  parameter Modelica.SIunits.Time stagingRuntimes[nDev] = fill(stagingRuntime, nDev)
     "Staging runtimes array";
 
   Buildings.Controls.OBC.CDL.Routing.BooleanReplicator repLag(
-    final nout=num) if lag
+    final nout=nDev) if lag
     "Replicates lag signal"
     annotation (Placement(transformation(extent={{-200,-110},{-180,-90}})));
 
   Buildings.Controls.OBC.CDL.Routing.BooleanReplicator repLead(
-    final nout=num)
+    final nout=nDev)
     "Replicates lead signal"
     annotation (Placement(transformation(extent={{-200,-10},{-180,10}})));
 
-  Buildings.Controls.OBC.CDL.Logical.And3 and3[num] "Logical and"
+  Buildings.Controls.OBC.CDL.Logical.And3 and3[nDev] "Logical and"
     annotation (Placement(transformation(extent={{-20,20},{0,40}})));
 
   Buildings.Controls.OBC.CDL.Logical.MultiOr mulOr(
-    final nu=num)
+    final nu=nDev)
     "Logical or with an array input"
     annotation (Placement(transformation(extent={{20,20},{40,40}})));
 
   Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep(
-    final nout=num)
+    final nout=nDev)
     "Converts scalar input into an array output"
     annotation (Placement(transformation(extent={{60,20},{80,40}})));
 
-  Buildings.Controls.OBC.CDL.Logical.Pre pre[num](
+  Buildings.Controls.OBC.CDL.Logical.Pre pre[nDev](
     final pre_u_start=initRoles)
     "Returns previous timestep value to avoid algebraic loops"
     annotation (Placement(transformation(extent={{120,20},{140,40}})));
 
-  Buildings.Controls.OBC.CDL.Logical.FallingEdge falEdg1[num] "Falling edge"
+  Buildings.Controls.OBC.CDL.Logical.FallingEdge falEdg1[nDev] "Falling edge"
     annotation (Placement(transformation(extent={{0,60},{20,80}})));
 
-  Buildings.Controls.OBC.CDL.Logical.Not not1[num]
+  Buildings.Controls.OBC.CDL.Logical.Not not1[nDev]
     "Logical not"
     annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
 
-  Buildings.Controls.OBC.CDL.Continuous.Add add2[num](
-    final k1=fill(1, num),
-    final k2=fill(1, num))
+  Buildings.Controls.OBC.CDL.Continuous.Add add2[nDev](
+    final k1=fill(1, nDev),
+    final k2=fill(1, nDev))
     "Adder"
     annotation (Placement(transformation(extent={{20,-80},{40,-60}})));
 
-  Buildings.Controls.OBC.CDL.Logical.Edge edg[num]
+  Buildings.Controls.OBC.CDL.Logical.Edge edg[nDev]
     "Logical edge"
     annotation (Placement(transformation(extent={{-60,-140},{-40,-120}})));
 
-  Buildings.Controls.OBC.CDL.Discrete.TriggeredSampler triSam[num]
+  Buildings.Controls.OBC.CDL.Discrete.TriggeredSampler triSam[nDev]
     "Sample trigger"
     annotation (Placement(transformation(extent={{-40,-100},{-20,-80}})));
 
-  Buildings.Controls.OBC.CDL.Discrete.ZeroOrderHold zerOrdHol[num](
-    final samplePeriod=fill(1,num)) "Zero order hold"
+  Buildings.Controls.OBC.CDL.Discrete.ZeroOrderHold zerOrdHol[nDev](
+    final samplePeriod=fill(1,nDev)) "Zero order hold"
     annotation (Placement(transformation(extent={{80,-60},{100,-40}})));
 
-  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con1[num](
-    final k=fill(1, num)) "Constant"
+  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con1[nDev](
+    final k=fill(1, nDev)) "Constant"
     annotation (Placement(transformation(extent={{-40,-60},{-20,-40}})));
 
-  Buildings.Controls.OBC.CDL.Continuous.Modulo mod[num]
+  Buildings.Controls.OBC.CDL.Continuous.Modulo mod[nDev]
     "Modulo"
     annotation (Placement(transformation(extent={{100,-120},{120,-100}})));
 
-  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con2[num](
-    final k=fill(num, num)) "Constant"
+  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con2[nDev](
+    final k=fill(nDev, nDev)) "Constant"
     annotation (Placement(transformation(extent={{60,-140},{80,-120}})));
 
-  Buildings.Controls.OBC.CDL.Continuous.LessThreshold lesThr[num](
-    final threshold=fill(0.5, num))
+  Buildings.Controls.OBC.CDL.Continuous.LessThreshold lesThr[nDev](
+    final threshold=fill(0.5, nDev))
     "Identifies zero outputs of the modulo operation"
     annotation (Placement(transformation(extent={{140,-120},{160,-100}})));
 
-  Buildings.Controls.OBC.CDL.Continuous.Add add1[num](
-    final k1=fill(1, num),
-    final k2=fill(1, num))
+  Buildings.Controls.OBC.CDL.Continuous.Add add1[nDev](
+    final k1=fill(1, nDev),
+    final k2=fill(1, nDev))
     "Logical and"
     annotation (Placement(transformation(extent={{60,-100},{80,-80}})));
 
-  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con3[num](
-    final k=linspace(num - 1, 0, num)) "Constant"
+  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con3[nDev](
+    final k=linspace(nDev - 1, 0, nDev)) "Constant"
     annotation (Placement(transformation(extent={{20,-120},{40,-100}})));
 
-  Buildings.Controls.OBC.CDL.Logical.LogicalSwitch logSwi[num]
+  Buildings.Controls.OBC.CDL.Logical.LogicalSwitch logSwi[nDev]
     annotation (Placement(transformation(extent={{-140,-40},{-120,-20}})));
 
-  Buildings.Controls.OBC.CDL.Logical.Sources.Constant staSta[num](
-    final k=fill(false, num)) if not lag
+  Buildings.Controls.OBC.CDL.Logical.Sources.Constant staSta[nDev](
+    final k=fill(false, nDev)) if not lag
     "Standby status"
     annotation (Placement(transformation(extent={{-200,-70},{-180,-50}})));
 equation
@@ -175,13 +176,13 @@ equation
           {41,-110}}, color={0,0,127}));
   connect(add1.y, mod.u1) annotation (Line(points={{81,-90},{88,-90},{88,-104},{
           98,-104}},   color={0,0,127}));
-  connect(booRep.y, edg.u) annotation (Line(points={{81,30},{92,30},{92,0},{-60,
-          0},{-60,-130},{-62,-130}},   color={255,0,255}));
+  connect(booRep.y, edg.u) annotation (Line(points={{81,30},{92,30},{92,0},{-80,
+          0},{-80,-130},{-62,-130}},   color={255,0,255}));
   connect(lesThr.y, pre.u) annotation (Line(points={{161,-110},{180,-110},{180,0},
           {100,0},{100,30},{118,30}},     color={255,0,255}));
   connect(lesThr.y, yDevRol) annotation (Line(points={{161,-110},{200,-110},{200,
           0},{250,0}},                     color={255,0,255}));
-  connect(and3.y, mulOr.u[1:num]) annotation (Line(points={{1,30},{18,30}},
+  connect(and3.y, mulOr.u[1:nDev]) annotation (Line(points={{1,30},{18,30}},
                       color={255,0,255}));
   connect(logSwi.y, tim.u) annotation (Line(points={{-119,-30},{-110,-30},{-110,
           60},{-102,60}}, color={255,0,255}));
@@ -241,7 +242,7 @@ Chapter 7, App B, 1.01, A.4.  The input vector <code>uDevRol<\code> indicates th
 of the devices. Default initial lead role is assigned to the device associated
 with the first index in the input vector. The block measures the <code>stagingRuntime<\code>
 for each device and switches the lead role to the next higher index
-as its <code>stagingRuntime<\code> expires. It can be used for any number of devices <code>num<\code>.
+as its <code>stagingRuntime<\code> expires. It can be used for any nDevber of devices <code>nDev<\code>.
 </p>
 </html>", revisions="<html>
 <ul>
@@ -252,4 +253,4 @@ First implementation.
 </ul>
 
 </html>"));
-end EquipmentRotationMult;
+end EquipmentRotationMultiple;

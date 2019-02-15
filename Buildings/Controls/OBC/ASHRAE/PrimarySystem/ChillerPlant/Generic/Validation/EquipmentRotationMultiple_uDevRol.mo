@@ -1,21 +1,22 @@
 within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Generic.Validation;
-model EquipmentRotationMult_uDevRol
+model EquipmentRotationMultiple_uDevRol
   "Validate lead/lag and lead/standby switching"
 
-  parameter Integer num = 3
-    "Total number of devices, such as chillers, isolation valves, CW pumps, or CHW pumps";
+  parameter Integer nDev = 3
+    "Total nDevber of devices, such as chillers, isolation valves, CW pumps, or CHW pumps";
 
-  parameter Boolean initRoles[num] = {if i==1 then true else false for i in 1:num}
+  parameter Boolean initRoles[nDev] = {if i==1 then true else false for i in 1:nDev}
     "Sets initial roles: true = lead, false = lag or standby";
 
-  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Generic.EquipmentRotationMult leaSta(
+  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Generic.EquipmentRotationMultiple
+    leaSta(
     final stagingRuntime=5*60*60,
-    final num=num,
+    final nDev=nDev,
     final initRoles=initRoles,
     final lag=false) "Equipment rotation - lead/standby"
     annotation (Placement(transformation(extent={{40,-20},{60,0}})));
 
-  EquipmentRotationMult leaLag(stagingRuntime=5*60*60)
+  EquipmentRotationMultiple leaLag(stagingRuntime=5*60*60)
     "Equipment rotation - lead/lag"
     annotation (Placement(transformation(extent={{-20,-20},{0,0}})));
 
@@ -39,13 +40,13 @@ equation
           {30,-4},{38,-4}}, color={255,0,255}));
           annotation (
    experiment(StopTime=10000.0, Tolerance=1e-06),
-    __Dymola_Commands(file="modelica://Buildings/Resources/Scripts/Dymola/Controls/OBC/ASHRAE/PrimarySystem/ChillerPlant/Generic/Validation/EquipmentRotationMult_uDevRol.mos"
+    __Dymola_Commands(file="modelica://Buildings/Resources/Scripts/Dymola/Controls/OBC/ASHRAE/PrimarySystem/ChillerPlant/Generic/Validation/EquipmentRotationMultiple_uDevRol.mos"
     "Simulate and plot"),
   Documentation(info="<html>
 <p>
 This example validates
-<a href=\"modelica://Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Generic.EquipmentRotationMult\">
-Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Generic.EquipmentRotationMult</a>.
+<a href=\"modelica://Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Generic.EquipmentRotationMultiple\">
+Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Generic.EquipmentRotationMultple</a>.
 </p>
 </html>", revisions="<html>
 <ul>
@@ -66,4 +67,4 @@ Icon(graphics={
                 fillPattern = FillPattern.Solid,
                 points = {{-36,60},{64,0},{-36,-60},{-36,60}})}),Diagram(
         coordinateSystem(preserveAspectRatio=false)));
-end EquipmentRotationMult_uDevRol;
+end EquipmentRotationMultiple_uDevRol;
