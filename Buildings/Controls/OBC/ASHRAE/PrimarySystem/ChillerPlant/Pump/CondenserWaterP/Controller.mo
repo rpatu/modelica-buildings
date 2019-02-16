@@ -3,23 +3,23 @@ block Controller "Condenser water pump controller"
 
   parameter Boolean isheadered = true
     "Flag of headered condenser water pumps design: true=headered, false=dedicated";
-  parameter Boolean hasWSE = true
-    "Flag of waterside economizer: true=has WSE, false=no WSE";
-  parameter Integer num = 3
+  parameter Boolean haveWSE = true
+    "Flag of waterside economizer: true=have WSE, false=no WSE";
+  parameter Integer nSta = 3
     "Total number of stages, zero stage should be counted as one stage";
-  parameter Real chiNum[num] = {0, 1, 2}
+  parameter Real chiNum[nSta] = {0, 1, 2}
     "Total number of operating chillers at each stage";
-  parameter Real uLow "if y=true and u<uLow, switch to y=false"
-    annotation (Dialog(group="Speed check"));
-  parameter Real uHigh "if y=false and u>uHigh, switch to y=true"
-    annotation (Dialog(group="Speed check"));
+  parameter Real uLow = 0.005 "if y=true and u<uLow, switch to y=false"
+    annotation (Dialog(group="Speed equality check"));
+  parameter Real uHigh = 0.015 "if y=false and u>uHigh, switch to y=true"
+    annotation (Dialog(group="Speed equality check"));
 
   Buildings.Controls.OBC.CDL.Interfaces.IntegerInput uChiSta
     "Current chiller stage"
     annotation (Placement(transformation(extent={{-160,50},{-120,90}}),
       iconTransformation(extent={{-140,60},{-100,100}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uWSE if
-       hasWSE "Water side economizer status: true = ON, false = OFF"
+       haveWSE "Water side economizer status: true = ON, false = OFF"
     annotation (Placement(transformation(extent={{-160,-50},{-120,-10}}),
       iconTransformation(extent={{-140,-60},{-100,-20}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uLeaChiOn
@@ -63,11 +63,11 @@ protected
     "Enable lead pumps for plants with dedicated condenser water pump"
     annotation (Placement(transformation(extent={{40,30},{60,50}})));
   Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences.Speed_noWSE
-    pumSpeNoWse if not hasWSE
+    pumSpeNoWse if not haveWSE
     "Operating speed of condenser water pump for plants without waterside economizer"
     annotation (Placement(transformation(extent={{40,-10},{60,10}})));
-  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences.Speed_hasWSE
-    pumSpeWitWse if hasWSE
+  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences.Speed_haveWSE
+    pumSpeWitWse if haveWSE
     "Operating speed of condenser water pump for plants with waterside economizer"
     annotation (Placement(transformation(extent={{40,-50},{60,-30}})));
   Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr(
@@ -75,14 +75,14 @@ protected
     "Check if there is any chiller operating"
     annotation (Placement(transformation(extent={{-20,90},{0,110}})));
   Buildings.Controls.OBC.CDL.Conversions.RealToInteger reaToInt if
-       not hasWSE
+       not haveWSE
     annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
-  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con[num](
+  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con[nSta](
     final k=chiNum)
     "Number of operating chillers at each stage"
     annotation (Placement(transformation(extent={{-100,90},{-80,110}})));
   Buildings.Controls.OBC.CDL.Routing.RealExtractor curOpeChi(
-    final nin=num)
+    final nin=nSta)
     "Current number of operating chillers"
     annotation (Placement(transformation(extent={{-60,90},{-40,110}})));
   Buildings.Controls.OBC.CDL.Continuous.Feedback speDif
@@ -245,10 +245,10 @@ for a description.
 <li>
 The operating speed <code>yConWatPumSpe</code> and number of operating pumps
 <code>yConWatPumNum</code> should be controlled based on whether the plant has 
-waterside economizer or not (<code>hasWSE</code>). When it has economizer, then 
+waterside economizer or not (<code>haveWSE</code>). When it has economizer, then 
 use block <code>pumSpeWitWse</code>. See 
-<a href=\"modelica://Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences.Speed_hasWSE\">
-Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences.Speed_hasWSE</a>
+<a href=\"modelica://Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences.Speed_haveWSE\">
+Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences.Speed_haveWSE</a>
 for a description. Otherwise, use block <code>pumSpeNoWse</code>. See
 <a href=\"modelica://Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences.Speed_noWSE\">
 Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences.Speed_noWSE</a>

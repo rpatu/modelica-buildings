@@ -85,16 +85,14 @@ block EnableNextChiller "Sequence for enabling next chiller"
     "Chilled water minimum flow bypass setpoint"
     annotation (Placement(transformation(extent={{200,-200},{220,-180}}),
       iconTransformation(extent={{100,-40},{120,-20}})));
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yMinBypRes
-    "Minimum chilled water flow bypass setpoint reset status"
-    annotation (Placement(transformation(extent={{200,-250},{220,-230}}),
-      iconTransformation(extent={{100,-70},{120,-50}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yEndSta
     "Flag to indicate if the staging process is finished"
     annotation (Placement(transformation(extent={{200,-320},{220,-300}}),
       iconTransformation(extent={{100,-100},{120,-80}})));
 
 protected
+  final parameter Integer chiInd[nChi]={i for i in 1:nChi}
+    "Chiller index, {1,2,...,n}";
   Buildings.Controls.OBC.CDL.Logical.LogicalSwitch logSwi[nChi] "Logical switch"
     annotation (Placement(transformation(extent={{100,260},{120,280}})));
   Buildings.Controls.OBC.CDL.Logical.And and2
@@ -233,6 +231,9 @@ protected
     annotation (Placement(transformation(extent={{160,-200},{180,-180}})));
   Buildings.Controls.OBC.CDL.Logical.LogicalSwitch logSwi5 "Logical switch"
     annotation (Placement(transformation(extent={{160,-320},{180,-300}})));
+  Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt[nChi](
+    final k=chiInd)    "Chiller index array"
+    annotation (Placement(transformation(extent={{-160,230},{-140,250}})));
 
 equation
   connect(uNexEnaChi, intRep.u)
@@ -398,8 +399,6 @@ equation
           -232},{158,-232}}, color={255,0,255}));
   connect(minBypSet1.yMinBypRes, logSwi4.u3) annotation (Line(points={{101,-260},
           {120,-260},{120,-248},{158,-248}}, color={255,0,255}));
-  connect(logSwi4.y, yMinBypRes)
-    annotation (Line(points={{181,-240},{210,-240}}, color={255,0,255}));
   connect(not2.y, chiWatByp.u2) annotation (Line(points={{-139,100},{-130,100},{
           -130,-190},{158,-190}}, color={255,0,255}));
   connect(minBypSet.yChiWatBypSet, chiWatByp.u3) annotation (Line(points={{101,-208},
@@ -417,6 +416,10 @@ equation
   connect(logSwi5.y, yEndSta)
     annotation (Line(points={{181,-310},{210,-310}}, color={255,0,255}));
 
+  connect(conInt.y, intEqu.u2) annotation (Line(points={{-139,240},{-110,240},{-110,
+          262},{-102,262}}, color={255,127,0}));
+  connect(conInt.y, intEqu1.u2) annotation (Line(points={{-139,240},{-110,240},{
+          -110,-8},{-102,-8}}, color={255,127,0}));
 annotation (
   defaultComponentName="enaNexChi",
   Diagram(coordinateSystem(preserveAspectRatio=false,

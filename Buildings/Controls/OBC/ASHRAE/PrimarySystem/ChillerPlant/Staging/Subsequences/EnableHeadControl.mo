@@ -2,7 +2,7 @@
 block EnableHeadControl
   "Sequences for enabling head pressure control for the chiller being enabled"
 
-  parameter Integer nChi "Total number of chiller";
+  parameter Integer nChi=2 "Total number of chiller";
   parameter Modelica.SIunits.Time thrTimEnb=10
     "Threshold time to enable head pressure control after condenser water pump being reset";
   parameter Modelica.SIunits.Time waiTim = 30
@@ -36,6 +36,8 @@ block EnableHeadControl
       iconTransformation(extent={{100,50},{120,70}})));
 
 protected
+  final parameter Integer chiInd[nChi]={i for i in 1:nChi}
+    "Chiller index, {1,2,...,n}";
   Buildings.Controls.OBC.CDL.Logical.Timer tim
     "Count the time after condenser water pump being reset"
     annotation (Placement(transformation(extent={{-20,70},{0,90}})));
@@ -106,6 +108,9 @@ protected
   Buildings.Controls.OBC.CDL.Logical.Sources.Constant con1(final k=heaStaCha)
     "Head control status change"
     annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+  Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt[nChi](
+    final k=chiInd)   "Chiller index array"
+    annotation (Placement(transformation(extent={{-120,-50},{-100,-30}})));
 
 equation
   connect(uUpsDevSta, edg.u)
@@ -197,13 +202,12 @@ equation
     annotation (Line(points={{101,30},{110,30},{110,10},{60,10},{60,-2},
       {78,-2}}, color={0,0,127}));
 
+  connect(conInt.y, intEqu.u2) annotation (Line(points={{-99,-40},{-90,-40},{-90,
+          -18},{-62,-18}}, color={255,127,0}));
 annotation (
   defaultComponentName="enaHeaCon",
   Diagram(coordinateSystem(preserveAspectRatio=false,
-          extent={{-140,-140},{220,140}}), graphics={Text(
-          extent={{-138,-20},{-72,-44}},
-          lineColor={28,108,200},
-          textString="New block to generate array")}),
+          extent={{-140,-140},{220,140}})),
     Icon(graphics={
         Rectangle(
         extent={{-100,-100},{100,100}},

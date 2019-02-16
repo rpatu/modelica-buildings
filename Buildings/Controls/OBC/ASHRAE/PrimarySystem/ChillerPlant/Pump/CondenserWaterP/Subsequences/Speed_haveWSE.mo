@@ -1,5 +1,5 @@
 ﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pump.CondenserWaterP.Subsequences;
-block Speed_hasWSE
+block Speed_haveWSE
   "Sequence for operating condenser water pumps for plants with waterside economizer"
 
   parameter Integer staNum = 3
@@ -191,4 +191,4 @@ First implementation.
 </li>
 </ul>
 </html>"));
-end Speed_hasWSE;
+end Speed_haveWSE;

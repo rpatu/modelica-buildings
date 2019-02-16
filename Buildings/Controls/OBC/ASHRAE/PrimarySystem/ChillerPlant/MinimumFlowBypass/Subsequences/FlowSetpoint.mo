@@ -33,7 +33,7 @@ block FlowSetpoint "Chilled water minimum flow bypass setpoint"
 
 protected
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con[nSta](
-    each final k=minFloSet)
+    final k=minFloSet)
     "Minimum bypass flow setpoint at each stage, equal to the sum of minimum chilled water flowrate of the chillers being enabled at the stage"
     annotation (Placement(transformation(extent={{-220,90},{-200,110}})));
   Buildings.Controls.OBC.CDL.Routing.RealExtractor curMinSet(final nin=nSta)

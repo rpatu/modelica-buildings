@@ -39,10 +39,15 @@ block EnableChiIsoVal
     "Status of chiller chilled water isolation valve control: true=enabled valve is fully open"
     annotation (Placement(transformation(extent={{180,200},{200,220}}),
       iconTransformation(extent={{100,50},{120,70}})));
+  Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt[nChi](
+    final k=chiInd) "Chiller index array"
+    annotation (Placement(transformation(extent={{-80,-30},{-60,-10}})));
 
 protected
-  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con7(final k=
-        chaChiWatIsoTim) "Time to change chilled water isolation valve"
+  final parameter Integer chiInd[nChi]={i for i in 1:nChi}
+    "Chiller index, {1,2,...,n}";
+  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con7(
+    final k=chaChiWatIsoTim) "Time to change chilled water isolation valve"
     annotation (Placement(transformation(extent={{-40,40},{-20,60}})));
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con8(final k=endValPos)
     "Ending valve position"
@@ -120,9 +125,8 @@ protected
   Buildings.Controls.OBC.CDL.Logical.And and5
     "Check if the isolation valve has been fully open"
     annotation (Placement(transformation(extent={{140,200},{160,220}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys5(
-    each final uLow=turOnChiWatIsoTim - 1,
-    each final uHigh=turOnChiWatIsoTim + 1)
+  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys5(each final uLow=
+        chaChiWatIsoTim - 1, each final uHigh=chaChiWatIsoTim + 1)
     "Check if it has past the target time of open CHW isolation valve "
     annotation (Placement(transformation(extent={{80,120},{100,140}})));
 
@@ -151,8 +155,9 @@ equation
       color={255,0,255}));
   connect(and2.y, lat.u)
     annotation (Line(points={{-19,-170},{19,-170}}, color={255,0,255}));
-  connect(uStaCha, not1.u) annotation (Line(points={{-180,-178},{-80,-178},{-80,
-          -200},{-42,-200}}, color={255,0,255}));
+  connect(uStaCha, not1.u)
+    annotation (Line(points={{-180,-178},{-80,-178},{-80,-200},{-42,-200}},
+      color={255,0,255}));
   connect(not1.y, lat.u0)
     annotation (Line(points={{-19,-200},{0,-200},{0,-176},{19,-176}},
       color={255,0,255}));
@@ -242,16 +247,15 @@ equation
     annotation (Line(points={{161,210},{190,210}}, color={255,0,255}));
   connect(or2.y, mulAnd1.u)
     annotation (Line(points={{61,210},{78,210}}, color={255,0,255}));
+  connect(conInt.y, intEqu.u2)
+    annotation (Line(points={{-59,-20},{-40,-20},{-40,2},{-22,2}},
+      color={255,127,0}));
 
 annotation (
   defaultComponentName="enaChiIsoVal",
   Diagram(coordinateSystem(preserveAspectRatio=false,
           extent={{-160,-240},{180,240}}),
           graphics={
-          Text(
-          extent={{-78,-18},{-12,-42}},
-          lineColor={28,108,200},
-          textString="New block to generate array"),
           Rectangle(
           extent={{-158,238},{178,142}},
           fillColor={210,210,210},

@@ -10,5 +10,6 @@ Up
 EnableChiIsoVal
 EnableHeadControl
 ResetMinBypassSetpoint
+NextChiller
 UpProcess
 Validation
