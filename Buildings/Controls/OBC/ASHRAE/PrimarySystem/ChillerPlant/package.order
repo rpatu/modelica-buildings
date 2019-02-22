@@ -1,8 +1,8 @@
 Economizer
 Generic
-Pump
+HeadPressure
+MinimumFlowBypass
+Pumps
 Setpoints
 Staging
 Tower
-HeadPressure
-MinimumFlowBypass

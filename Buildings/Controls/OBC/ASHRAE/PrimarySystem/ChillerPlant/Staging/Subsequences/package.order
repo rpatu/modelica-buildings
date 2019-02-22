@@ -2,10 +2,9 @@ Capacities
 CapacityRequirement
 Change
 Down
-DownProcess
 EfficiencyCondition
 FailsafeCondition
 PartLoadRatios
 Up
-UpProcess
+Processes
 Validation
