@@ -68,14 +68,12 @@ protected
     annotation (Placement(transformation(extent={{0,20},{20,40}})));
   Buildings.Controls.OBC.CDL.Logical.Timer tim1
     annotation (Placement(transformation(extent={{0,-110},{20,-90}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys2(
-    final uLow=10*60 - 2,
-    final uHigh=10*60 + 2)
+  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr(
+    final threshold=10*60)
     "Check if the time is greater than 10 minutes"
     annotation (Placement(transformation(extent={{40,20},{60,40}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys3(
-    final uLow=10*60 - 2,
-    final uHigh=10*60 + 2)
+  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr1(
+    final threshold=10*60)
     "Check if the time is greater than 10 minutes"
     annotation (Placement(transformation(extent={{40,-110},{60,-90}})));
   Buildings.Controls.OBC.CDL.Logical.LogicalSwitch enaNexLag
@@ -111,9 +109,9 @@ equation
     annotation (Line(points={{-19,30},{-2,30}},  color={255,0,255}));
   connect(hys1.y,tim1. u)
     annotation (Line(points={{-19,-100},{-2,-100}},color={255,0,255}));
-  connect(tim.y,hys2. u)
+  connect(tim.y, greEquThr.u)
     annotation (Line(points={{21,30},{38,30}}, color={0,0,127}));
-  connect(tim1.y,hys3. u)
+  connect(tim1.y, greEquThr1.u)
     annotation (Line(points={{21,-100},{38,-100}}, color={0,0,127}));
   connect(addPar1.y, addPar2.u)
     annotation (Line(points={{-59,-60},{-42,-60}}, color={0,0,127}));
@@ -131,13 +129,13 @@ equation
   connect(chiWatFloRat.y, add1.u2)
     annotation (Line(points={{-99,60},{-90,60},{-90,36},{-100,36},
       {-100,-106},{-82,-106}}, color={0,0,127}));
-  connect(hys2.y, enaNexLag.u2)
+  connect(greEquThr.y, enaNexLag.u2)
     annotation (Line(points={{61,30},{98,30}}, color={255,0,255}));
   connect(con1.y, enaNexLag.u3)
     annotation (Line(points={{21,70},{80,70},{80,22},{98,22}}, color={255,0,255}));
   connect(con.y, enaNexLag.u1)
     annotation (Line(points={{21,100},{90,100},{90,38},{98,38}}, color={255,0,255}));
-  connect(hys3.y, shuLasLag.u2)
+  connect(greEquThr1.y, shuLasLag.u2)
     annotation (Line(points={{61,-100},{98,-100}}, color={255,0,255}));
   connect(con1.y, shuLasLag.u1)
     annotation (Line(points={{21,70},{80,70},{80,-92},{98,-92}}, color={255,0,255}));

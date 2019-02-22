@@ -33,9 +33,8 @@ protected
     annotation (Placement(transformation(extent={{60,60},{80,80}})));
   Buildings.Controls.OBC.CDL.Logical.Timer tim "Count the total time of the chiller is off"
     annotation (Placement(transformation(extent={{-40,-30},{-20,-10}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys(
-    final uLow=offTimThr - 5,
-    final uHigh=offTimThr + 5)
+  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr(
+    final threshold=offTimThr)
     "Check if the chiller has been OFF for more than 3 minutes"
     annotation (Placement(transformation(extent={{0,-30},{20,-10}})));
   Buildings.Controls.OBC.CDL.Logical.And and2 "Logical and"
@@ -54,9 +53,9 @@ equation
     annotation (Line(points={{-120,-20},{-82,-20}}, color={255,0,255}));
   connect(not2.y, tim.u)
     annotation (Line(points={{-59,-20},{-42,-20}}, color={255,0,255}));
-  connect(tim.y, hys.u)
+  connect(tim.y, greEquThr.u)
     annotation (Line(points={{-19,-20},{-2,-20}}, color={0,0,127}));
-  connect(hys.y, or2.u1)
+  connect(greEquThr.y, or2.u1)
     annotation (Line(points={{21,-20},{38,-20}}, color={255,0,255}));
   connect(not1.y, or2.u2)
     annotation (Line(points={{-59,-80},{30,-80},{30,-28},{38,-28}},

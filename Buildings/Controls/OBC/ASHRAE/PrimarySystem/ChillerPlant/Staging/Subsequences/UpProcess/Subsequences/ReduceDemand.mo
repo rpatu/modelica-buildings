@@ -1,5 +1,5 @@
 ﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.UpProcess.Subsequences;
-block ReduceChillerDemand "Sequence for reducing operating chiller demand"
+block ReduceDemand "Sequence for reducing operating chiller demand"
 
   parameter Integer nChi = 2 "Total number of chillers in the plant";
   parameter Real chiDemRedFac = 0.75
@@ -16,8 +16,8 @@ block ReduceChillerDemand "Sequence for reducing operating chiller demand"
     "Chiller status: true=ON"
      annotation (Placement(transformation(extent={{-200,-70},{-160,-30}}),
        iconTransformation(extent={{-140,-80},{-100,-40}})));
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uStaUp
-    "Stage up status: true=stage-up"
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uDemLim
+    "Demand limit: true=limit chiller demand"
     annotation (Placement(transformation(extent={{-200,90},{-160,130}}),
       iconTransformation(extent={{-140,40},{-100,80}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiDem[nChi](
@@ -116,13 +116,12 @@ equation
     annotation (Line(points={{141,40},{170,40}}, color={0,0,127}));
   connect(truDel.y, yChiDemRed)
     annotation (Line(points={{121,-100},{170,-100}}, color={255,0,255}));
-  connect(uStaUp, edg.u)
+  connect(uDemLim, edg.u)
     annotation (Line(points={{-180,110},{-102,110}}, color={255,0,255}));
   connect(edg.y, booRep.u)
     annotation (Line(points={{-79,110},{-62,110}},   color={255,0,255}));
-  connect(uStaUp, booRep1.u)
-    annotation (Line(points={{-180,110},{-120,110},{-120,50},{-82,50}},
-      color={255,0,255}));
+  connect(uDemLim, booRep1.u) annotation (Line(points={{-180,110},{-120,110},{-120,
+          50},{-82,50}}, color={255,0,255}));
   connect(booRep1.y, swi4.u2)
     annotation (Line(points={{-59,50},{-40,50},{-40,40},{118,40}},
       color={255,0,255}));
@@ -204,4 +203,4 @@ First implementation.
 </li>
 </ul>
 </html>"));
-end ReduceChillerDemand;
+end ReduceDemand;

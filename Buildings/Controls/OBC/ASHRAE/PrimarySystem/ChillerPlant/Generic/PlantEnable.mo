@@ -104,14 +104,12 @@ protected
     final uHigh=0.25)
     "Check if outdoor temperature is higher than chiller lockout temperature"
     annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys1(
-    final uLow=plaThrTim - 5,
-    final uHigh=plaThrTim + 5)
+  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr(
+    final threshold=plaThrTim)
     "Check if chiller plant has been disabled more than threshold time"
     annotation (Placement(transformation(extent={{-60,130},{-40,150}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys2(
-    final uLow=plaThrTim - 5,
-    final uHigh=plaThrTim + 5)
+  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr1(
+    final threshold=plaThrTim)
     "Check if chiller plant has been enabled more than threshold time"
     annotation (Placement(transformation(extent={{-100,-50},{-80,-30}})));
   Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys3(
@@ -119,9 +117,8 @@ protected
     final uHigh=0.25)
     "Check if outdoor temperature is lower than chiller lockout temperature minus 1 degF"
     annotation (Placement(transformation(extent={{-100,-150},{-80,-130}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys4(
-    final uLow=reqThrTim - 5,
-    final uHigh=reqThrTim + 5)
+  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr2(
+    final threshold=reqThrTim)
     "Check if number of chiller plant request has been less than ignorable request by more than threshold time"
     annotation (Placement(transformation(extent={{-60,-110},{-40,-90}})));
   Buildings.Controls.OBC.CDL.Logical.MultiOr mulOr(final nu=3) "Logical or"
@@ -138,21 +135,21 @@ equation
     annotation (Line(points={{-220,140},{-142,140}}, color={255,0,255}));
   connect(not1.y, disTim.u)
     annotation (Line(points={{-119,140},{-102,140}}, color={255,0,255}));
-  connect(disTim.y, hys1.u)
+  connect(disTim.y, greEquThr.u)
     annotation (Line(points={{-79,140},{-62,140}}, color={0,0,127}));
   connect(TChiWatSupResReq, hasReq.u)
     annotation (Line(points={{-220,100},{-142,100}}, color={255,127,0}));
   connect(uPla, enaTim.u)
     annotation (Line(points={{-220,140},{-160,140},{-160,-40},{-142,-40}},
       color={255,0,255}));
-  connect(enaTim.y, hys2.u)
+  connect(enaTim.y, greEquThr1.u)
     annotation (Line(points={{-119,-40},{-102,-40}}, color={0,0,127}));
   connect(TChiWatSupResReq, intLesThr.u)
     annotation (Line(points={{-220,100},{-170,100},{-170,-100},{-142,-100}},
       color={255,127,0}));
   connect(intLesThr.y, enaTim1.u)
     annotation (Line(points={{-119,-100},{-102,-100}}, color={255,0,255}));
-  connect(enaTim1.y, hys4.u)
+  connect(enaTim1.y, greEquThr2.u)
     annotation (Line(points={{-79,-100},{-62,-100}}, color={0,0,127}));
   connect(TOut, addPar1.u)
     annotation (Line(points={{-220,10},{-180,10},{-180,-140},{-142,-140}},
@@ -162,15 +159,15 @@ equation
   connect(not2.y, mulOr.u[1])
     annotation (Line(points={{1,-50},{20,-50},{20,-95.3333},{38,-95.3333}},
       color={255,0,255}));
-  connect(hys4.y, mulOr.u[2])
+  connect(greEquThr2.y, mulOr.u[2])
     annotation (Line(points={{-39,-100},{38,-100}}, color={255,0,255}));
   connect(hys3.y, mulOr.u[3])
     annotation (Line(points={{-79,-140},{20,-140},{20,-104.667},{38,-104.667}},
       color={255,0,255}));
-  connect(hys2.y, and2.u1)
+  connect(greEquThr1.y, and2.u1)
     annotation (Line(points={{-79,-40},{-60,-40},{-60,-10},{38,-10}},
       color={255,0,255}));
-  connect(hys1.y, mulAnd.u[1])
+  connect(greEquThr.y, mulAnd.u[1])
     annotation (Line(points={{-39,140},{-20,140},{-20,95.25},{38,95.25}},
       color={255,0,255}));
   connect(hasReq.y, mulAnd.u[2])

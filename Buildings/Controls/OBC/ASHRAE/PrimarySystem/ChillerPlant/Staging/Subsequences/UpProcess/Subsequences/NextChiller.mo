@@ -1,11 +1,15 @@
-within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences;
+within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.UpProcess.Subsequences;
 block NextChiller
   "Sequence for selecting next chiller to be enabled or disabled"
   parameter Integer nChi = 2 "Total number of chillers";
-  parameter Integer upOnOffSta = 2
-    "Stage index that when staging up to the stage, need to turn off small chiller";
-  parameter Integer dowOnOffSta = 1
-    "Stage index that when staging down to the stage, need to turn on small chiller";
+  parameter Boolean havePonChi = false
+    "Flag to indicate if there is pony chiller";
+  parameter Integer upOnOffSta = 0
+    "Index of stage when staging up to the stage, need to turn off small chiller. When no stage chang need the change, set it to zeros"
+    annotation (Dialog(enable=havePonChi));
+  parameter Integer dowOnOffSta = 0
+    "Index of stage when staging down to the stage, need to turn on small chiller. When no stage chang need the change, set it to zeros"
+    annotation (Dialog(enable=havePonChi));
 
   Buildings.Controls.OBC.CDL.Interfaces.IntegerInput uChiPri[nChi]
     "Chiller enabling priority"
@@ -35,7 +39,11 @@ block NextChiller
     "Smaller chiller to be disabled in staging-up process"
     annotation (Placement(transformation(extent={{200,50},{220,70}}),
       iconTransformation(extent={{100,30},{120,50}})));
-  Buildings.Controls.OBC.CDL.Interfaces.IntegerOutput yDisLasChi
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yOnOff
+    "Indicate if the stage require one chiller to be enabled while another is disabled"
+    annotation (Placement(transformation(extent={{200,0},{220,20}}),
+      iconTransformation(extent={{100,-10},{120,10}})));
+  Buildings.Controls.OBC.CDL.Interfaces.IntegerOutput yLasDisChi
     "Disable last chiller when it is in stage-down process"
     annotation (Placement(transformation(extent={{200,-40},{220,-20}}),
       iconTransformation(extent={{100,-50},{120,-30}})));
@@ -129,6 +137,8 @@ protected
   Buildings.Controls.OBC.CDL.Conversions.RealToInteger reaToInt5
     "Convert real input to integer output"
     annotation (Placement(transformation(extent={{20,-140},{40,-120}})));
+  Buildings.Controls.OBC.CDL.Logical.Or or2 "Logical or"
+    annotation (Placement(transformation(extent={{160,0},{180,20}})));
 
 equation
   connect(uChiPri,intToRea. u)
@@ -198,38 +208,58 @@ equation
   connect(uSta, intEqu1.u1)
     annotation (Line(points={{-220,0},{-160,0},{-160,-170},{-142,-170}},
       color={255,127,0}));
-  connect(conInt1.y, intEqu1.u2) annotation (Line(points={{-159,-190},{-150,-190},
-          {-150,-178},{-142,-178}}, color={255,127,0}));
-  connect(uStaDow, and1.u1) annotation (Line(points={{-222,-60},{-120,-60},{-120,
-          -150},{-42,-150}}, color={255,0,255}));
-  connect(intEqu1.y, and1.u2) annotation (Line(points={{-119,-170},{-60,-170},{-60,
-          -158},{-42,-158}}, color={255,0,255}));
-  connect(mulSum.y, swi1.u1) annotation (Line(points={{-119,160},{-100,160},{-100,
-          -52},{-42,-52}}, color={0,0,127}));
-  connect(mulSum.y, disLasChi.u) annotation (Line(points={{-119,160},{-100,160},
-          {-100,-110},{-82,-110}}, color={0,0,127}));
-  connect(disLasChi.y, swi1.u3) annotation (Line(points={{-59,-110},{-50,-110},{
-          -50,-68},{-42,-68}}, color={0,0,127}));
-  connect(disLasChi.y, reaToInt5.u) annotation (Line(points={{-59,-110},{-50,-110},
-          {-50,-130},{18,-130}}, color={0,0,127}));
-  connect(reaToInt5.y, enaSmaChi.index) annotation (Line(points={{41,-130},{70,-130},
-          {70,-112}}, color={255,127,0}));
-  connect(intToRea.y, enaSmaChi.u) annotation (Line(points={{-39,200},{0,200},{0,
-          -100},{58,-100}}, color={0,0,127}));
-  connect(and1.y, swi2.u2) annotation (Line(points={{-19,-150},{50,-150},{50,-150},
-          {118,-150}}, color={255,0,255}));
-  connect(enaSmaChi.y, swi2.u1) annotation (Line(points={{81,-100},{100,-100},{100,
-          -142},{118,-142}}, color={0,0,127}));
-  connect(con1.y, swi2.u3) annotation (Line(points={{81,-180},{100,-180},{100,-158},
-          {118,-158}}, color={0,0,127}));
+  connect(conInt1.y, intEqu1.u2)
+    annotation (Line(points={{-159,-190},{-150,-190},{-150,-178},{-142,-178}},
+      color={255,127,0}));
+  connect(uStaDow, and1.u1)
+    annotation (Line(points={{-222,-60},{-120,-60},{-120,-150},{-42,-150}},
+      color={255,0,255}));
+  connect(intEqu1.y, and1.u2)
+    annotation (Line(points={{-119,-170},{-60,-170},{-60,-158},{-42,-158}},
+      color={255,0,255}));
+  connect(mulSum.y, swi1.u1)
+    annotation (Line(points={{-119,160},{-100,160},{-100,-52},{-42,-52}},
+      color={0,0,127}));
+  connect(mulSum.y, disLasChi.u)
+    annotation (Line(points={{-119,160},{-100,160},{-100,-110},{-82,-110}},
+      color={0,0,127}));
+  connect(disLasChi.y, swi1.u3)
+    annotation (Line(points={{-59,-110},{-50,-110},{-50,-68},{-42,-68}},
+      color={0,0,127}));
+  connect(disLasChi.y, reaToInt5.u)
+    annotation (Line(points={{-59,-110},{-50,-110},{-50,-130},{18,-130}},
+      color={0,0,127}));
+  connect(reaToInt5.y, enaSmaChi.index)
+    annotation (Line(points={{41,-130},{70,-130},{70,-112}},
+      color={255,127,0}));
+  connect(intToRea.y, enaSmaChi.u)
+    annotation (Line(points={{-39,200},{0,200},{0,-100},{58,-100}},
+      color={0,0,127}));
+  connect(and1.y, swi2.u2)
+    annotation (Line(points={{-19,-150},{50,-150},{50,-150},{118,-150}},
+      color={255,0,255}));
+  connect(enaSmaChi.y, swi2.u1)
+    annotation (Line(points={{81,-100},{100,-100},{100,-142},{118,-142}},
+      color={0,0,127}));
+  connect(con1.y, swi2.u3)
+    annotation (Line(points={{81,-180},{100,-180},{100,-158},{118,-158}},
+      color={0,0,127}));
   connect(nexDisChi.y, reaToInt6.u)
     annotation (Line(points={{81,-30},{98,-30}}, color={0,0,127}));
-  connect(reaToInt6.y, yDisLasChi)
+  connect(reaToInt6.y,yLasDisChi)
     annotation (Line(points={{121,-30},{210,-30}}, color={255,127,0}));
   connect(swi2.y, reaToInt7.u)
     annotation (Line(points={{141,-150},{158,-150}}, color={0,0,127}));
   connect(reaToInt7.y, yEnaSmaChi)
     annotation (Line(points={{181,-150},{210,-150}}, color={255,127,0}));
+  connect(and1.y, or2.u2)
+    annotation (Line(points={{-19,-150},{90,-150},{90,2},{158,2}},
+      color={255,0,255}));
+  connect(and2.y, or2.u1)
+    annotation (Line(points={{-19,60},{20,60},{20,10},{158,10}},
+      color={255,0,255}));
+  connect(or2.y, yOnOff)
+    annotation (Line(points={{181,10},{210,10}}, color={255,0,255}));
 
 annotation (
   defaultComponentName="nexChi",
@@ -288,5 +318,10 @@ annotation (
           extent={{44,-78},{98,-100}},
           lineColor={255,127,0},
           pattern=LinePattern.Dash,
-          textString="yEnaSmaChi")}));
+          textString="yEnaSmaChi"),
+        Text(
+          extent={{54,8},{96,-4}},
+          lineColor={255,0,255},
+          pattern=LinePattern.Dash,
+          textString="yOnOff")}));
 end NextChiller;

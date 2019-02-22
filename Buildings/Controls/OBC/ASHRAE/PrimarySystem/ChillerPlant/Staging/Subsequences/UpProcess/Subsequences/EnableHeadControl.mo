@@ -1,4 +1,4 @@
-﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences;
+﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.UpProcess.Subsequences;
 block EnableHeadControl
   "Sequences for enabling head pressure control for the chiller being enabled"
 
@@ -47,9 +47,8 @@ protected
   Buildings.Controls.OBC.CDL.Logical.Latch lat
     "Logical latch, maintain ON signal until condition changes"
     annotation (Placement(transformation(extent={{-60,70},{-40,90}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys(
-    final uLow=thrTimEnb - 1,
-    final uHigh=thrTimEnb + 1)
+  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr2(
+    final threshold=thrTimEnb)
     "Check if it is 10 seconds after condenser water pump achieves its new setpoint"
     annotation (Placement(transformation(extent={{40,70},{60,90}})));
   Buildings.Controls.OBC.CDL.Discrete.TriggeredSampler triSam[nChi]
@@ -67,9 +66,8 @@ protected
     annotation (Placement(transformation(extent={{-120,30},{-100,50}})));
   Buildings.Controls.OBC.CDL.Logical.Switch swi[nChi] "Logical switch"
     annotation (Placement(transformation(extent={{140,-20},{160,0}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys1(
-    final uLow=thrTimEnb + waiTim - 1,
-    final uHigh=thrTimEnb + waiTim + 1)
+  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr1(
+    final threshold=thrTimEnb + waiTim)
     "Check if it is 10 seconds after condenser water pump achieves its new setpoint and have waited another 30 seconds"
     annotation (Placement(transformation(extent={{40,100},{60,120}})));
   Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep1(
@@ -117,7 +115,7 @@ equation
     annotation (Line(points={{-160,120},{-122,120}}, color={255,0,255}));
   connect(lat.y, tim.u)
     annotation (Line(points={{-39,80},{-22,80}}, color={255,0,255}));
-  connect(tim.y, hys.u)
+  connect(tim.y, greEquThr2.u)
     annotation (Line(points={{1,80},{38,80}}, color={0,0,127}));
   connect(uChiHeaCon, booToRea.u)
     annotation (Line(points={{-160,-70},{-122,-70}}, color={255,0,255}));
@@ -143,15 +141,14 @@ equation
   connect(booRep.y, triSam.trigger)
     annotation (Line(points={{-39,-120},{-10,-120},{-10,-101.8}},
       color={255,0,255}));
-  connect(tim.y, hys1.u)
-    annotation (Line(points={{1,80},{20,80},{20,110},{38,110}},
-      color={0,0,127}));
-  connect(hys1.y, yEnaHeaCon)
+  connect(tim.y, greEquThr1.u)
+    annotation (Line(points={{1,80},{20,80},{20,110},{38,110}}, color={0,0,127}));
+  connect(greEquThr1.y, yEnaHeaCon)
     annotation (Line(points={{61,110},{230,110}}, color={255,0,255}));
   connect(booRep1.y, swi.u2)
     annotation (Line(points={{101,80},{120,80},{120,-10},{138,-10}},
       color={255,0,255}));
-  connect(hys.y, booRep1.u)
+  connect(greEquThr2.y, booRep1.u)
     annotation (Line(points={{61,80},{78,80}}, color={255,0,255}));
   connect(swi.y, greEquThr.u)
     annotation (Line(points={{161,-10},{178,-10}}, color={0,0,127}));
@@ -191,7 +188,7 @@ equation
   connect(con.y, logSwi.u3)
     annotation (Line(points={{-39,20},{-20,20},{-20,22},{-2,22}},
       color={255,0,255}));
-  connect(hys.y, logSwi.u2)
+  connect(greEquThr2.y, logSwi.u2)
     annotation (Line(points={{61,80},{70,80},{70,60},{-10,60},{-10,30},
       {-2,30}}, color={255,0,255}));
   connect(logSwi.y, booRep3.u)
@@ -201,9 +198,10 @@ equation
   connect(booToRea1.y, swi2.u1)
     annotation (Line(points={{101,30},{110,30},{110,10},{60,10},{60,-2},
       {78,-2}}, color={0,0,127}));
+  connect(conInt.y, intEqu.u2)
+    annotation (Line(points={{-99,-40},{-90,-40},{-90,-18},{-62,-18}},
+      color={255,127,0}));
 
-  connect(conInt.y, intEqu.u2) annotation (Line(points={{-99,-40},{-90,-40},{-90,
-          -18},{-62,-18}}, color={255,127,0}));
 annotation (
   defaultComponentName="enaHeaCon",
   Diagram(coordinateSystem(preserveAspectRatio=false,

@@ -1,4 +1,4 @@
-﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences;
+﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.UpProcess.Subsequences;
 block ResetMinBypassSetpoint
   "Sequence for reset minimum chilled water bypass flow setpoint"
 
@@ -50,9 +50,8 @@ protected
     annotation (Placement(transformation(extent={{20,-50},{40,-30}})));
   Buildings.Controls.OBC.CDL.Logical.And and2 "Logical and"
     annotation (Placement(transformation(extent={{-60,70},{-40,90}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys2(
-    final uLow=aftByPasSetTim - 1,
-    final uHigh=aftByPasSetTim + 1)
+  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr(
+    final threshold=aftByPasSetTim)
     "Check if it is 1 minute after new setpoint achieved"
     annotation (Placement(transformation(extent={{60,-50},{80,-30}})));
   Buildings.Controls.OBC.CDL.Logical.Not not1 "Logical not"
@@ -83,7 +82,7 @@ equation
     annotation (Line(points={{-39,-40},{-22,-40}}, color={255,0,255}));
   connect(not2.y, tim.u)
     annotation (Line(points={{1,-40},{18,-40}}, color={255,0,255}));
-  connect(tim.y, hys2.u)
+  connect(tim.y, greEquThr.u)
     annotation (Line(points={{41,-40},{58,-40}}, color={0,0,127}));
   connect(and2.y, and1.u1)
     annotation (Line(points={{-39,80},{40,80},{40,88},{118,88}},
@@ -105,12 +104,12 @@ equation
   connect(lat.y, and1.u2)
     annotation (Line(points={{61,30},{80,30},{80,80},{118,80}},
       color={255,0,255}));
-  connect(hys2.y, and1.u3)
+  connect(greEquThr.y, and1.u3)
     annotation (Line(points={{81,-40},{100,-40},{100,72},{118,72}},
       color={255,0,255}));
 
 annotation (
-  defaultComponentName="minBypSet",
+  defaultComponentName="minBypRes",
   Icon(graphics={
         Rectangle(
         extent={{-100,-100},{100,100}},
