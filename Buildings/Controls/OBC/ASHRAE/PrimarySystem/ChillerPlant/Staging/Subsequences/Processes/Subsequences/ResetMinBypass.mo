@@ -1,5 +1,5 @@
 ﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.Processes.Subsequences;
-block ResetMinBypassSetpoint
+block ResetMinBypass
   "Sequence for reset minimum chilled water bypass flow setpoint"
 
   parameter Modelica.SIunits.Time aftByPasSetTim = 60;
@@ -172,4 +172,4 @@ First implementation.
 </li>
 </ul>
 </html>"));
-end ResetMinBypassSetpoint;
+end ResetMinBypass;

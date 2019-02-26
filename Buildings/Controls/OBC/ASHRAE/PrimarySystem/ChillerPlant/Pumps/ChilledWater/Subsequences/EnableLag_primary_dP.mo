@@ -1,8 +1,8 @@
 ﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pumps.ChilledWater.Subsequences;
 block EnableLag_primary_dP
   "Sequences for enabling lag pump for primary-only plants using differential pressure pump speed control"
-  parameter Integer num = 2 "Total number of pumps";
-  parameter Integer num_nominal(final max = num, final min = 0) = 1
+  parameter Integer nPum = 2 "Total number of pumps";
+  parameter Integer nPum_nominal(final max = nPum, final min = 0) = 1
     "Total number of pumps that operate at design conditions"
     annotation (Dialog(group="Nominal conditions"));
   parameter Modelica.SIunits.VolumeFlowRate VChiWat_flow_nominal
@@ -14,7 +14,7 @@ block EnableLag_primary_dP
     final quantity="VolumeFlowRate") "Chilled water flow"
     annotation (Placement(transformation(extent={{-180,40},{-140,80}}),
       iconTransformation(extent={{-140,20},{-100,60}})));
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChiWatPum[num]
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChiWatPum[nPum]
     "Chilled water pump status"
     annotation (Placement(transformation(extent={{-180,-40},{-140,0}}),
       iconTransformation(extent={{-140,-58},{-100,-18}})));
@@ -32,17 +32,17 @@ protected
     final k=1/VChiWat_flow_nominal)
     "Chiller water flow ratio"
     annotation (Placement(transformation(extent={{-120,50},{-100,70}})));
-  Buildings.Controls.OBC.CDL.Conversions.BooleanToInteger booToInt[num]
+  Buildings.Controls.OBC.CDL.Conversions.BooleanToInteger booToInt[nPum]
     "Convert boolean input to integer number"
     annotation (Placement(transformation(extent={{-80,-30},{-60,-10}})));
-  Buildings.Controls.OBC.CDL.Integers.MultiSum mulSumInt(final nin=num)
+  Buildings.Controls.OBC.CDL.Integers.MultiSum mulSumInt(final nin=nPum)
     "Total number of operating pumps"
     annotation (Placement(transformation(extent={{-40,-30},{-20,-10}})));
   Buildings.Controls.OBC.CDL.Conversions.IntegerToReal intToRea
     annotation (Placement(transformation(extent={{0,-30},{20,-10}})));
   Buildings.Controls.OBC.CDL.Continuous.AddParameter addPar(
     final p=-0.03,
-    final k=1/num_nominal)
+    final k=1/nPum_nominal)
     annotation (Placement(transformation(extent={{40,-30},{60,-10}})));
   Buildings.Controls.OBC.CDL.Continuous.AddParameter addPar1(
     final p=-1,
@@ -50,7 +50,7 @@ protected
     annotation (Placement(transformation(extent={{-80,-70},{-60,-50}})));
   Buildings.Controls.OBC.CDL.Continuous.AddParameter addPar2(
     final p=-0.03,
-    final k=1/num_nominal)
+    final k=1/nPum_nominal)
     annotation (Placement(transformation(extent={{-40,-70},{-20,-50}})));
   Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys(
     final uLow=-0.01,

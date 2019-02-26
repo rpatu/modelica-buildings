@@ -31,23 +31,24 @@ block ChilledWaterPlantReset
 
   Buildings.Controls.OBC.CDL.Interfaces.IntegerInput TChiWatSupResReq
     "Cooling chilled water supply temperature setpoint reset request"
-    annotation (Placement(transformation(extent={{-180,10},{-140,50}}),
+    annotation (Placement(transformation(extent={{-180,-30},{-140,10}}),
       iconTransformation(extent={{-140,-20},{-100,20}})));
-  Buildings.Controls.OBC.CDL.Interfaces.IntegerInput uChiSta
-    "Chiller stage"
-    annotation (Placement(transformation(extent={{-180,-20},{-140,20}}),
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uStaPro
+    "Plant staging staus, indicate if plant is in the staging process"
+    annotation (Placement(transformation(extent={{-180,-60},{-140,-20}}),
       iconTransformation(extent={{-140,-80},{-100,-40}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChiWatPum[num]
     "Chilled water pump status"
-    annotation (Placement(transformation(extent={{-180,40},{-140,80}}),
+    annotation (Placement(transformation(extent={{-180,0},{-140,40}}),
       iconTransformation(extent={{-140,40},{-100,80}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiWatPlaRes(
     final min=0,
     final max=1,
     final unit="1") "Chilled water plant reset"
-    annotation (Placement(transformation(extent={{120,-10},{140,10}}),
+    annotation (Placement(transformation(extent={{120,-50},{140,-30}}),
       iconTransformation(extent={{100,-10},{120,10}})));
 
+protected
   Buildings.Controls.OBC.ASHRAE.G36_PR1.Generic.SetPoints.TrimAndRespond triRes(
     final iniSet=iniSet,
     final minSet=minSet,
@@ -58,89 +59,72 @@ block ChilledWaterPlantReset
     final triAmo=triAmo,
     final resAmo=resAmo,
     final maxRes=maxRes) "Calculate chilled water plant reset"
-    annotation (Placement(transformation(extent={{0,50},{20,70}})));
+    annotation (Placement(transformation(extent={{0,10},{20,30}})));
   Buildings.Controls.OBC.CDL.Discrete.TriggeredSampler triSam
     "Sample last reset value when there is chiller stage change"
-    annotation (Placement(transformation(extent={{40,50},{60,70}})));
+    annotation (Placement(transformation(extent={{40,10},{60,30}})));
   Buildings.Controls.OBC.CDL.Logical.Edge edg
     "Check if the input changes from false to true"
-    annotation (Placement(transformation(extent={{20,20},{40,40}})));
+    annotation (Placement(transformation(extent={{20,-20},{40,0}})));
   Buildings.Controls.OBC.CDL.Logical.TrueHoldWithReset truHol(
     final duration=holTim)
     "Hold the true input with given time"
-    annotation (Placement(transformation(extent={{20,-10},{40,10}})));
+    annotation (Placement(transformation(extent={{20,-50},{40,-30}})));
   Buildings.Controls.OBC.CDL.Logical.Switch swi
     "Switch plant reset value depends on if there is chiller stage change"
-    annotation (Placement(transformation(extent={{80,-10},{100,10}})));
-  Buildings.Controls.OBC.CDL.Integers.Change cha
-    "Check if there is chiller stage change"
-    annotation (Placement(transformation(extent={{-120,-10},{-100,10}})));
-
-protected
+    annotation (Placement(transformation(extent={{80,-50},{100,-30}})));
   Buildings.Controls.OBC.CDL.Logical.Not not1[num] "Logical not"
-    annotation (Placement(transformation(extent={{-120,50},{-100,70}})));
+    annotation (Placement(transformation(extent={{-120,10},{-100,30}})));
   Buildings.Controls.OBC.CDL.Logical.MultiAnd mulAnd(
     final nu=num) "Logical and"
-    annotation (Placement(transformation(extent={{-80,50},{-60,70}})));
+    annotation (Placement(transformation(extent={{-80,10},{-60,30}})));
   Buildings.Controls.OBC.CDL.Logical.Not not2
     "Check if these is any CHW pump is proven on"
-    annotation (Placement(transformation(extent={{-40,50},{-20,70}})));
+    annotation (Placement(transformation(extent={{-40,10},{-20,30}})));
 
 equation
   connect(not1.y, mulAnd.u)
-          annotation (Line(points={{-99,60},{-82,60}}, color={255,0,255}));
+    annotation (Line(points={{-99,20},{-82,20}}, color={255,0,255}));
   connect(TChiWatSupResReq, triRes.numOfReq)
-          annotation (Line(points={{-160,30},{-10,30},{-10,52},{-2,52}},
-          color={255,127,0}));
+    annotation (Line(points={{-160,-10},{-10,-10},{-10,12},{-2,12}},
+      color={255,127,0}));
   connect(mulAnd.y, not2.u)
-          annotation (Line(points={{-58.3,60},{-42,60}}, color={255,0,255}));
+    annotation (Line(points={{-58.3,20},{-42,20}}, color={255,0,255}));
   connect(not2.y, triRes.uDevSta)
-          annotation (Line(points={{-19,60},{-10,60},{-10,68},{-2,68}},
-          color={255,0,255}));
+    annotation (Line(points={{-19,20},{-10,20},{-10,28},{-2,28}},
+      color={255,0,255}));
   connect(uChiWatPum, not1.u)
-          annotation (Line(points={{-160,60},{-122,60}}, color={255,0,255}));
+    annotation (Line(points={{-160,20},{-122,20}}, color={255,0,255}));
   connect(triRes.y, triSam.u)
-          annotation (Line(points={{21,60},{38,60}}, color={0,0,127}));
+    annotation (Line(points={{21,20},{38,20}}, color={0,0,127}));
   connect(truHol.y, swi.u2)
-          annotation (Line(points={{41,0},{78,0}}, color={255,0,255}));
+    annotation (Line(points={{41,-40},{78,-40}}, color={255,0,255}));
   connect(triRes.y, swi.u3)
-          annotation (Line(points={{21,60},{30,60},{30,80},{66,80},{66,-8},
-          {78,-8}}, color={0,0,127}));
+    annotation (Line(points={{21,20},{30,20},{30,40},{66,40},{66,-48},{78,-48}},
+      color={0,0,127}));
   connect(triSam.y, swi.u1)
-          annotation (Line(points={{61,60},{70,60},{70,8},{78,8}}, color={0,0,127}));
-  connect(swi.y, yChiWatPlaRes)
-          annotation (Line(points={{101,0},{130,0}}, color={0,0,127}));
+    annotation (Line(points={{61,20},{70,20},{70,-32},{78,-32}},color={0,0,127}));
   connect(edg.y, triSam.trigger)
-          annotation (Line(points={{41,30},{50,30},{50,48.2}}, color={255,0,255}));
-  connect(uChiSta, cha.u)
-          annotation (Line(points={{-160,0},{-142,0},{-142,0},{-122,0}},
-          color={255,127,0}));
-  connect(cha.y, truHol.u)
-          annotation (Line(points={{-99,0},{19,0}}, color={255,0,255}));
-  connect(cha.y, edg.u)
-          annotation (Line(points={{-99,0},{0,0},{0,30},{18,30}},
-          color={255,0,255}));
+    annotation (Line(points={{41,-10},{50,-10},{50,8.2}},color={255,0,255}));
+  connect(swi.y, yChiWatPlaRes)
+    annotation (Line(points={{101,-40},{130,-40}},  color={0,0,127}));
+  connect(uStaPro, truHol.u)
+    annotation (Line(points={{-160,-40},{19,-40}}, color={255,0,255}));
+  connect(uStaPro, edg.u)
+    annotation (Line(points={{-160,-40},{0,-40},{0,-10},{18,-10}},
+      color={255,0,255}));
 
 annotation (
   defaultComponentName="chiWatPlaRes",
   Diagram(coordinateSystem(preserveAspectRatio=false,
-  extent={{-140,-60},{120,100}}), graphics={Rectangle(
-          extent={{-138,18},{98,-58}},
+  extent={{-140,-60},{120,60}}),  graphics={
+                                     Rectangle(
+          extent={{-138,58},{98,-18}},
           fillColor={210,210,210},
           fillPattern=FillPattern.Solid,
-          pattern=LinePattern.None), Rectangle(
-          extent={{-138,98},{98,22}},
-          fillColor={210,210,210},
-          fillPattern=FillPattern.Solid,
-          pattern=LinePattern.None), Text(
-          extent={{10,-46},{94,-58}},
-          pattern=LinePattern.None,
-          fillColor={210,210,210},
-          fillPattern=FillPattern.Solid,
-          lineColor={0,0,255},
-          textString="Check if there is chiller stage change"),
+          pattern=LinePattern.None),
           Text(
-          extent={{-70,100},{82,84}},
+          extent={{-70,60},{82,44}},
           pattern=LinePattern.None,
           fillColor={210,210,210},
           fillPattern=FillPattern.Solid,

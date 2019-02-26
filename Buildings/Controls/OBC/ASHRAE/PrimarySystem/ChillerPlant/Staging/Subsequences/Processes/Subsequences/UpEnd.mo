@@ -96,7 +96,7 @@ protected
   Buildings.Controls.OBC.CDL.Conversions.BooleanToReal booToRea1[nChi]
     "Convert boolean input to real output"
     annotation (Placement(transformation(extent={{-160,10},{-140,30}})));
-  CDL.Continuous.LessEqualThreshold                           lesEquThr(
+  Buildings.Controls.OBC.CDL.Continuous.LessEqualThreshold lesEquThr(
     final threshold=0.5)
     "Check if the disabled chiller is not requiring chilled water"
     annotation (Placement(transformation(extent={{-80,10},{-60,30}})));
@@ -114,7 +114,7 @@ protected
   Buildings.Controls.OBC.CDL.Conversions.BooleanToReal booToRea2[nChi]
     "Convert boolean input to real output"
     annotation (Placement(transformation(extent={{-160,-80},{-140,-60}})));
-  CDL.Continuous.LessEqualThreshold                           lesEquThr1(
+  Buildings.Controls.OBC.CDL.Continuous.LessEqualThreshold lesEquThr1(
     final threshold=0.5)
     "Check if the disabled chiller is not requiring condenser water"
     annotation (Placement(transformation(extent={{-80,-80},{-60,-60}})));
@@ -132,8 +132,10 @@ protected
   Buildings.Controls.OBC.CDL.Logical.Sources.Constant con3(final k=false)
     "False constant"
     annotation (Placement(transformation(extent={{-60,-146},{-40,-126}})));
-  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.Processes.Subsequences.ResetMinBypassSetpoint
-    minBypSet1(final aftByPasSetTim=aftByPasSetTim, final minFloDif=minFloDif)
+  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.Processes.Subsequences.ResetMinBypass
+    minBypSet1(
+    final aftByPasSetTim=aftByPasSetTim,
+    final minFloDif=minFloDif)
     "Check if minimum bypass flow has been resetted"
     annotation (Placement(transformation(extent={{80,-190},{100,-170}})));
   Buildings.Controls.OBC.CDL.Logical.Not not2 "Logical not"

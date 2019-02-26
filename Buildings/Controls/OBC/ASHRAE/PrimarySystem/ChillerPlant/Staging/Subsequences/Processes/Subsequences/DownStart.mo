@@ -115,7 +115,7 @@ protected
     final chiDemRedFac=chiDemRedFac,
     final holChiDemTim=holChiDemTim) "Reduce chiller demand"
     annotation (Placement(transformation(extent={{0,160},{20,180}})));
-  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.Processes.Subsequences.ResetMinBypassSetpoint
+  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.Processes.Subsequences.ResetMinBypass
     minBypRes(final aftByPasSetTim=aftByPasSetTim, final minFloDif=minFloDif)
     "Slowly change the minimum flow bypass setpoint"
     annotation (Placement(transformation(extent={{60,90},{80,110}})));

@@ -1,5 +1,5 @@
 ﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pumps;
-package CondenserWaterP "Sequnences for controlling condenser water pumps"
+package CondenserWater "Sequnences for controlling condenser water pumps"
 annotation (Documentation(info="<html>
 <p>
 This package contains sequences for controlling condenser wate pumps 
@@ -19,4 +19,4 @@ First implementation.
 </li>
 </ul>
 </html>"));
-end CondenserWaterP;
+end CondenserWater;

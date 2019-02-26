@@ -1,20 +1,20 @@
 ﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pumps.ChilledWater.Subsequences;
 block Speed_primary_remoteDp
   "Pump speed control for primary-only plants where the remote DP sensor(s) is hardwired to the plant controller"
-  parameter Integer senNum = 2
+  parameter Integer nSen = 2
     "Total number of remote differential pressure sensors";
-  parameter Integer pumNum = 2
+  parameter Integer nPum = 2
     "Total number of chilled water pumps";
   parameter Real minPumSpe = 0
     "Minimum pump speed";
   parameter Real maxPumSpe = 1
     "Maximum pump speed";
 
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChiWatPum[pumNum]
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChiWatPum[nPum]
     "Chilled water pump status"
     annotation (Placement(transformation(extent={{-140,-70},{-100,-30}}),
       iconTransformation(extent={{-140,-20},{-100,20}})));
-  Buildings.Controls.OBC.CDL.Interfaces.RealInput dpChiWat[senNum](
+  Buildings.Controls.OBC.CDL.Interfaces.RealInput dpChiWat[nSen](
     each final unit="Pa",
     each final quantity="PressureDifference")
     "Chilled water differential static pressure"
@@ -35,9 +35,9 @@ block Speed_primary_remoteDp
 
 protected
   Buildings.Controls.OBC.CDL.Routing.RealReplicator reaRep(
-    final nout=senNum) "Replicate real input"
+    final nout=nSen) "Replicate real input"
     annotation (Placement(transformation(extent={{-40,-90},{-20,-70}})));
-  Buildings.Controls.OBC.CDL.Continuous.LimPID conPID[senNum](
+  Buildings.Controls.OBC.CDL.Continuous.LimPID conPID[nSen](
     each final yMax=1,
     each final yMin=0,
     each final reverseAction=true,
@@ -45,15 +45,15 @@ protected
     each final y_reset=0) "Pump speed controller"
     annotation (Placement(transformation(extent={{20,-20},{40,0}})));
   Buildings.Controls.OBC.CDL.Logical.MultiOr mulOr(
-    final nu=pumNum)
+    final nu=nPum)
     annotation (Placement(transformation(extent={{-80,-60},{-60,-40}})));
   Buildings.Controls.OBC.CDL.Logical.Not not1 "Logical not"
     annotation (Placement(transformation(extent={{-40,-60},{-20,-40}})));
   Buildings.Controls.OBC.CDL.Continuous.MultiMax maxLoo(
-    final nin=senNum) "Maximum DP loop output"
+    final nin=nSen) "Maximum DP loop output"
     annotation (Placement(transformation(extent={{60,-20},{80,0}})));
   Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep(
-    final nout=senNum)
+    final nout=nSen)
     "Replicate boolean input"
     annotation (Placement(transformation(extent={{-8,-60},{12,-40}})));
   Buildings.Controls.OBC.CDL.Continuous.Line pumSpe "Pump speed"

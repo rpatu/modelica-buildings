@@ -101,7 +101,7 @@ protected
   Buildings.Controls.OBC.CDL.Logical.Not not1 "Logical not"
     annotation (Placement(transformation(extent={{-20,20},{0,40}})));
   Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt[nChi](
-    final k=chiInd)     "Chiller index array"
+    final k=chiInd) "Chiller index array"
     annotation (Placement(transformation(extent={{-160,160},{-140,180}})));
   Buildings.Controls.OBC.CDL.Routing.IntegerReplicator intRep1(final nout=nChi)
     "Replicate integer input"

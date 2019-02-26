@@ -33,7 +33,7 @@ block UpController
   parameter Modelica.SIunits.VolumeFlowRate minFloDif=0.01
     "Minimum flow rate difference to check if bybass flow achieves setpoint"
     annotation (Dialog(group="Reset minimum bypass"));
-  parameter Boolean isheadered=true
+  parameter Boolean isHeadered=true
     "Flag of headered condenser water pumps design: true=headered, false=dedicated"
     annotation (Dialog(group="Enable condenser water pump"));
   parameter Real chiNum[nSta]={0,1,2}
@@ -116,26 +116,30 @@ block UpController
     "Chilled water requst status for each chiller"
     annotation (Placement(transformation(extent={{-280,-240},{-240,-200}}),
       iconTransformation(extent={{-240,-240},{-200,-200}})));
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput y
+    "Indicate stage-up status: true=in stage-up process"
+    annotation (Placement(transformation(extent={{240,200},{260,220}}),
+      iconTransformation(extent={{200,180},{220,200}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiDem[nChi]
     "Chiller demand setpoint"
     annotation (Placement(transformation(extent={{240,170},{260,190}}),
-      iconTransformation(extent={{200,180},{220,200}})));
+      iconTransformation(extent={{200,130},{220,150}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiWatBypSet
     "Chilled water minimum flow bypass setpoint"
     annotation (Placement(transformation(extent={{240,80},{260,100}}),
-      iconTransformation(extent={{200,130},{220,150}})));
+      iconTransformation(extent={{200,80},{220,100}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yLeaConWatPum
     "Lead condenser water pump status"
     annotation (Placement(transformation(extent={{240,30},{260,50}}),
-      iconTransformation(extent={{200,80},{220,100}})));
+      iconTransformation(extent={{200,30},{220,50}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yConWatPumSpeSet
     "Condenser water pump speed"
     annotation (Placement(transformation(extent={{240,10},{260,30}}),
-      iconTransformation(extent={{200,30},{220,50}})));
+      iconTransformation(extent={{200,-10},{220,10}})));
   Buildings.Controls.OBC.CDL.Interfaces.IntegerOutput yConWatPumNum
     "Number of operating condenser water pumps"
     annotation (Placement(transformation(extent={{240,-10},{260,10}}),
-      iconTransformation(extent={{200,-40},{220,-20}})));
+      iconTransformation(extent={{200,-52},{220,-32}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yChiHeaCon[nChi]
     "Chiller head pressure control enabling status"
     annotation (Placement(transformation(extent={{240,-100},{260,-80}}),
@@ -163,7 +167,7 @@ protected
     final chiDemRedFac=chiDemRedFac,
     final holChiDemTim=holChiDemTim) "Limit chiller demand"
     annotation (Placement(transformation(extent={{-80,160},{-60,180}})));
-  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.Processes.Subsequences.ResetMinBypassSetpoint
+  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.Processes.Subsequences.ResetMinBypass
     minBypSet(final aftByPasSetTim=aftByPasSetTim, final minFloDif=minFloDif)
     "Check if minium bypass has been reset"
     annotation (Placement(transformation(extent={{60,120},{80,140}})));
@@ -205,9 +209,9 @@ protected
   Buildings.Controls.OBC.CDL.Logical.Sources.Constant con(final k=false)
     "False constant"
     annotation (Placement(transformation(extent={{-200,50},{-180,70}})));
-  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pumps.CondenserWaterP.Controller
+  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Pumps.CondenserWater.Controller
     conWatPumCon(
-    final isheadered=isheadered,
+    final isHeadered=isHeadered,
     final haveWSE=haveWSE,
     final nSta=nSta,
     final chiNum=chiNum,
@@ -382,6 +386,8 @@ equation
           {-50,-217},{59,-217}}, color={255,0,255}));
   connect(con.y, enaNexCWP.uStaDow) annotation (Line(points={{-179,60},{-20,60},
           {-20,18},{-2,18}}, color={255,0,255}));
+  connect(lat.y, y)
+    annotation (Line(points={{-119,210},{250,210}}, color={255,0,255}));
 annotation (
   defaultComponentName="upProCon",
   Diagram(coordinateSystem(preserveAspectRatio=false,

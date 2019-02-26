@@ -1,11 +1,11 @@
-ReduceDemand
-EnableCWPump
-UpEnd
-EnableChiller
 DisableChiller
 DownStart
+EnableCWPump
 EnableChiIsoVal
+EnableChiller
 EnableHeadControl
-ResetMinBypassSetpoint
 NextChiller
+ReduceDemand
+ResetMinBypass
+UpEnd
 Validation
