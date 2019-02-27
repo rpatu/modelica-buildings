@@ -121,37 +121,41 @@ block DownController
     each final unit="W")
     "Chiller demand setpoint"
     annotation (Placement(transformation(extent={{320,250},{340,270}}),
-      iconTransformation(extent={{200,130},{220,150}})));
+      iconTransformation(extent={{200,140},{220,160}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yChi[nChi]
     "Chiller enabling status"
     annotation (Placement(transformation(extent={{320,210},{340,230}}),
-      iconTransformation(extent={{200,80},{220,100}})));
+      iconTransformation(extent={{200,100},{220,120}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiWatIsoVal[nChi](
     each final min=0,
     each final max=1,
     each final unit="1")
     "Chiller chilled water isolation valve position"
     annotation (Placement(transformation(extent={{320,50},{340,70}}),
-      iconTransformation(extent={{200,30},{220,50}})));
+      iconTransformation(extent={{200,50},{220,70}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yChiHeaCon[nChi]
     "Chiller head pressure control enabling status"
     annotation (Placement(transformation(extent={{320,-110},{340,-90}}),
-      iconTransformation(extent={{200,-10},{220,10}})));
+      iconTransformation(extent={{200,10},{220,30}})));
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yTowStaDow
+    "Tower stage down status: true=stage down cooling tower"
+    annotation (Placement(transformation(extent={{320,-150},{340,-130}}),
+      iconTransformation(extent={{200,-40},{220,-20}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yLeaPum
     "Lead pump status"
     annotation (Placement(transformation(extent={{320,-170},{340,-150}}),
-      iconTransformation(extent={{200,-50},{220,-30}})));
+      iconTransformation(extent={{200,-80},{220,-60}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yConWatPumSpeSet(
     each final min=0,
     each final max=1,
     each final unit="1")
     "Condenser water pump speed"
     annotation (Placement(transformation(extent={{320,-200},{340,-180}}),
-      iconTransformation(extent={{200,-100},{220,-80}})));
+      iconTransformation(extent={{200,-120},{220,-100}})));
   Buildings.Controls.OBC.CDL.Interfaces.IntegerOutput yConWatPumNum
     "Number of operating condenser water pumps"
     annotation (Placement(transformation(extent={{320,-230},{340,-210}}),
-      iconTransformation(extent={{200,-150},{220,-130}})));
+      iconTransformation(extent={{200,-160},{220,-140}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiWatBypSet(
     final unit="m3/s")
     "Chilled water minimum flow bypass setpoint"
@@ -456,6 +460,8 @@ equation
 
   connect(lat.y, y)
     annotation (Line(points={{-99,380},{330,380}}, color={255,0,255}));
+  connect(disHeaCon.yEnaHeaCon, yTowStaDow) annotation (Line(points={{281,-94},{
+          300,-94},{300,-140},{330,-140}}, color={255,0,255}));
 annotation (
   defaultComponentName="dowProCon",
   Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-220,-400},{320,400}})),

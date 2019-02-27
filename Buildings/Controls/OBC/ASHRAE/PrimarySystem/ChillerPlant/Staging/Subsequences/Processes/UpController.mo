@@ -123,23 +123,27 @@ block UpController
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiDem[nChi]
     "Chiller demand setpoint"
     annotation (Placement(transformation(extent={{240,170},{260,190}}),
-      iconTransformation(extent={{200,130},{220,150}})));
+      iconTransformation(extent={{200,140},{220,160}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yChiWatBypSet
     "Chilled water minimum flow bypass setpoint"
     annotation (Placement(transformation(extent={{240,80},{260,100}}),
-      iconTransformation(extent={{200,80},{220,100}})));
+      iconTransformation(extent={{200,100},{220,120}})));
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yTowStaUp
+    "Tower stage up status: true=stage up cooling tower"
+    annotation (Placement(transformation(extent={{240,50},{260,70}}),
+      iconTransformation(extent={{200,60},{220,80}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yLeaConWatPum
     "Lead condenser water pump status"
     annotation (Placement(transformation(extent={{240,30},{260,50}}),
-      iconTransformation(extent={{200,30},{220,50}})));
+      iconTransformation(extent={{200,20},{220,40}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yConWatPumSpeSet
     "Condenser water pump speed"
     annotation (Placement(transformation(extent={{240,10},{260,30}}),
-      iconTransformation(extent={{200,-10},{220,10}})));
+      iconTransformation(extent={{200,-20},{220,0}})));
   Buildings.Controls.OBC.CDL.Interfaces.IntegerOutput yConWatPumNum
     "Number of operating condenser water pumps"
     annotation (Placement(transformation(extent={{240,-10},{260,10}}),
-      iconTransformation(extent={{200,-52},{220,-32}})));
+      iconTransformation(extent={{200,-60},{220,-40}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yChiHeaCon[nChi]
     "Chiller head pressure control enabling status"
     annotation (Placement(transformation(extent={{240,-100},{260,-80}}),
@@ -269,7 +273,7 @@ equation
   connect(minBypSet1.yChiWatBypSet, minBypSet.VBypas_setpoint) annotation (Line(
         points={{21,90},{40,90},{40,122},{58,122}}, color={0,0,127}));
   connect(minBypSet.yMinBypRes, enaNexCWP.uUpDevSta) annotation (Line(points={{81,130},
-          {90,130},{90,40},{-10,40},{-10,28},{-2,28}},         color={255,0,255}));
+          {90,130},{90,60},{-10,60},{-10,28},{-2,28}},         color={255,0,255}));
   connect(lat.y, enaNexCWP.uStaUp) annotation (Line(points={{-119,210},{-100,210},
           {-100,22},{-2,22}},    color={255,0,255}));
   connect(uSta, enaNexCWP.uSta) annotation (Line(points={{-260,20},{-110,20},{-110,
@@ -388,6 +392,8 @@ equation
           {-20,18},{-2,18}}, color={255,0,255}));
   connect(lat.y, y)
     annotation (Line(points={{-119,210},{250,210}}, color={255,0,255}));
+  connect(minBypSet.yMinBypRes, yTowStaUp) annotation (Line(points={{81,130},{90,
+          130},{90,60},{250,60}}, color={255,0,255}));
 annotation (
   defaultComponentName="upProCon",
   Diagram(coordinateSystem(preserveAspectRatio=false,

@@ -33,57 +33,57 @@ block Controller
   Buildings.Controls.OBC.CDL.Interfaces.IntegerInput uPumPri[nPum]
     "Chiller water pump enabling priority"
     annotation (Placement(transformation(extent={{-300,210},{-260,250}}),
-      iconTransformation(extent={{-240,200},{-200,240}})));
+      iconTransformation(extent={{-120,80},{-100,100}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChiWatPum[nPum]
     "Chilled water pumps operating status"
     annotation (Placement(transformation(extent={{-300,120},{-260,160}}),
-      iconTransformation(extent={{-198,68},{-158,108}})));
+      iconTransformation(extent={{-120,60},{-100,80}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uLeaChiEna if not isHeadered
     "Lead chiller enabling status"
     annotation (Placement(transformation(extent={{-300,90},{-260,130}}),
-      iconTransformation(extent={{-254,158},{-214,198}})));
+      iconTransformation(extent={{-120,40},{-100,60}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uLeaChiOn if not isHeadered
     "Lead chiller status"
     annotation (Placement(transformation(extent={{-300,60},{-260,100}}),
-      iconTransformation(extent={{-246,116},{-206,156}})));
+      iconTransformation(extent={{-120,20},{-100,40}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uLeaChiWatReq if not isHeadered
     "Status indicating if lead chiller is requesting chilled water"
     annotation (Placement(transformation(extent={{-300,30},{-260,70}}),
-      iconTransformation(extent={{-218,100},{-178,140}})));
+      iconTransformation(extent={{-120,0},{-100,20}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChiIsoVal[nChi] if isHeadered
     "Chilled water isolation valve status"
     annotation (Placement(transformation(extent={{-300,0},{-260,40}}),
-      iconTransformation(extent={{-198,68},{-158,108}})));
+      iconTransformation(extent={{-120,-20},{-100,0}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealInput VChiWat_flow(
     unit="m3/s")
     "Chilled water flow"
     annotation (Placement(transformation(extent={{-300,-30},{-260,10}}),
-      iconTransformation(extent={{-252,-80},{-212,-40}})));
+      iconTransformation(extent={{-120,-40},{-100,-20}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealInput dpChiWat_local(
     final unit="Pa",
     final quantity="PressureDifference") if hasLocalSensor
     "Chilled water differential static pressure from local sensor"
     annotation (Placement(transformation(extent={{-300,-190},{-260,-150}}),
-      iconTransformation(extent={{-218,-220},{-178,-180}})));
+      iconTransformation(extent={{-120,-60},{-100,-40}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealInput dpChiWat_remote[nSen](
     each final unit="Pa",
     each final quantity="PressureDifference")
     "Chilled water differential static pressure from remote sensor"
     annotation (Placement(transformation(extent={{-300,-230},{-260,-190}}),
-      iconTransformation(extent={{-240,-260},{-200,-220}})));
+      iconTransformation(extent={{-120,-80},{-100,-60}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealInput dpChiWatSet(
     final unit="Pa",
     final quantity="PressureDifference")
     "Chilled water differential static pressure setpoint"
     annotation (Placement(transformation(extent={{-300,-260},{-260,-220}}),
-      iconTransformation(extent={{-296,-302},{-256,-262}})));
+      iconTransformation(extent={{-120,-100},{-100,-80}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yPumSpe[nPum](
     each final min=0,
     each final max=1,
     each final unit="1")
     "Chilled water pump speed"
     annotation (Placement(transformation(extent={{260,-210},{280,-190}}),
-      iconTransformation(extent={{252,-240},{272,-220}})));
+      iconTransformation(extent={{100,-10},{120,10}})));
 
 protected
   final parameter Integer pumInd[nPum]={i for i in 1:nPum}
@@ -280,8 +280,6 @@ equation
           {110,-92},{138,-92}},   color={255,0,255}));
   connect(booToInt.y, mulSumInt.u) annotation (Line(points={{-159,-140},{-142,-140}},
                                        color={255,127,0}));
-
-
   connect(uChiWatPum, lasLagPumSta.u3) annotation (Line(points={{-280,140},{120,
           140},{120,-108},{138,-108}}, color={255,0,255}));
   connect(nexLagPumSta.y, pumSta.u2)
@@ -316,8 +314,7 @@ equation
           -150},{120,-150},{120,-200},{138,-200}}, color={255,0,255}));
   connect(pumSpe.y, yPumSpe)
     annotation (Line(points={{161,-200},{270,-200}}, color={0,0,127}));
-  annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-260,-260},
-            {260,260}})), Diagram(coordinateSystem(preserveAspectRatio=false,
+  annotation (Diagram(coordinateSystem(preserveAspectRatio=false,
           extent={{-260,-260},{260,260}}), graphics={
           Rectangle(
           extent={{-256,256},{176,64}},
@@ -359,11 +356,20 @@ equation
           fillPattern=FillPattern.Solid,
           pattern=LinePattern.None),
           Text(
-          extent={{76,-156},{158,-174}},
+          extent={{96,-156},{166,-168}},
           pattern=LinePattern.None,
           fillColor={210,210,210},
           fillPattern=FillPattern.Solid,
           lineColor={0,0,127},
           horizontalAlignment=TextAlignment.Right,
-          textString="Pump speed")}));
+          textString="Pump speed")}), Icon(graphics={
+        Rectangle(
+          extent={{-100,-100},{100,100}},
+          lineColor={0,0,127},
+          fillColor={255,255,255},
+          fillPattern=FillPattern.Solid),
+        Text(
+          extent={{-100,150},{100,110}},
+          lineColor={0,0,255},
+          textString="%name")}));
 end Controller;
