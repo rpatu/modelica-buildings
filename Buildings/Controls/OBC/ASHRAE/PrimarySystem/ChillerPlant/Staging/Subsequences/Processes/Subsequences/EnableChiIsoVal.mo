@@ -102,13 +102,11 @@ protected
     annotation (Placement(transformation(extent={{80,70},{100,90}})));
   Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys3[nChi](
     each final uLow=0.025,
-    each final uHigh=0.05)
-    "Check if isolation valve is enabled"
+    each final uHigh=0.05) "Check if isolation valve is enabled"
     annotation (Placement(transformation(extent={{-120,200},{-100,220}})));
   Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys4[nChi](
     each final uLow=0.925,
-    each final uHigh=0.975)
-    "Check if isolation valve is open more than 95%"
+    each final uHigh=0.975) "Check if isolation valve is open more than 95%"
     annotation (Placement(transformation(extent={{-120,140},{-100,160}})));
   Buildings.Controls.OBC.CDL.Logical.Not not3[nChi] "Logical not"
     annotation (Placement(transformation(extent={{-40,170},{-20,190}})));
@@ -121,12 +119,14 @@ protected
   Buildings.Controls.OBC.CDL.Logical.Or  or2[nChi] "Logicla or"
     annotation (Placement(transformation(extent={{40,200},{60,220}})));
   Buildings.Controls.OBC.CDL.Logical.MultiAnd mulAnd1(final nu=nChi)
+    "Logical and"
     annotation (Placement(transformation(extent={{80,200},{100,220}})));
   Buildings.Controls.OBC.CDL.Logical.And and5
     "Check if the isolation valve has been fully open"
     annotation (Placement(transformation(extent={{140,200},{160,220}})));
-  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys5(each final uLow=
-        chaChiWatIsoTim - 1, each final uHigh=chaChiWatIsoTim + 1)
+  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys5(
+    each final uLow=chaChiWatIsoTim - 1,
+    each final uHigh=chaChiWatIsoTim + 1)
     "Check if it has past the target time of open CHW isolation valve "
     annotation (Placement(transformation(extent={{80,120},{100,140}})));
 
