@@ -58,8 +58,7 @@ block CoupledSpeed
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yTowSpe(
     final min=0,
     final max=1,
-    final unit="1")
-    "Cooling tower fan speed"
+    final unit="1") "Cooling tower fan speed"
     annotation (Placement(transformation(extent={{100,-70},{120,-50}}),
       iconTransformation(extent={{100,-10},{120,10}})));
 

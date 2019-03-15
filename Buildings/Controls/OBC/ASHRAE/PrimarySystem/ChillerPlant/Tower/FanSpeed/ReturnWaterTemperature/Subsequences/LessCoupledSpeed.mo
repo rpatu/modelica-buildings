@@ -14,32 +14,32 @@ block LessCoupledSpeed
     Buildings.Controls.OBC.CDL.Types.SimpleController.PI "Type of controller"
     annotation (Dialog(group="Return water temperature controller"));
   parameter Real kRetCon=1 "Gain of controller"
-    annotation (Dialog(group="Return water temperature Controller"));
+    annotation (Dialog(group="Return water temperature controller"));
   parameter Modelica.SIunits.Time TiRetCon=0.5 "Time constant of integrator block"
-    annotation (Dialog(group="Return water temperature Controller"));
+    annotation (Dialog(group="Return water temperature controller"));
   parameter Modelica.SIunits.Time TdRetCon=0.1 "Time constant of derivative block"
-    annotation (Dialog(group="Return water temperature Controller", enable=
+    annotation (Dialog(group="Return water temperature controller", enable=
           controllerType == Buildings.Controls.OBC.CDL.Types.SimpleController.PD or
           controllerType == Buildings.Controls.OBC.CDL.Types.SimpleController.PID));
   parameter Real yRetConMax=1 "Upper limit of output"
-    annotation (Dialog(group="Return water temperature Controller"));
+    annotation (Dialog(group="Return water temperature controller"));
   parameter Real yRetConMin=0 "Lower limit of output"
-    annotation (Dialog(group="Return water temperature Controller"));
+    annotation (Dialog(group="Return water temperature controller"));
   parameter Buildings.Controls.OBC.CDL.Types.SimpleController supWatCon=
     Buildings.Controls.OBC.CDL.Types.SimpleController.PI "Type of controller"
     annotation (Dialog(group="Supply water temperature controller"));
   parameter Real kSupCon=1 "Gain of controller"
-    annotation (Dialog(group="Supply water temperature Controller"));
+    annotation (Dialog(group="Supply water temperature controller"));
   parameter Modelica.SIunits.Time TiSupCon=0.5 "Time constant of integrator block"
-    annotation (Dialog(group="Supply water temperature Controller"));
+    annotation (Dialog(group="Supply water temperature controller"));
   parameter Modelica.SIunits.Time TdSupCon=0.1 "Time constant of derivative block"
-    annotation (Dialog(group="Supply water temperature Controller", enable=
+    annotation (Dialog(group="Supply water temperature controller", enable=
           controllerType == Buildings.Controls.OBC.CDL.Types.SimpleController.PD or
           controllerType == Buildings.Controls.OBC.CDL.Types.SimpleController.PID));
   parameter Real ySupConMax=1 "Upper limit of output"
-    annotation (Dialog(group="Supply water temperature Controller"));
+    annotation (Dialog(group="Supply water temperature controller"));
   parameter Real ySupConMin=0 "Lower limit of output"
-    annotation (Dialog(group="Supply water temperature Controller"));
+    annotation (Dialog(group="Supply water temperature controller"));
 
   Buildings.Controls.OBC.CDL.Interfaces.RealInput TConWatRetSet(
     final unit="K",
@@ -135,7 +135,7 @@ protected
     final y_reset=ySupConMin) "Condenser water supply temperature controller"
     annotation (Placement(transformation(extent={{-60,-70},{-40,-50}})));
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant  minSpe(
-    final k=minTowSpe)   "Minimum tower speed"
+    final k=minTowSpe) "Minimum tower speed"
     annotation (Placement(transformation(extent={{-60,-40},{-40,-20}})));
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant zer1(final k=0)
     "Zero constant"
