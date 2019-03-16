@@ -10,15 +10,15 @@ block WaterLevel
     "maximum cooling tower water level recommended by manufacturer";
 
   Buildings.Controls.OBC.CDL.Interfaces.RealInput watLev(
-    final quantity="Length")
-    "Measured water level"
+    final quantity="Length") "Measured water level"
     annotation (Placement(transformation(extent={{-140,-20},{-100,20}}),
       iconTransformation(extent={{-140,-20},{-100,20}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yMakUp
     "Makeup water valve On-Off status"
     annotation (Placement(transformation(extent={{100,-10},{120,10}}),
-        iconTransformation(extent={{100,-10},{120,10}})));
+      iconTransformation(extent={{100,-10},{120,10}})));
 
+protected
   Buildings.Controls.OBC.CDL.Continuous.AddParameter addPar(
     final p=watLevMin,
     final k=-1)

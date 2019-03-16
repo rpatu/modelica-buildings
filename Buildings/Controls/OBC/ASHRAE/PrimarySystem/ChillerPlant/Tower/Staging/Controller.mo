@@ -1,5 +1,5 @@
-within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower;
-block Staging "Sequence of staging cooling tower cells"
+within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.Staging;
+block Controller "Sequence of staging cooling tower cells"
 
   parameter Integer nTowCel=4 "Total number of cooling tower cells";
   parameter Integer staNum=3
@@ -51,31 +51,31 @@ block Staging "Sequence of staging cooling tower cells"
   Buildings.Controls.OBC.CDL.Interfaces.RealInput uIsoVal[nTowCel](
     each final unit="1",
     each final min=0,
-    each final max=1)
-    "Cooling tower cells isolation valve position"
+    each final max=1) "Cooling tower cells isolation valve position"
     annotation (Placement(transformation(extent={{-140,-150},{-100,-110}}),
       iconTransformation(extent={{-120,-100},{-100,-80}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yTowSta[nTowCel]
-    "Cooling tower enabling status"
+    "Cooling tower cell enabling status"
     annotation (Placement(transformation(extent={{100,40},{120,60}}),
       iconTransformation(extent={{100,-10},{120,10}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yIsoVal[nTowCel](
     each final unit="1",
     each final min=0,
-    each final max=1)
-    "Cooling tower cells isolation valve position"
+    each final max=1) "Cooling tower cells isolation valve position"
     annotation (Placement(transformation(extent={{100,-10},{120,10}}),
       iconTransformation(extent={{100,-100},{120,-80}})));
 
 protected
   final parameter Integer towCelInd[nTowCel]={i for i in 1:nTowCel}
     "Tower cell index, {1,2,...,n}";
-  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.Subsequences.EnableCells enaTowCel(
+  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.Staging.Subsequences.EnableCells
+    enaTowCel(
     final nTowCel=nTowCel,
     final staNum=staNum,
     final towCelOnSet=towCelOnSet)
     annotation (Placement(transformation(extent={{-60,100},{-40,120}})));
-  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.Subsequences.EnableProcesses towCelStaPro(
+  Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.Staging.Subsequences.EnableProcesses
+    towCelStaPro(
     final nTowCel=nTowCel,
     final chaTowCelIsoTim=chaTowCelIsoTim,
     final iniValPos=iniValPos,
@@ -180,4 +180,4 @@ annotation (
           extent={{-100,150},{100,110}},
           lineColor={0,0,255},
           textString="%name")}));
-end Staging;
+end Controller;

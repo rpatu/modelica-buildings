@@ -1,4 +1,4 @@
-within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.Staging;
+within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.Staging.Subsequences;
 block EnableProcesses "Sequence for enabling cells"
 
   parameter Integer nTowCel = 4
@@ -20,8 +20,8 @@ block EnableProcesses "Sequence for enabling cells"
     each final max=1) "Cooling tower cells isolation valve position"
     annotation (Placement(transformation(extent={{-180,20},{-140,60}}),
       iconTransformation(extent={{-140,20},{-100,60}})));
-  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uChaCel
-    "Cell changing status: true=start to change cell status"
+  Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uEnaCel
+    "Cell enabling status: true=start enabling cell status"
     annotation (Placement(transformation(extent={{-180,-10},{-140,30}}),
       iconTransformation(extent={{-140,-60},{-100,-20}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uTowSta[nTowCel]
@@ -128,7 +128,7 @@ equation
       color={255,127,0}));
   connect(intEqu.y, swi2.u2)
     annotation (Line(points={{-19,90},{38,90}},   color={255,0,255}));
-  connect(uChaCel, tim.u)
+  connect(uEnaCel, tim.u)
     annotation (Line(points={{-160,10},{-130,10},{-130,160},{-122,160}},
       color={255,0,255}));
   connect(con9.y, lin1.x1)
@@ -155,7 +155,7 @@ equation
   connect(uIsoVal, swi2.u3)
     annotation (Line(points={{-160,40},{20,40},{20,82},{38,82}},
       color={0,0,127}));
-  connect(uChaCel, booRep.u)
+  connect(uEnaCel, booRep.u)
     annotation (Line(points={{-160,10},{-62,10}}, color={255,0,255}));
   connect(booRep.y, swi.u2)
     annotation (Line(points={{-39,10},{40,10},{40,60},{98,60}},

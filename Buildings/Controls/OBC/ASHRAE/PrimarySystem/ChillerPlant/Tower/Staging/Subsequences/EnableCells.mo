@@ -1,6 +1,5 @@
-﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.Subsequences;
-block EnableCells
-  "Sequence for identifying enabing and disabling cells"
+﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.Staging.Subsequences;
+block EnableCells "Sequence for identifying enabing and disabling cells"
 
   parameter Integer nTowCel = 4
     "Total number of cooling tower cells";

@@ -12,20 +12,20 @@ block Controller
   parameter Modelica.SIunits.Temperature TTowSet=283.15 "Tower temperature setpoint"
     annotation (Dialog(tab="Tower enable"));
   parameter Real LIFT_min[nChi]={12,12} "Minimum LIFT of each chiller"
-    annotation (Dialog(tab="Condenser water return temperature setpoint"));
+    annotation (Dialog(tab="Return temperature setpoint"));
   parameter Real LIFT_max[nChi]={25,25} "Maximum LIFT of each chiller"
-    annotation (Dialog(tab="Condenser water return temperature setpoint"));
+    annotation (Dialog(tab="Return temperature setpoint"));
   parameter Modelica.SIunits.Time iniPlaTim=600
     "Time to hold return temperature to initial setpoint after plant being enabled"
-    annotation (Dialog(tab="Condenser water return temperature setpoint",
+    annotation (Dialog(tab="Return temperature setpoint",
                        group="Plant startup"));
   parameter Modelica.SIunits.Time ramTim=180
     "Time to ramp return water temperature from initial value to setpoint"
-    annotation (Dialog(tab="Condenser water return temperature setpoint",
+    annotation (Dialog(tab="Return temperature setpoint",
                        group="Plant startup"));
   parameter Modelica.SIunits.Temperature TConWatRet_nominal=303.15
     "Design condenser water return temperature"
-    annotation (Dialog(tab="Condenser water return temperature setpoint",
+    annotation (Dialog(tab="Return temperature setpoint",
                        group="Plant startup"));
   parameter Buildings.Controls.OBC.CDL.Types.SimpleController couPlaCon=
     Buildings.Controls.OBC.CDL.Types.SimpleController.PI
@@ -165,20 +165,19 @@ block Controller
   Buildings.Controls.OBC.CDL.Interfaces.RealInput uConWatPumSpe[nConWatPum](
     each final min=0,
     each final max=1,
-    each final unit="1")
-    "Current condenser water pump speed"
+    each final unit="1") "Current condenser water pump speed"
     annotation (Placement(transformation(extent={{-200,-260},{-160,-220}}),
       iconTransformation(extent={{-220,-180},{-200,-160}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealInput TConWatSup(
     final quantity="ThermodynamicTemperature",
-    final unit="K") "Condenser water supply temperature"
+    final unit="K") if not closeCoupledPlant
+    "Condenser water supply temperature"
     annotation (Placement(transformation(extent={{-200,-300},{-160,-260}}),
       iconTransformation(extent={{-220,-200},{-200,-180}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yTowSpe(
     final min=0,
     final max=1,
-    final unit="1")
-    "Cooling tower fan speed"
+    final unit="1") "Cooling tower fan speed"
     annotation (Placement(transformation(extent={{160,190},{180,210}}),
       iconTransformation(extent={{200,70},{220,90}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yTow
@@ -205,7 +204,7 @@ protected
     final LIFT_max=LIFT_max,
     final iniPlaTim=iniPlaTim,
     final ramTim=ramTim,
-    final TConWatRet_nominal=TConWatRet_nominal) "Condenser water return temperature setpoint"
+    final TConWatRet_nominal=TConWatRet_nominal) "Return temperature setpoint"
     annotation (Placement(transformation(extent={{40,-80},{60,-60}})));
   Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.FanSpeed.ReturnWaterTemperature.Subsequences.Enable enaTow(
     final nChi=nChi,
