@@ -2,9 +2,9 @@ within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.Staging;
 block Controller "Sequence of staging cooling tower cells"
 
   parameter Integer nTowCel=4 "Total number of cooling tower cells";
-  parameter Integer staNum=3
+  parameter Integer nSta=3
     "Total number of stages, stage zero should be counted as one stage";
-  parameter Real towCelOnSet[2*staNum]={0,2,2,4,4,4}
+  parameter Real towCelOnSet[2*nSta]={0,2,2,4,4,4}
     "Number of condenser water pumps that should be ON, according to current chiller stage and WSE status";
   parameter Modelica.SIunits.Time chaTowCelIsoTim=300
     "Time to slowly change isolation valve"
@@ -71,15 +71,15 @@ protected
   Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.Staging.Subsequences.EnableCells
     enaTowCel(
     final nTowCel=nTowCel,
-    final staNum=staNum,
-    final towCelOnSet=towCelOnSet)
+    final nSta=nSta,
+    final towCelOnSet=towCelOnSet) "Identifying enabing and disabling cells"
     annotation (Placement(transformation(extent={{-60,100},{-40,120}})));
   Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.Staging.Subsequences.EnableProcesses
     towCelStaPro(
     final nTowCel=nTowCel,
     final chaTowCelIsoTim=chaTowCelIsoTim,
     final iniValPos=iniValPos,
-    final endValPos=endValPos)
+    final endValPos=endValPos) "Sequence for process of enabling cells"
     annotation (Placement(transformation(extent={{0,-20},{20,0}})));
   Buildings.Controls.OBC.CDL.Conversions.RealToInteger enaCel[nTowCel]
     "Convert real number to integer"

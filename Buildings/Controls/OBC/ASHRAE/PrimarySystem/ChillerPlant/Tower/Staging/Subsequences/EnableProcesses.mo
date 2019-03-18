@@ -1,5 +1,5 @@
 within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Tower.Staging.Subsequences;
-block EnableProcesses "Sequence for enabling cells"
+block EnableProcesses "Sequence for process of enabling cells"
 
   parameter Integer nTowCel = 4
     "Total number of cooling tower cells";

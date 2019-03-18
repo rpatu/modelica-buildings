@@ -79,6 +79,12 @@ block LessCoupledSpeed
     "Tower maximum speed that reset based on plant partial load ratio"
     annotation (Placement(transformation(extent={{-140,-170},{-100,-130}}),
       iconTransformation(extent={{-140,-120},{-100,-80}})));
+  Buildings.Controls.OBC.CDL.Interfaces.RealOutput TConWatSupSet(
+    final unit="K",
+    final quantity="ThermodynamicTemperature")
+    "Condenser water supply temperature setpoint"
+    annotation (Placement(transformation(extent={{100,100},{120,120}}),
+      iconTransformation(extent={{100,70},{120,90}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealOutput yTowSpe(
     final min=0,
     final max=1,
@@ -190,8 +196,8 @@ equation
     annotation (Line(points={{-39,-60},{58,-60}}, color={0,0,127}));
   connect(TConWatSup, conPID1.u_m) annotation (Line(points={{-120,-90},{-50,-90},
           {-50,-72}}, color={0,0,127}));
-  connect(noProOn.y, conPID1.trigger) annotation (Line(points={{21,20},{40,20},{
-          40,-2},{-90,-2},{-90,-82},{-58,-82},{-58,-72}}, color={255,0,255}));
+  connect(noProOn.y, conPID1.trigger) annotation (Line(points={{21,20},{40,20},
+          {40,0},{-90,0},{-90,-80},{-58,-80},{-58,-72}},  color={255,0,255}));
   connect(one1.y, CWSTSpd.x2) annotation (Line(points={{21,-80},{40,-80},{40,-64},
           {58,-64}}, color={0,0,127}));
   connect(one1.y, CWSTSpd.f2) annotation (Line(points={{21,-80},{40,-80},{40,-68},
@@ -209,6 +215,8 @@ equation
                                         color={0,0,127}));
   connect(fanSpe.y, yTowSpe)
     annotation (Line(points={{81,-120},{110,-120}}, color={0,0,127}));
+  connect(supTemSet.y, TConWatSupSet)
+    annotation (Line(points={{81,110},{110,110}}, color={0,0,127}));
 
 annotation (
   defaultComponentName="lesCouTowSpe",

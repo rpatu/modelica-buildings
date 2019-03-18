@@ -41,12 +41,7 @@ block Controller "Tower fan speed control"
   parameter Modelica.SIunits.Time TdWSE=0.1 "Time constant of derivative block"
     annotation (Dialog(tab="WSE Enabled", group="WSE-only",enable=haveWSE));
 
-  parameter Modelica.SIunits.Temperature TTowSet=283.15
-    "Tower temperature setpoint"
-    annotation (Dialog(tab="Return temperature control", group="Tower enable"));
   parameter Real LIFT_min[nChi]={12,12} "Minimum LIFT of each chiller"
-    annotation (Dialog(tab="Return temperature control", group="Setpoint"));
-  parameter Real LIFT_max[nChi]={25,25} "Maximum LIFT of each chiller"
     annotation (Dialog(tab="Return temperature control", group="Setpoint"));
   parameter Modelica.SIunits.Time iniPlaTim=600
     "Time to hold return temperature to initial setpoint after plant being enabled"
@@ -54,8 +49,14 @@ block Controller "Tower fan speed control"
   parameter Modelica.SIunits.Time ramTim=180
     "Time to ramp return water temperature from initial value to setpoint"
     annotation (Dialog(tab="Return temperature control", group="Setpoint"));
-  parameter Modelica.SIunits.Temperature TConWatRet_nominal=303.15
-    "Design condenser water return temperature"
+  parameter Modelica.SIunits.Temperature TConWatRet_nominal[nChi]={303.15,303.15}
+    "Condenser water return temperature (condenser leaving) of each chiller"
+    annotation (Dialog(tab="Return temperature control", group="Setpoint"));
+  parameter Modelica.SIunits.Temperature TChiWatSupMin[nChi]={278.15,278.15}
+    "Lowest chilled water supply temperature oc each chiller"
+    annotation (Dialog(tab="Return temperature control", group="Setpoint"));
+  parameter Modelica.SIunits.Temperature TPlaConWatRet_nominal=303.15
+    "Design plant condenser water return temperature"
     annotation (Dialog(tab="Return temperature control", group="Setpoint"));
 
   parameter Buildings.Controls.OBC.CDL.Types.SimpleController couPlaCon=
@@ -166,11 +167,6 @@ block Controller "Tower fan speed control"
     "Maximum cooling tower speed setpoint from each chiller head pressure control loop"
     annotation (Placement(transformation(extent={{-140,-40},{-100,0}}),
       iconTransformation(extent={{-120,-10},{-100,10}})));
-  Buildings.Controls.OBC.CDL.Interfaces.RealInput TTow(
-    final unit="K",
-    final quantity="ThermodynamicTemperature") "Measured tower temperature"
-    annotation (Placement(transformation(extent={{-140,-60},{-100,-20}}),
-      iconTransformation(extent={{-120,-30},{-100,-10}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uTowSta[nTowCel]
     "Cooling tower cell operating status: true=running tower cell"
     annotation (Placement(transformation(extent={{-140,-80},{-100,-40}}),
@@ -185,8 +181,7 @@ block Controller "Tower fan speed control"
       iconTransformation(extent={{-120,-110},{-100,-90}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealInput TConWatRet(
     final unit="K",
-    final quantity="ThermodynamicTemperature")
-    "Condenser water return temperature"
+    final quantity="ThermodynamicTemperature") "Condenser water return temperature"
     annotation (Placement(transformation(extent={{-140,-140},{-100,-100}}),
       iconTransformation(extent={{-120,-150},{-100,-130}})));
   Buildings.Controls.OBC.CDL.Interfaces.RealInput uConWatPumSpe[nConWatPum](
@@ -222,12 +217,12 @@ protected
     final closeCoupledPlant=closeCoupledPlant,
     final desCap=desCap,
     final minTowSpe=minTowSpe,
-    final TTowSet=TTowSet,
     final LIFT_min=LIFT_min,
-    final LIFT_max=LIFT_max,
+    TConWatRet_nominal=TConWatRet_nominal,
+    TChiWatSupMin=TChiWatSupMin,
     final iniPlaTim=iniPlaTim,
     final ramTim=ramTim,
-    final TConWatRet_nominal=TConWatRet_nominal,
+    TPlaConWatRet_nominal=TPlaConWatRet_nominal,
     final couPlaCon=couPlaCon,
     final kCouPla=kCouPla,
     final TiCouPla=TiCouPla,
@@ -271,7 +266,7 @@ protected
 
 equation
   connect(fanSpeWse.yTowSpe, fanSpeRetTem.uTowSpeWSE) annotation (Line(points={{-19,50},
-          {0,50},{0,-21},{19,-21}},  color={0,0,127}));
+          {0,50},{0,-22},{19,-22}},  color={0,0,127}));
   connect(fanSpeWse.chiLoa, chiLoa) annotation (Line(points={{-42,60},{-60,60},{
           -60,140},{-120,140}}, color={0,0,127}));
   connect(fanSpeWse.uChi, uChi) annotation (Line(points={{-42,56},{-64,56},{-64,
@@ -285,31 +280,29 @@ equation
   connect(fanSpeWse.TChiWatSupSet, TChiWatSupSet)
     annotation (Line(points={{-42,40},{-120,40}}, color={0,0,127}));
   connect(uChi, fanSpeRetTem.uChi) annotation (Line(points={{-120,120},{-64,120},
-          {-64,-24},{19,-24}}, color={255,0,255}));
+          {-64,-25},{19,-25}}, color={255,0,255}));
   connect(uWSE, fanSpeRetTem.uWSE) annotation (Line(points={{-120,100},{-68,100},
-          {-68,-27},{19,-27}}, color={255,0,255}));
-  connect(fanSpeRetTem.reqPlaCap, reqPlaCap) annotation (Line(points={{19,-30},{
-          -76,-30},{-76,0},{-120,0}},   color={0,0,127}));
-  connect(fanSpeRetTem.uMaxTowSpeSet, uMaxTowSpeSet) annotation (Line(points={{19,-33},
-          {-80,-33},{-80,-20},{-120,-20}},  color={0,0,127}));
+          {-68,-28},{19,-28}}, color={255,0,255}));
+  connect(fanSpeRetTem.reqPlaCap, reqPlaCap) annotation (Line(points={{19,-31},{
+          -76,-31},{-76,0},{-120,0}},   color={0,0,127}));
+  connect(fanSpeRetTem.uMaxTowSpeSet, uMaxTowSpeSet) annotation (Line(points={{19,-34},
+          {-80,-34},{-80,-20},{-120,-20}},  color={0,0,127}));
   connect(uTowSpe, fanSpeRetTem.uTowSpe) annotation (Line(points={{-120,80},{-72,
-          80},{-72,-36},{19,-36}},  color={0,0,127}));
-  connect(fanSpeRetTem.TTow, TTow) annotation (Line(points={{19,-39},{-72,-39},{
-          -72,-40},{-120,-40}}, color={0,0,127}));
-  connect(fanSpeRetTem.uTowSta, uTowSta) annotation (Line(points={{19,-42},{-68,
-          -42},{-68,-60},{-120,-60}}, color={255,0,255}));
-  connect(fanSpeRetTem.uConWatPumNum, uConWatPumNum) annotation (Line(points={{19,-45},
-          {-64,-45},{-64,-80},{-120,-80}},      color={255,127,0}));
+          80},{-72,-37},{19,-37}},  color={0,0,127}));
+  connect(fanSpeRetTem.uTowSta, uTowSta) annotation (Line(points={{19,-40},{-68,
+          -40},{-68,-60},{-120,-60}}, color={255,0,255}));
+  connect(fanSpeRetTem.uConWatPumNum, uConWatPumNum) annotation (Line(points={{19,-43},
+          {-64,-43},{-64,-80},{-120,-80}},      color={255,127,0}));
   connect(TChiWatSupSet, fanSpeRetTem.TChiWatSupSet) annotation (Line(points={{-120,40},
-          {-60,40},{-60,-48},{19,-48}},     color={0,0,127}));
-  connect(fanSpeRetTem.uPla, uPla) annotation (Line(points={{19,-51},{-60,-51},{
+          {-60,40},{-60,-46},{19,-46}},     color={0,0,127}));
+  connect(fanSpeRetTem.uPla, uPla) annotation (Line(points={{19,-49},{-60,-49},{
           -60,-100},{-120,-100}}, color={255,0,255}));
-  connect(fanSpeRetTem.TConWatRet, TConWatRet) annotation (Line(points={{19,-54},
-          {-56,-54},{-56,-120},{-120,-120}}, color={0,0,127}));
-  connect(fanSpeRetTem.uConWatPumSpe, uConWatPumSpe) annotation (Line(points={{19,-57},
-          {-52,-57},{-52,-140},{-120,-140}},      color={0,0,127}));
-  connect(fanSpeRetTem.TConWatSup, TConWatSup) annotation (Line(points={{19,-59},
-          {-48,-59},{-48,-160},{-120,-160}}, color={0,0,127}));
+  connect(fanSpeRetTem.TConWatRet, TConWatRet) annotation (Line(points={{19,-52},
+          {-56,-52},{-56,-120},{-120,-120}}, color={0,0,127}));
+  connect(fanSpeRetTem.uConWatPumSpe, uConWatPumSpe) annotation (Line(points={{19,-55},
+          {-52,-55},{-52,-140},{-120,-140}},      color={0,0,127}));
+  connect(fanSpeRetTem.TConWatSup, TConWatSup) annotation (Line(points={{19,-58},
+          {-48,-58},{-48,-160},{-120,-160}}, color={0,0,127}));
   connect(fanSpeRetTem.yTowSpe, yTowSpe) annotation (Line(points={{61,-32},{80,-32},
           {80,-20},{110,-20}}, color={0,0,127}));
   connect(fanSpeRetTem.yTow, yTow) annotation (Line(points={{61,-48},{80,-48},{80,

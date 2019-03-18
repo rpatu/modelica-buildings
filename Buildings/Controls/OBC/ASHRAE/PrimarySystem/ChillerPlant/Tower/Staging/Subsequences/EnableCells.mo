@@ -3,9 +3,9 @@ block EnableCells "Sequence for identifying enabing and disabling cells"
 
   parameter Integer nTowCel = 4
     "Total number of cooling tower cells";
-  parameter Integer staNum = 3
+  parameter Integer nSta = 3
     "Total number of stages, stage zero should be counted as one stage";
-  parameter Real towCelOnSet[2*staNum] = {0,2,2,4,4,4}
+  parameter Real towCelOnSet[2*nSta] = {0,2,2,4,4,4}
     "Number of condenser water pumps that should be ON, according to current chiller stage and WSE status"
     annotation (Dialog(group="Setpoint according to stage"));
 
@@ -272,7 +272,7 @@ protected
   Buildings.Controls.OBC.CDL.Logical.Switch swi8[nTowCel] "Logical switch"
     annotation (Placement(transformation(extent={{400,-220},{420,-200}})));
   Buildings.Controls.OBC.CDL.Routing.RealExtractor towCelOn(
-    final nin=2*staNum) "Number of tower cells shoud be on in current stage"
+    final nin=2*nSta) "Number of tower cells shoud be on in current stage"
     annotation (Placement(transformation(extent={{-320,450},{-300,470}})));
   Buildings.Controls.OBC.CDL.Continuous.AddParameter addPar1(
     final p=1,
@@ -282,7 +282,7 @@ protected
   Buildings.Controls.OBC.CDL.Conversions.RealToInteger reaToInt
     "Convert real input to integer output"
     annotation (Placement(transformation(extent={{-280,450},{-260,470}})));
-  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con2[2*staNum](
+  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con2[2*nSta](
     final k=towCelOnSet) "Number of tower cells shoud be on"
     annotation (Placement(transformation(extent={{-360,450},{-340,470}})));
   Buildings.Controls.OBC.CDL.Conversions.RealToInteger pumSpeSta
