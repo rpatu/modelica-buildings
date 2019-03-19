@@ -1,8 +1,11 @@
 ﻿within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Generic;
 block PlantEnable "Sequence to enable and disable plant"
 
+
+  parameter Boolean haveWSE = true
+    "Flag to indicate if the plant has waterside economizer";
   parameter Real schTab[4,2] = [0,1; 6*3600,1; 19*3600,1; 24*3600,1]
-    "Table matrix (time = first column is time in seconds, unless timeScale <> 1)";
+    "Plant enabling schedule allowing operators to lock out the plant during off-hour";
   parameter Buildings.Controls.OBC.CDL.Types.Smoothness tabSmo=
     Buildings.Controls.OBC.CDL.Types.Smoothness.ConstantSegments
     "Smoothness of table interpolation";
@@ -17,24 +20,45 @@ block PlantEnable "Sequence to enable and disable plant"
     "Threshold time to check current chiller plant request";
   parameter Integer ignReq = 0
     "Ignorable chiller plant requests";
-  parameter Integer iniSta = 0
+  parameter Integer iniSta = 1
     "Lowest chiller plant stage";
 
   Buildings.Controls.OBC.CDL.Interfaces.BooleanInput uPla
     "Current chiller plant enabling status"
     annotation (Placement(transformation(extent={{-240,120},{-200,160}}),
-      iconTransformation(extent={{-140,40},{-100,80}})));
-  Buildings.Controls.OBC.CDL.Interfaces.RealInput TOut
+      iconTransformation(extent={{-140,80},{-100,120}})));
+  Buildings.Controls.OBC.CDL.Interfaces.RealInput TOut(
+    final unit="K",
+    final quantity="ThermodynamicTemperature")
     "Outdoor air temperature"
     annotation (Placement(transformation(extent={{-240,-10},{-200,30}}),
-      iconTransformation(extent={{-140,-80},{-100,-40}})));
+      iconTransformation(extent={{-140,0},{-100,40}})));
   Buildings.Controls.OBC.CDL.Interfaces.IntegerInput TChiWatSupResReq
     "Cooling chilled water supply temperature setpoint reset request"
     annotation (Placement(transformation(extent={{-240,80},{-200,120}}),
-      iconTransformation(extent={{-140,-20},{-100,20}})));
+      iconTransformation(extent={{-140,40},{-100,80}})));
+  Buildings.Controls.OBC.CDL.Interfaces.RealInput TPreHeaChaLea(
+    final unit="K",
+    final quantity="ThermodynamicTemperature") if haveWSE
+    "Predicted heat exchanger leaving water temperature"
+    annotation (Placement(transformation(extent={{-240,-220},{-200,-180}}),
+      iconTransformation(extent={{-140,-40},{-100,0}})));
+  Buildings.Controls.OBC.CDL.Interfaces.RealInput TChiWatSupSet(
+    final unit="K",
+    final quantity="ThermodynamicTemperature") if haveWSE
+    "Chilled water supply setpoint"
+    annotation (Placement(transformation(extent={{-240,-260},{-200,-220}}),
+      iconTransformation(extent={{-140,-80},{-100,-40}})));
+  Buildings.Controls.OBC.CDL.Interfaces.RealInput PLRHeaExc(
+    final min=0,
+    final max=1,
+    final unit="1") if haveWSE
+    "Heat exchanger part load ratio"
+    annotation (Placement(transformation(extent={{-240,-300},{-200,-260}}),
+      iconTransformation(extent={{-140,-120},{-100,-80}})));
   Buildings.Controls.OBC.CDL.Interfaces.IntegerOutput yIniChiSta
     "Initial chiller plant stage"
-    annotation (Placement(transformation(extent={{200,-50},{220,-30}}),
+    annotation (Placement(transformation(extent={{200,-290},{220,-270}}),
       iconTransformation(extent={{100,-70},{120,-50}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yPla
     "Chiller plant enabling status"
@@ -84,7 +108,7 @@ protected
     "Difference between chiller lockout temperature and outdoor temperature"
     annotation (Placement(transformation(extent={{-140,-150},{-120,-130}})));
   Buildings.Controls.OBC.CDL.Conversions.RealToInteger reaToInt
-    annotation (Placement(transformation(extent={{140,-50},{160,-30}})));
+    annotation (Placement(transformation(extent={{140,-290},{160,-270}})));
   Buildings.Controls.OBC.CDL.Logical.Not not2 "Logical not"
     annotation (Placement(transformation(extent={{-20,-60},{0,-40}})));
   Buildings.Controls.OBC.CDL.Logical.And and2 "Logical and"
@@ -93,15 +117,14 @@ protected
     "Maintains an on signal until conditions changes"
     annotation (Placement(transformation(extent={{100,80},{120,100}})));
   Buildings.Controls.OBC.CDL.Discrete.TriggeredSampler triSam
-    annotation (Placement(transformation(extent={{140,30},{160,50}})));
+    annotation (Placement(transformation(extent={{140,-210},{160,-190}})));
   Buildings.Controls.OBC.CDL.Logical.Edge edg
-    annotation (Placement(transformation(extent={{100,-10},{120,10}})));
+    annotation (Placement(transformation(extent={{120,-250},{140,-230}})));
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con(final k=iniSta)
     "Lowest chiller stage"
-    annotation (Placement(transformation(extent={{100,30},{120,50}})));
+    annotation (Placement(transformation(extent={{0,-180},{20,-160}})));
   Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys(
-    final uLow=0,
-    final uHigh=0.25)
+    final uLow=0.05, final uHigh=0.1)
     "Check if outdoor temperature is higher than chiller lockout temperature"
     annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
   Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr(
@@ -113,8 +136,7 @@ protected
     "Check if chiller plant has been enabled more than threshold time"
     annotation (Placement(transformation(extent={{-100,-50},{-80,-30}})));
   Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys3(
-    final uLow=0,
-    final uHigh=0.25)
+    final uLow=0.05, final uHigh=0.1)
     "Check if outdoor temperature is lower than chiller lockout temperature minus 1 degF"
     annotation (Placement(transformation(extent={{-100,-150},{-80,-130}})));
   Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr2(
@@ -123,6 +145,31 @@ protected
     annotation (Placement(transformation(extent={{-60,-110},{-40,-90}})));
   Buildings.Controls.OBC.CDL.Logical.MultiOr mulOr(final nu=3) "Logical or"
     annotation (Placement(transformation(extent={{40,-110},{60,-90}})));
+  Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con1(final k=0)
+    "Zero stage"
+    annotation (Placement(transformation(extent={{0,-240},{20,-220}})));
+  Buildings.Controls.OBC.CDL.Logical.And and1 if haveWSE "Logical and"
+    annotation (Placement(transformation(extent={{-60,-210},{-40,-190}})));
+  Buildings.Controls.OBC.CDL.Continuous.Hysteresis equOne(
+    final uLow=0.98,
+    final uHigh=0.99) if haveWSE
+    "Check if heat exchanger part load ratio equals to 1"
+    annotation (Placement(transformation(extent={{-160,-290},{-140,-270}})));
+  Buildings.Controls.OBC.CDL.Continuous.AddParameter addPar2(
+    final p=5/9, final k=1) if haveWSE
+    "1 degF lower than chilled water supply temperature"
+    annotation (Placement(transformation(extent={{-180,-250},{-160,-230}})));
+  Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys1(
+    final uLow=0.05, final uHigh=0.1) if haveWSE
+    "Check if predict heat exchange leaving water temperature is greater than chilled water supply temperature setpoint minus 1degF"
+    annotation (Placement(transformation(extent={{-120,-210},{-100,-190}})));
+  Buildings.Controls.OBC.CDL.Continuous.Feedback feedback if haveWSE
+    annotation (Placement(transformation(extent={{-150,-210},{-130,-190}})));
+  Buildings.Controls.OBC.CDL.Logical.Switch swi
+    annotation (Placement(transformation(extent={{60,-210},{80,-190}})));
+  Buildings.Controls.OBC.CDL.Logical.Sources.Constant con2(final k=true) if not haveWSE
+    "Constant true"
+    annotation (Placement(transformation(extent={{-60,-280},{-40,-260}})));
 
 equation
   connect(addPar.y, hys.u)
@@ -192,22 +239,48 @@ equation
     annotation (Line(points={{61.7,-100},{80,-100},{80,-40},{20,-40},{20,-18},
       {38,-18}}, color={255,0,255}));
   connect(lat.y, edg.u)
-    annotation (Line(points={{121,90},{140,90},{140,60},{90,60},{90,0},{98,0}},
-      color={255,0,255}));
+    annotation (Line(points={{121,90},{140,90},{140,60},{100,60},{100,-240},
+      {118,-240}},color={255,0,255}));
   connect(edg.y, triSam.trigger)
-    annotation (Line(points={{121,0},{150,0},{150,28.2}}, color={255,0,255}));
-  connect(con.y, triSam.u)
-    annotation (Line(points={{121,40},{138,40}}, color={0,0,127}));
+    annotation (Line(points={{141,-240},{150,-240},{150,-211.8}}, color={255,0,255}));
   connect(triSam.y, reaToInt.u)
-    annotation (Line(points={{161,40},{180,40},{180,-20},{120,-20},{120,-40},
-      {138,-40}}, color={0,0,127}));
+    annotation (Line(points={{161,-200},{180,-200},{180,-260},{120,-260},
+      {120,-280},{138,-280}}, color={0,0,127}));
   connect(reaToInt.y, yIniChiSta)
-    annotation (Line(points={{161,-40},{210,-40}}, color={255,127,0}));
+    annotation (Line(points={{161,-280},{210,-280}}, color={255,127,0}));
+  connect(PLRHeaExc, equOne.u)
+    annotation (Line(points={{-220,-280},{-192,-280},{-192,-280},{-162,-280}},
+      color={0,0,127}));
+  connect(TChiWatSupSet, addPar2.u)
+    annotation (Line(points={{-220,-240},{-182,-240}}, color={0,0,127}));
+  connect(TPreHeaChaLea, feedback.u1)
+    annotation (Line(points={{-220,-200},{-152,-200}}, color={0,0,127}));
+  connect(addPar2.y, feedback.u2)
+    annotation (Line(points={{-159,-240},{-140,-240},{-140,-212}}, color={0,0,127}));
+  connect(feedback.y, hys1.u)
+    annotation (Line(points={{-129,-200},{-122,-200}}, color={0,0,127}));
+  connect(con.y, swi.u1)
+    annotation (Line(points={{21,-170},{40,-170},{40,-192},{58,-192}}, color={0,0,127}));
+  connect(con1.y, swi.u3)
+    annotation (Line(points={{21,-230},{40,-230},{40,-208},{58,-208}}, color={0,0,127}));
+  connect(hys1.y, and1.u1)
+    annotation (Line(points={{-99,-200},{-62,-200}}, color={255,0,255}));
+  connect(equOne.y, and1.u2)
+    annotation (Line(points={{-139,-280},{-80,-280},{-80,-208},{-62,-208}},
+      color={255,0,255}));
+  connect(and1.y, swi.u2)
+    annotation (Line(points={{-39,-200},{58,-200}}, color={255,0,255}));
+  connect(swi.y, triSam.u)
+    annotation (Line(points={{81,-200},{138,-200}}, color={0,0,127}));
+  connect(con2.y, swi.u2)
+    annotation (Line(points={{-39,-270},{-20,-270},{-20,-200},{58,-200}},
+      color={255,0,255}));
 
 annotation (
   defaultComponentName = "plaEna",
-  Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-200,-160},{200,160}})),
-  Icon(graphics={
+  Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-200,-340},{200,160}})),
+  Icon(coordinateSystem(extent={{-100,-100},{100,100}}),
+       graphics={
         Rectangle(
         extent={{-100,-100},{100,100}},
         lineColor={0,0,127},
@@ -221,21 +294,21 @@ annotation (
           extent={{-17,7.5},{17,-7.5}},
           lineColor={0,0,127},
           pattern=LinePattern.Dash,
-          origin={-83,59.5},
+          origin={-83,97.5},
           rotation=0,
           textString="uPla"),
         Text(
           extent={{-49,9.5},{49,-9.5}},
           lineColor={0,0,127},
           pattern=LinePattern.Dash,
-          origin={-47,-0.5},
+          origin={-49,59.5},
           rotation=0,
           textString="TChiWatSupResReq"),
         Text(
           extent={{-16,6.5},{16,-6.5}},
           lineColor={0,0,127},
           pattern=LinePattern.Dash,
-          origin={-84,-59.5},
+          origin={-84,20.5},
           rotation=0,
           textString="TOut"),
         Text(
@@ -251,7 +324,28 @@ annotation (
           pattern=LinePattern.Dash,
           origin={69,-59},
           rotation=0,
-          textString="yIniChiSta")}),
+          textString="yIniChiSta"),
+        Text(
+          extent={{-39,7.5},{39,-7.5}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          origin={-57,-20.5},
+          rotation=0,
+          textString="TPreHeaChaLea"),
+        Text(
+          extent={{-36,8.5},{36,-8.5}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          origin={-60,-59.5},
+          rotation=0,
+          textString="TChiWatSupSet"),
+        Text(
+          extent={{-28,6.5},{28,-6.5}},
+          lineColor={0,0,127},
+          pattern=LinePattern.Dash,
+          origin={-68,-91.5},
+          rotation=0,
+          textString="PLRHeaExc")}),
  Documentation(info="<html>
 <p>
 Block that generate chiller plant enable signals, according to

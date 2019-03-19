@@ -1,5 +1,5 @@
 within Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.Processes;
-block DownController
+block Down
   "Sequence for controlling devices when there is a stage-down command"
 
   parameter Integer nChi=2 "Total number of chillers in the plant";
@@ -475,4 +475,4 @@ annotation (
           extent={{-240,270},{200,210}},
           lineColor={0,0,255},
           textString="%name")}));
-end DownController;
+end Down;
