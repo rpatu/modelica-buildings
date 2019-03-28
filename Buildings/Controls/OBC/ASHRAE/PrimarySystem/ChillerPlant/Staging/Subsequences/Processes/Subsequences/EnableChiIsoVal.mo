@@ -37,7 +37,7 @@ block EnableChiIsoVal
       iconTransformation(extent={{100,-10},{120,10}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yEnaChiWatIsoVal
     "Status of chiller chilled water isolation valve control: true=enabled valve is fully open"
-    annotation (Placement(transformation(extent={{180,200},{200,220}}),
+    annotation (Placement(transformation(extent={{180,130},{200,150}}),
       iconTransformation(extent={{100,50},{120,70}})));
   Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt[nChi](
     final k=chiInd) "Chiller index array"
@@ -54,10 +54,10 @@ protected
     annotation (Placement(transformation(extent={{0,40},{20,60}})));
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con6(final k=iniValPos)
     "Initial isolation valve position"
-    annotation (Placement(transformation(extent={{-40,100},{-20,120}})));
+    annotation (Placement(transformation(extent={{-40,90},{-20,110}})));
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant con9(final k=0)
     "Constant zero"
-    annotation (Placement(transformation(extent={{0,100},{20,120}})));
+    annotation (Placement(transformation(extent={{0,90},{20,110}})));
   Buildings.Controls.OBC.CDL.Continuous.Line lin1
     "Chilled water isolation valve setpoint"
     annotation (Placement(transformation(extent={{40,70},{60,90}})));
@@ -103,41 +103,41 @@ protected
   Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys3[nChi](
     each final uLow=0.025,
     each final uHigh=0.05) "Check if isolation valve is enabled"
-    annotation (Placement(transformation(extent={{-120,200},{-100,220}})));
+    annotation (Placement(transformation(extent={{-120,210},{-100,230}})));
   Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys4[nChi](
     each final uLow=0.925,
     each final uHigh=0.975) "Check if isolation valve is open more than 95%"
-    annotation (Placement(transformation(extent={{-120,140},{-100,160}})));
+    annotation (Placement(transformation(extent={{-120,150},{-100,170}})));
   Buildings.Controls.OBC.CDL.Logical.Not not3[nChi] "Logical not"
-    annotation (Placement(transformation(extent={{-40,170},{-20,190}})));
+    annotation (Placement(transformation(extent={{-40,180},{-20,200}})));
   Buildings.Controls.OBC.CDL.Logical.Not not4[nChi] "Logical not"
-    annotation (Placement(transformation(extent={{-40,140},{-20,160}})));
+    annotation (Placement(transformation(extent={{-40,150},{-20,170}})));
   Buildings.Controls.OBC.CDL.Logical.And and4[nChi] "Logical and"
-    annotation (Placement(transformation(extent={{0,170},{20,190}})));
+    annotation (Placement(transformation(extent={{0,180},{20,200}})));
   Buildings.Controls.OBC.CDL.Logical.And and3[nChi] "Logical and"
-    annotation (Placement(transformation(extent={{0,200},{20,220}})));
+    annotation (Placement(transformation(extent={{0,210},{20,230}})));
   Buildings.Controls.OBC.CDL.Logical.Or  or2[nChi] "Logicla or"
-    annotation (Placement(transformation(extent={{40,200},{60,220}})));
+    annotation (Placement(transformation(extent={{40,210},{60,230}})));
   Buildings.Controls.OBC.CDL.Logical.MultiAnd mulAnd1(final nu=nChi)
     "Logical and"
-    annotation (Placement(transformation(extent={{80,200},{100,220}})));
-  Buildings.Controls.OBC.CDL.Logical.And and5
+    annotation (Placement(transformation(extent={{80,210},{100,230}})));
+  Buildings.Controls.OBC.CDL.Logical.And3 and5
     "Check if the isolation valve has been fully open"
-    annotation (Placement(transformation(extent={{140,200},{160,220}})));
+    annotation (Placement(transformation(extent={{140,130},{160,150}})));
   Buildings.Controls.OBC.CDL.Continuous.Hysteresis hys5(
     each final uLow=chaChiWatIsoTim - 1,
     each final uHigh=chaChiWatIsoTim + 1)
     "Check if it has past the target time of open CHW isolation valve "
-    annotation (Placement(transformation(extent={{80,120},{100,140}})));
+    annotation (Placement(transformation(extent={{80,110},{100,130}})));
 
 equation
   connect(uChiWatIsoVal, triSam.u)
     annotation (Line(points={{-180,-100},{-82,-100}}, color={0,0,127}));
   connect(con9.y, lin1.x1)
-    annotation (Line(points={{21,110},{30,110},{30,88},{38,88}},
+    annotation (Line(points={{21,100},{30,100},{30,88},{38,88}},
       color={0,0,127}));
   connect(con6.y, lin1.f1)
-    annotation (Line(points={{-19,110},{-10,110},{-10,84},{38,84}},
+    annotation (Line(points={{-19,100},{-10,100},{-10,84},{38,84}},
       color={0,0,127}));
   connect(con7.y, lin1.x2)
     annotation (Line(points={{-19,50},{-10,50},{-10,76},{38,76}},
@@ -210,59 +210,61 @@ equation
     annotation (Line(points={{-59,-100},{40,-100},{40,2},{58,2}},
       color={0,0,127}));
   connect(uChiWatIsoVal, hys4.u)
-    annotation (Line(points={{-180,-100},{-140,-100},{-140,150},{-122,150}},
+    annotation (Line(points={{-180,-100},{-140,-100},{-140,160},{-122,160}},
       color={0,0,127}));
   connect(uChiWatIsoVal, hys3.u)
-    annotation (Line(points={{-180,-100},{-140,-100},{-140,210},{-122,210}},
+    annotation (Line(points={{-180,-100},{-140,-100},{-140,220},{-122,220}},
       color={0,0,127}));
   connect(hys3.y, and3.u1)
-    annotation (Line(points={{-99,210},{-2,210}}, color={255,0,255}));
+    annotation (Line(points={{-99,220},{-2,220}}, color={255,0,255}));
   connect(hys4.y, and3.u2)
-    annotation (Line(points={{-99,150},{-80,150},{-80,202},{-2,202}},
+    annotation (Line(points={{-99,160},{-80,160},{-80,212},{-2,212}},
       color={255,0,255}));
   connect(hys4.y, not4.u)
-    annotation (Line(points={{-99,150},{-42,150}}, color={255,0,255}));
+    annotation (Line(points={{-99,160},{-42,160}}, color={255,0,255}));
   connect(hys3.y, not3.u)
-    annotation (Line(points={{-99,210},{-60,210},{-60,180},{-42,180}},
+    annotation (Line(points={{-99,220},{-60,220},{-60,190},{-42,190}},
       color={255,0,255}));
   connect(not4.y, and4.u2)
-    annotation (Line(points={{-19,150},{-12,150},{-12,172},{-2,172}},
+    annotation (Line(points={{-19,160},{-12,160},{-12,182},{-2,182}},
       color={255,0,255}));
   connect(not3.y, and4.u1)
-    annotation (Line(points={{-19,180},{-2,180}}, color={255,0,255}));
+    annotation (Line(points={{-19,190},{-2,190}}, color={255,0,255}));
   connect(and3.y, or2.u1)
-    annotation (Line(points={{21,210},{38,210}}, color={255,0,255}));
+    annotation (Line(points={{21,220},{38,220}}, color={255,0,255}));
   connect(and4.y, or2.u2)
-    annotation (Line(points={{21,180},{30,180},{30,202},{38,202}},
+    annotation (Line(points={{21,190},{30,190},{30,212},{38,212}},
       color={255,0,255}));
   connect(tim.y, hys5.u)
-    annotation (Line(points={{-79,80},{-60,80},{-60,130},{78,130}},
+    annotation (Line(points={{-79,80},{-60,80},{-60,120},{78,120}},
       color={0,0,127}));
-  connect(hys5.y, and5.u2)
-    annotation (Line(points={{101,130},{120,130},{120,202},{138,202}},
-      color={255,0,255}));
   connect(mulAnd1.y, and5.u1)
-    annotation (Line(points={{101.7,210},{138,210}}, color={255,0,255}));
+    annotation (Line(points={{101.7,220},{120,220},{120,148},{138,148}},
+                                                     color={255,0,255}));
   connect(and5.y, yEnaChiWatIsoVal)
-    annotation (Line(points={{161,210},{190,210}}, color={255,0,255}));
+    annotation (Line(points={{161,140},{190,140}}, color={255,0,255}));
   connect(or2.y, mulAnd1.u)
-    annotation (Line(points={{61,210},{78,210}}, color={255,0,255}));
+    annotation (Line(points={{61,220},{78,220}}, color={255,0,255}));
   connect(conInt.y, intEqu.u2)
     annotation (Line(points={{-59,-20},{-40,-20},{-40,2},{-22,2}},
       color={255,127,0}));
 
+  connect(hys5.y, and5.u3) annotation (Line(points={{101,120},{120,120},{120,132},
+          {138,132}}, color={255,0,255}));
+  connect(yUpsDevSta, and5.u2) annotation (Line(points={{-180,-140},{-130,-140},
+          {-130,140},{138,140}}, color={255,0,255}));
 annotation (
   defaultComponentName="enaChiIsoVal",
   Diagram(coordinateSystem(preserveAspectRatio=false,
           extent={{-160,-240},{180,240}}),
           graphics={
           Rectangle(
-          extent={{-158,238},{178,142}},
+          extent={{-158,238},{178,122}},
           fillColor={210,210,210},
           fillPattern=FillPattern.Solid,
           pattern=LinePattern.None),
           Text(
-          extent={{-38,174},{172,140}},
+          extent={{-38,184},{172,150}},
           pattern=LinePattern.None,
           fillColor={210,210,210},
           fillPattern=FillPattern.Solid,

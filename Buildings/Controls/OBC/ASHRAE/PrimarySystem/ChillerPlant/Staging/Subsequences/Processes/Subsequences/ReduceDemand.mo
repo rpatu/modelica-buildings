@@ -27,7 +27,7 @@ block ReduceDemand "Sequence for reducing operating chiller demand"
       iconTransformation(extent={{100,30},{120,50}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yChiDemRed
     "Indicate if the chiller demand reduction process has finished"
-    annotation (Placement(transformation(extent={{160,-110},{180,-90}}),
+    annotation (Placement(transformation(extent={{160,-10},{180,10}}),
       iconTransformation(extent={{100,-50},{120,-30}})));
 
 protected
@@ -56,25 +56,27 @@ protected
     each final uLow=chiDemRedFac + 0.5 - 0.1,
     each final uHigh=chiDemRedFac + 0.5 + 0.1)
     "Check if actual demand has already reduced at instant when receiving stage change signal"
-    annotation (Placement(transformation(extent={{-20,-110},{0,-90}})));
+    annotation (Placement(transformation(extent={{-40,-110},{-20,-90}})));
   Buildings.Controls.OBC.CDL.Continuous.Division div[nChi]
     "Output result of first input divided by second input"
     annotation (Placement(transformation(extent={{-20,-60},{0,-40}})));
   Buildings.Controls.OBC.CDL.Logical.Not not1[nChi] "Logical not"
-    annotation (Placement(transformation(extent={{20,-110},{40,-90}})));
+    annotation (Placement(transformation(extent={{0,-110},{20,-90}})));
   Buildings.Controls.OBC.CDL.Logical.MultiAnd mulAnd(final nu=nChi)
     "Output true when elements of input vector are true"
-    annotation (Placement(transformation(extent={{60,-110},{80,-90}})));
+    annotation (Placement(transformation(extent={{40,-110},{60,-90}})));
   Buildings.Controls.OBC.CDL.Logical.TrueDelay truDel(
     final delayTime=holChiDemTim)
     "Wait a giving time before proceeding"
-    annotation (Placement(transformation(extent={{100,-110},{120,-90}})));
+    annotation (Placement(transformation(extent={{80,-110},{100,-90}})));
   Buildings.Controls.OBC.CDL.Logical.Edge edg
     "Rising edge, output true at the moment when input turns from false to true"
     annotation (Placement(transformation(extent={{-100,100},{-80,120}})));
   Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep1(final nout=nChi)
     "Replicate boolean input "
     annotation (Placement(transformation(extent={{-80,40},{-60,60}})));
+  Buildings.Controls.OBC.CDL.Logical.And and2 "Logical and"
+    annotation (Placement(transformation(extent={{120,-10},{140,10}})));
 
 equation
   connect(booRep.y, triSam.trigger)
@@ -95,7 +97,7 @@ equation
     annotation (Line(points={{-119,-100},{-100,-100},{-100,-58},{-82,-58}},
       color={0,0,127}));
   connect(triSam.y, swi.u1)
-    annotation (Line(points={{21,80},{40,80},{40,0},{-100,0},{-100,-42},{-82,-42}},
+    annotation (Line(points={{21,80},{40,80},{40,20},{-100,20},{-100,-42},{-82,-42}},
       color={0,0,127}));
   connect(swi.y, div.u2)
     annotation (Line(points={{-59,-50},{-40,-50},{-40,-56},{-22,-56}},
@@ -104,18 +106,16 @@ equation
     annotation (Line(points={{-180,80},{-140,80},{-140,-20},{-40,-20},
       {-40,-44},{-22,-44}}, color={0,0,127}));
   connect(div.y, hys.u)
-    annotation (Line(points={{1,-50},{20,-50},{20,-70},{-40,-70},
-      {-40,-100},{-22,-100}}, color={0,0,127}));
+    annotation (Line(points={{1,-50},{20,-50},{20,-70},{-60,-70},{-60,-100},{-42,
+          -100}},             color={0,0,127}));
   connect(hys.y, not1.u)
-    annotation (Line(points={{1,-100},{18,-100}}, color={255,0,255}));
+    annotation (Line(points={{-19,-100},{-2,-100}}, color={255,0,255}));
   connect(not1.y, mulAnd.u)
-    annotation (Line(points={{41,-100},{58,-100}}, color={255,0,255}));
+    annotation (Line(points={{21,-100},{38,-100}}, color={255,0,255}));
   connect(mulAnd.y, truDel.u)
-    annotation (Line(points={{81.7,-100},{98,-100}}, color={255,0,255}));
+    annotation (Line(points={{61.7,-100},{78,-100}}, color={255,0,255}));
   connect(swi4.y,yChiDem)
     annotation (Line(points={{141,40},{170,40}}, color={0,0,127}));
-  connect(truDel.y, yChiDemRed)
-    annotation (Line(points={{121,-100},{170,-100}}, color={255,0,255}));
   connect(uDemLim, edg.u)
     annotation (Line(points={{-180,110},{-102,110}}, color={255,0,255}));
   connect(edg.y, booRep.u)
@@ -125,6 +125,12 @@ equation
   connect(booRep1.y, swi4.u2)
     annotation (Line(points={{-59,50},{-40,50},{-40,40},{118,40}},
       color={255,0,255}));
+  connect(uDemLim, and2.u1) annotation (Line(points={{-180,110},{-120,110},{-120,
+          0},{118,0}}, color={255,0,255}));
+  connect(truDel.y, and2.u2) annotation (Line(points={{101,-100},{110,-100},{110,
+          -8},{118,-8}}, color={255,0,255}));
+  connect(and2.y, yChiDemRed)
+    annotation (Line(points={{141,0},{170,0}}, color={255,0,255}));
 
 annotation (
   defaultComponentName="chiDemRed",

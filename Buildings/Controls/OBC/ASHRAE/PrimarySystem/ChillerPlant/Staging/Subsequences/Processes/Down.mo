@@ -279,6 +279,8 @@ protected
     final minFloDif=minFloDif)
     "Check if minium bypass has been reset"
     annotation (Placement(transformation(extent={{260,-380},{280,-360}})));
+  Buildings.Controls.OBC.CDL.Logical.And and2 "Logical and"
+    annotation (Placement(transformation(extent={{260,-270},{280,-250}})));
 
 equation
   connect(uSta, staDow.uSta) annotation (Line(points={{-240,170},{-120,170},{-120,
@@ -397,9 +399,6 @@ equation
           -218},{210,-218},{210,-310},{-240,-310}}, color={0,0,127}));
   connect(con.y, minBypSet.uStaUp) annotation (Line(points={{-79,320},{-60,320},
           {-60,-322},{258,-322}}, color={255,0,255}));
-  connect(conWatPumCon.yPumSpeChe, minBypSet.uUpsDevSta) annotation (Line(
-        points={{241,-219},{260,-219},{260,-300},{240,-300},{240,-326},{258,-326}},
-        color={255,0,255}));
   connect(uSta, minBypSet.uSta) annotation (Line(points={{-240,170},{-120,170},{
           -120,-330},{258,-330}}, color={255,127,0}));
   connect(nexChi.yOnOff, minBypSet.uOnOff) annotation (Line(points={{41,290},{60,
@@ -425,9 +424,6 @@ equation
     annotation (Line(points={{-240,380},{-182,380}}, color={255,0,255}));
   connect(edg.y, lat.u)
     annotation (Line(points={{-159,380},{-121,380}}, color={255,0,255}));
-  connect(conWatPumCon.yPumSpeChe, minBypSet1.uUpsDevSta) annotation (Line(
-        points={{241,-219},{260,-219},{260,-300},{240,-300},{240,-362},{258,-362}},
-        color={255,0,255}));
   connect(lat.y, minBypSet1.uStaCha) annotation (Line(points={{-99,380},{-80,380},
           {-80,360},{-200,360},{-200,-366},{258,-366}}, color={255,0,255}));
   connect(minBypSet.yChiWatBypSet, minBypSet1.VBypas_setpoint) annotation (Line(
@@ -462,6 +458,14 @@ equation
     annotation (Line(points={{-99,380},{330,380}}, color={255,0,255}));
   connect(disHeaCon.yEnaHeaCon, yTowStaDow) annotation (Line(points={{281,-94},{
           300,-94},{300,-140},{330,-140}}, color={255,0,255}));
+  connect(disHeaCon.yEnaHeaCon, and2.u2) annotation (Line(points={{281,-94},{300,
+          -94},{300,-140},{140,-140},{140,-268},{258,-268}}, color={255,0,255}));
+  connect(conWatPumCon.yPumSpeChe, and2.u1) annotation (Line(points={{241,-219},
+          {250,-219},{250,-260},{258,-260}}, color={255,0,255}));
+  connect(and2.y, minBypSet.uUpsDevSta) annotation (Line(points={{281,-260},{300,
+          -260},{300,-300},{240,-300},{240,-326},{258,-326}}, color={255,0,255}));
+  connect(and2.y, minBypSet1.uUpsDevSta) annotation (Line(points={{281,-260},{300,
+          -260},{300,-300},{240,-300},{240,-362},{258,-362}}, color={255,0,255}));
 annotation (
   defaultComponentName="dowProCon",
   Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-220,-400},{320,400}})),

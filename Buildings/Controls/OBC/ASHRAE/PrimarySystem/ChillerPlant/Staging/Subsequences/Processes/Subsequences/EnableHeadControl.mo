@@ -32,7 +32,7 @@ block EnableHeadControl
       iconTransformation(extent={{100,-70},{120,-50}})));
   Buildings.Controls.OBC.CDL.Interfaces.BooleanOutput yEnaHeaCon
     "Status of heat pressure control: true=enabled head pressure control"
-    annotation (Placement(transformation(extent={{220,100},{240,120}}),
+    annotation (Placement(transformation(extent={{220,110},{240,130}}),
       iconTransformation(extent={{100,50},{120,70}})));
 
 protected
@@ -69,7 +69,7 @@ protected
   Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greEquThr1(
     final threshold=thrTimEnb + waiTim)
     "Check if it is 10 seconds after condenser water pump achieves its new setpoint and have waited another 30 seconds"
-    annotation (Placement(transformation(extent={{40,100},{60,120}})));
+    annotation (Placement(transformation(extent={{40,110},{60,130}})));
   Buildings.Controls.OBC.CDL.Routing.BooleanReplicator booRep1(
     final nout=nChi) "Replicate boolean input"
     annotation (Placement(transformation(extent={{80,70},{100,90}})));
@@ -109,6 +109,8 @@ protected
   Buildings.Controls.OBC.CDL.Integers.Sources.Constant conInt[nChi](
     final k=chiInd)   "Chiller index array"
     annotation (Placement(transformation(extent={{-120,-50},{-100,-30}})));
+  Buildings.Controls.OBC.CDL.Logical.And and1 "Logical and"
+    annotation (Placement(transformation(extent={{140,110},{160,130}})));
 
 equation
   connect(uUpsDevSta, edg.u)
@@ -142,9 +144,7 @@ equation
     annotation (Line(points={{-39,-120},{-10,-120},{-10,-101.8}},
       color={255,0,255}));
   connect(tim.y, greEquThr1.u)
-    annotation (Line(points={{1,80},{20,80},{20,110},{38,110}}, color={0,0,127}));
-  connect(greEquThr1.y, yEnaHeaCon)
-    annotation (Line(points={{61,110},{230,110}}, color={255,0,255}));
+    annotation (Line(points={{1,80},{20,80},{20,120},{38,120}}, color={0,0,127}));
   connect(booRep1.y, swi.u2)
     annotation (Line(points={{101,80},{120,80},{120,-10},{138,-10}},
       color={255,0,255}));
@@ -201,6 +201,12 @@ equation
   connect(conInt.y, intEqu.u2)
     annotation (Line(points={{-99,-40},{-90,-40},{-90,-18},{-62,-18}},
       color={255,127,0}));
+  connect(uUpsDevSta, and1.u2) annotation (Line(points={{-160,120},{-130,120},{-130,
+          104},{120,104},{120,112},{138,112}}, color={255,0,255}));
+  connect(greEquThr1.y, and1.u1)
+    annotation (Line(points={{61,120},{138,120}}, color={255,0,255}));
+  connect(and1.y, yEnaHeaCon)
+    annotation (Line(points={{161,120},{230,120}}, color={255,0,255}));
 
 annotation (
   defaultComponentName="enaHeaCon",

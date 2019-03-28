@@ -156,6 +156,8 @@ block Up "Sequence for control devices when there is stage-up command"
     annotation (Placement(transformation(extent={{240,-230},{260,-210}}),
       iconTransformation(extent={{200,-200},{220,-180}})));
 
+  CDL.Logical.And and2 "Logical and"
+    annotation (Placement(transformation(extent={{20,-70},{40,-50}})));
 protected
   Buildings.Controls.OBC.ASHRAE.PrimarySystem.ChillerPlant.Staging.Subsequences.Processes.Subsequences.NextChiller
     nexChi(
@@ -289,9 +291,6 @@ equation
           {40,20},{40,-12},{58,-12}}, color={255,127,0}));
   connect(lat.y, enaHeaCon.uStaCha) annotation (Line(points={{-119,210},{-100,210},
           {-100,-86},{58,-86}},color={255,0,255}));
-  connect(conWatPumCon.yPumSpeChe, enaHeaCon.uUpsDevSta) annotation (Line(
-        points={{81,-29},{96,-29},{96,-60},{40,-60},{40,-82},{58,-82}},
-        color={255,0,255}));
   connect(nexChi.yNexEnaChi, enaHeaCon.uNexChaChi) annotation (Line(points={{-59,239},
           {-36,239},{-36,-94},{58,-94}},      color={255,127,0}));
   connect(enaHeaCon.uChiHeaCon, uChiHeaCon) annotation (Line(points={{58,-98},{
@@ -302,7 +301,7 @@ equation
   connect(enaChiIsoVal.uChiWatIsoVal, uChiWatIsoVal) annotation (Line(points={{58,-146},
           {-96,-146},{-96,-160},{-260,-160}},       color={0,0,127}));
   connect(enaHeaCon.yEnaHeaCon, enaChiIsoVal.yUpsDevSta) annotation (Line(
-        points={{81,-84},{96,-84},{96,-112},{40,-112},{40,-154},{58,-154}},
+        points={{81,-84},{96,-84},{96,-120},{40,-120},{40,-154},{58,-154}},
         color={255,0,255}));
   connect(lat.y, enaChiIsoVal.uStaCha) annotation (Line(points={{-119,210},{-100,
           210},{-100,-158},{58,-158}}, color={255,0,255}));
@@ -404,6 +403,12 @@ equation
   connect(minBypSet.yMinBypRes, yTowStaUp) annotation (Line(points={{81,130},{
           96,130},{96,60},{250,60}},
                                   color={255,0,255}));
+  connect(minBypSet.yMinBypRes, and2.u2) annotation (Line(points={{81,130},{96,
+          130},{96,60},{-28,60},{-28,-68},{18,-68}}, color={255,0,255}));
+  connect(conWatPumCon.yPumSpeChe, and2.u1) annotation (Line(points={{81,-29},{
+          90,-29},{90,-40},{8,-40},{8,-60},{18,-60}}, color={255,0,255}));
+  connect(and2.y, enaHeaCon.uUpsDevSta) annotation (Line(points={{41,-60},{50,
+          -60},{50,-82},{58,-82}}, color={255,0,255}));
 annotation (
   defaultComponentName="upProCon",
   Diagram(coordinateSystem(preserveAspectRatio=false,
