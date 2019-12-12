@@ -24,7 +24,7 @@ First implementation.
  __Dymola_Commands(file="modelica://Buildings/Resources/Scripts/Dymola/Experimental/EnergyPlus/Validation/OneZoneOneOutputVariable.mos"
         "Simulate and plot"),
 experiment(
-      StopTime=432000,
+      StopTime=1032000,
       Tolerance=1e-06,
       __Dymola_Algorithm="Cvode"));
 end OneZoneOneOutputVariable;
