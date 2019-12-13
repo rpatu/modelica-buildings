@@ -113,6 +113,10 @@ void OutputVariableExchange(
 
   *y = outVar->outputs->valsEP[0];
 
+  if (fabs(time-86400) < 3600.){
+    ModelicaFormatMessage("************** Debug for output %s, time = %0.2f, y = %0.2f", outVar->modelicaNameOutputVariable, time, *y);
+  }
+
   if (FMU_EP_VERBOSITY >= TIMESTEP)
     ModelicaFormatMessage("Returning from OutputVariablesExchange with nextEventTime = %.2f, y = %.2f, output variable = %s, mode = %s\n",
     *tNext, *y, outVar->modelicaNameOutputVariable, fmuModeToString(bui->mode));
