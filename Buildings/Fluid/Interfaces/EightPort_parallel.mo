@@ -1,5 +1,5 @@
 within Buildings.Fluid.Interfaces;
-partial model EightPort "Partial model with eight ports"
+partial model EightPort_parallel "Partial model with eight ports"
 
   replaceable package Medium1 =
     Modelica.Media.Interfaces.PartialMedium "Medium 1 in the component"
@@ -106,27 +106,27 @@ partial model EightPort "Partial model with eight ports"
                      m_flow(min=if allowFlowReversal2 then -Modelica.Constants.inf else 0),
                      h_outflow(start=h_outflow_a2_start))
     "Fluid connector a2 (positive design flow direction is from port_a2 to port_b2)"
-    annotation (Placement(transformation(extent={{90,20},{110,40}})));
+    annotation (Placement(transformation(extent={{-110,20},{-90,40}})));
   Modelica.Fluid.Interfaces.FluidPort_b port_b2(
                      redeclare final package Medium = Medium2,
                      m_flow(max=if allowFlowReversal2 then +Modelica.Constants.inf else 0),
                      h_outflow(start=h_outflow_b2_start))
     "Fluid connector b2 (positive design flow direction is from port_a2 to port_b2)"
-    annotation (Placement(transformation(extent={{-90,20},{-110,40}}),
-                iconTransformation(extent={{-90,20},{-110,40}})));
+    annotation (Placement(transformation(extent={{110,20},{90,40}}),
+                iconTransformation(extent={{110,20},{90,40}})));
 
   Modelica.Fluid.Interfaces.FluidPort_a port_a3(
                      redeclare final package Medium = Medium3,
                      m_flow(min=if allowFlowReversal3 then -Modelica.Constants.inf else 0),
                      h_outflow(start=h_outflow_a3_start))
     "Fluid connector a1 (positive design flow direction is from port_a3 to port_b3)"
-    annotation (Placement(transformation(extent={{-110,-42},{-90,-22}})));
+    annotation (Placement(transformation(extent={{90,-40},{110,-20}})));
   Modelica.Fluid.Interfaces.FluidPort_b port_b3(
                      redeclare final package Medium = Medium3,
                      m_flow(max=if allowFlowReversal3 then +Modelica.Constants.inf else 0),
                      h_outflow(start=h_outflow_b3_start))
     "Fluid connector b2 (positive design flow direction is from port_a3 to port_b3)"
-    annotation (Placement(transformation(extent={{110,-40},{90,-20}}),
+    annotation (Placement(transformation(extent={{-90,-40},{-110,-20}}),
                 iconTransformation(extent={{110,-41},{90,-21}})));
   Modelica.Fluid.Interfaces.FluidPort_a port_a4(
                      redeclare final package Medium = Medium4,
@@ -169,4 +169,4 @@ See <a href=\"https://github.com/ibpsa/modelica-ibpsa/issues/1050\">#1050</a>.
           textString="%name")}),
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{
             100,100}})));
-end EightPort;
+end EightPort_parallel;
