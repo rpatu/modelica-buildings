@@ -138,17 +138,17 @@ package DHC_Marseille
         annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
       Modelica.Blocks.Sources.RealExpression realExpression(y=4 + 273.15)
         annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-80,50},{-60,70}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TT211(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TT211(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{60,-4},{80,16}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TCout(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TCout(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-60,-70},{-80,-50}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{140,-30},{120,-10}})));
       Modelica.Fluid.Valves.ValveLinear CV121(
         redeclare package Medium =
@@ -158,15 +158,6 @@ package DHC_Marseille
             extent={{-10,-10},{10,10}},
             rotation=180,
             origin={40,-20})));
-
-      Modelica.Fluid.Valves.ValveLinear XV111(
-        redeclare package Medium =
-            Modelica.Media.Water.ConstantPropertyLiquidWater,
-        dp_nominal=10000,
-        m_flow_nominal=500) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=180,
-            origin={-30,-30})));
 
       Modelica.Fluid.Sensors.Pressure PT221(redeclare package Medium =
             Modelica.Media.Water.ConstantPropertyLiquidWater)
@@ -246,8 +237,6 @@ package DHC_Marseille
 
       Modelica.Blocks.Interfaces.BooleanInput on(start=false)
         annotation (Placement(transformation(extent={{-160,-150},{-120,-110}})));
-      Controls.OBC.CDL.Conversions.BooleanToReal signal
-        annotation (Placement(transformation(extent={{-80,-140},{-60,-120}})));
       Modelica.StateGraph.InitialStep GF_stopped
         annotation (Placement(transformation(extent={{-320,-40},{-300,-20}})));
       Modelica.StateGraph.TransitionWithSignal GF_start_request
@@ -260,8 +249,14 @@ package DHC_Marseille
         annotation (Placement(transformation(extent={{-200,-40},{-180,-20}})));
       Modelica.Blocks.Logical.Not not1
         annotation (Placement(transformation(extent={{-140,-70},{-160,-50}})));
-      Modelica.Blocks.Sources.RealExpression Q_set1(y=0.01)
-        annotation (Placement(transformation(extent={{-60,-98},{-40,-78}})));
+      Modelica.Fluid.Valves.ValveDiscrete valveDiscrete(
+        redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater,
+        dp_nominal=10000,
+        m_flow_nominal=500)
+        annotation (Placement(transformation(extent={{-20,-50},{-40,-70}})));
+      Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=true)
+        annotation (Placement(transformation(extent={{-62,-110},{-42,-90}})));
     equation
       connect(realExpression.y, chi.TSet) annotation (Line(points={{-79,30},{-16,30},
               {-16,9},{-12,9}}, color={0,0,127}));
@@ -277,10 +272,6 @@ package DHC_Marseille
         annotation (Line(points={{10,6},{60,6}}, color={0,127,255}));
       connect(chi.port_a2, CV121.port_b) annotation (Line(points={{10,-6},{20,-6},{20,
               -20},{30,-20}}, color={0,127,255}));
-      connect(TCout.port_a, XV111.port_b) annotation (Line(points={{-60,-60},{-56,-60},
-              {-56,-30},{-40,-30}}, color={0,127,255}));
-      connect(XV111.port_a, chi.port_b2) annotation (Line(points={{-20,-30},{-16,-30},
-              {-16,-6},{-10,-6}}, color={0,127,255}));
       connect(THIn.port_b, PT221.port) annotation (Line(points={{-60,60},{-56,60},{-56,
               6},{-32,6}}, color={0,127,255}));
       connect(chi.port_b1, PT211.port)
@@ -335,8 +326,6 @@ package DHC_Marseille
         annotation (Line(points={{-299.5,-30},{-274,-30}}, color={0,0,0}));
       connect(GF_start_request.outPort, GF_starting.inPort[1])
         annotation (Line(points={{-268.5,-30},{-241,-30}}, color={0,0,0}));
-      connect(GF_starting.active, signal.u) annotation (Line(points={{-230,-41},{-230,
-              -80},{-92,-80},{-92,-130},{-82,-130}}, color={255,0,255}));
       connect(GF_starting.outPort[1], GF_stop_request.inPort)
         annotation (Line(points={{-219.5,-30},{-194,-30}}, color={0,0,0}));
       connect(GF_stop_request.outPort, GF_stopped.inPort[1]) annotation (Line(
@@ -347,8 +336,12 @@ package DHC_Marseille
             color={255,0,255}));
       connect(not1.y, GF_stop_request.condition) annotation (Line(points={{-161,-60},
               {-190,-60},{-190,-42}}, color={255,0,255}));
-      connect(Q_set1.y, XV111.opening) annotation (Line(points={{-39,-88},{-30,
-              -88},{-30,-38}}, color={0,0,127}));
+      connect(TCout.port_a, valveDiscrete.port_b)
+        annotation (Line(points={{-60,-60},{-40,-60}}, color={0,127,255}));
+      connect(valveDiscrete.port_a, chi.port_b2) annotation (Line(points={{-20,
+              -60},{-14,-60},{-14,-6},{-10,-6}}, color={0,127,255}));
+      connect(booleanExpression.y, valveDiscrete.open) annotation (Line(points=
+              {{-41,-100},{-41,-99},{-30,-99},{-30,-68}}, color={255,0,255}));
       annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-140,-140},
                 {140,140}}), graphics={
             Rectangle(
@@ -659,13 +652,17 @@ package DHC_Marseille
           annotation (Placement(transformation(extent={{-80,-50},{-60,-30}})));
       equation
         connect(entree_c.ports[1], chiller_carnot.port_a1) annotation (Line(
-              points={{-60,40},{-36,40},{-36,6},{-10,6}}, color={0,127,255}));
+              points={{-60,40},{-36,40},{-36,4.28571},{-7.14286,4.28571}},
+                                                          color={0,127,255}));
         connect(chiller_carnot.port_b1, sortie_c.ports[1]) annotation (Line(
-              points={{10,6},{36,6},{36,40},{60,40}}, color={0,127,255}));
+              points={{7.14286,4.28571},{36,4.28571},{36,40},{60,40}},
+                                                      color={0,127,255}));
         connect(entree_f.ports[1], chiller_carnot.port_a2) annotation (Line(
-              points={{60,-40},{36,-40},{36,-6},{10,-6}}, color={0,127,255}));
+              points={{60,-40},{36,-40},{36,-4.28571},{7.14286,-4.28571}},
+                                                          color={0,127,255}));
         connect(chiller_carnot.port_b2, sortie_f.ports[1]) annotation (Line(
-              points={{-10,-6},{-36,-6},{-36,-40},{-60,-40}}, color={0,127,255}));
+              points={{-7.14286,-4.28571},{-36,-4.28571},{-36,-40},{-60,-40}},
+                                                              color={0,127,255}));
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end test_carnot;
@@ -997,7 +994,8 @@ package DHC_Marseille
     PEM.pem_gf pem_gf(redeclare package Medium = Media.Water)
       annotation (Placement(transformation(extent={{0,-60},{20,-40}})));
     GF.Chiller_carnot chiller_carnot(redeclare package Medium1 = Media.Water,
-        redeclare package Medium2 = Media.Water)
+        redeclare package Medium2 = Media.Water,
+      on(fixed=false))
       annotation (Placement(transformation(extent={{-4,24},{24,-4}})));
     Modelica.Fluid.Sources.MassFlowSource_T entree_f(
       redeclare package Medium =
@@ -1046,4 +1044,91 @@ package DHC_Marseille
     annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
           coordinateSystem(preserveAspectRatio=false)));
   end Plant;
+
+  package test_valves
+    model test_tor
+      Modelica.Fluid.Valves.ValveDiscrete valveDiscrete(
+        redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater,
+        dp_nominal=10000,
+        m_flow_nominal=100)
+        annotation (Placement(transformation(extent={{-10,-60},{10,-40}})));
+      Modelica.Fluid.Valves.ValveLinear valveLinear(
+        redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater,
+        dp_nominal=10000,
+        m_flow_nominal=100)
+        annotation (Placement(transformation(extent={{-10,20},{10,40}})));
+      Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium
+          = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+        annotation (Placement(transformation(extent={{100,-60},{80,-40}})));
+      Modelica.Fluid.Sources.MassFlowSource_T source2(
+        redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater,
+        m_flow=100,
+        nPorts=1)
+        annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
+      Modelica.Fluid.Sources.MassFlowSource_T source1(
+        redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater,
+        m_flow=100,
+        nPorts=1)
+        annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
+      Modelica.Fluid.Sources.FixedBoundary boundary1(redeclare package Medium
+          = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+        annotation (Placement(transformation(extent={{100,20},{80,40}})));
+      Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=true)
+        annotation (Placement(transformation(extent={{-40,-20},{-20,0}})));
+      Modelica.Blocks.Sources.RealExpression realExpression
+        annotation (Placement(transformation(extent={{-40,60},{-20,80}})));
+    equation
+      connect(source1.ports[1], valveLinear.port_a)
+        annotation (Line(points={{-80,30},{-10,30}}, color={0,127,255}));
+      connect(valveLinear.port_b, boundary1.ports[1])
+        annotation (Line(points={{10,30},{80,30}}, color={0,127,255}));
+      connect(source2.ports[1], valveDiscrete.port_a)
+        annotation (Line(points={{-80,-50},{-10,-50}}, color={0,127,255}));
+      connect(valveDiscrete.port_b, boundary2.ports[1])
+        annotation (Line(points={{10,-50},{80,-50}}, color={0,127,255}));
+      connect(booleanExpression.y, valveDiscrete.open) annotation (Line(points=
+              {{-19,-10},{0,-10},{0,-42}}, color={255,0,255}));
+      connect(realExpression.y, valveLinear.opening)
+        annotation (Line(points={{-19,70},{0,70},{0,38}}, color={0,0,127}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end test_tor;
+
+    model test_tor1
+      Modelica.Fluid.Valves.ValveDiscrete valveDiscrete(
+        redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater,
+        dp_nominal=10000,
+        m_flow_nominal=100)
+        annotation (Placement(transformation(extent={{-10,-60},{10,-40}})));
+      Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium
+          = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
+        annotation (Placement(transformation(extent={{100,-60},{80,-40}})));
+      Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=false)
+        annotation (Placement(transformation(extent={{-40,-20},{-20,0}})));
+      Fluid.Movers.FlowControlled_dp fan(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=100,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
+        inputType=Buildings.Fluid.Types.InputType.Constant,
+        constantHead=100)
+        annotation (Placement(transformation(extent={{-60,-60},{-40,-40}})));
+    equation
+      connect(valveDiscrete.port_b, boundary2.ports[1]) annotation (Line(points
+            ={{10,-50},{58,-50},{58,-48},{80,-48}}, color={0,127,255}));
+      connect(booleanExpression.y, valveDiscrete.open) annotation (Line(points=
+              {{-19,-10},{0,-10},{0,-42}}, color={255,0,255}));
+      connect(boundary2.ports[2], fan.port_a) annotation (Line(points={{80,-52},
+              {68,-52},{68,-80},{-80,-80},{-80,-50},{-60,-50}}, color={0,127,
+              255}));
+      connect(fan.port_b, valveDiscrete.port_a)
+        annotation (Line(points={{-40,-50},{-10,-50}}, color={0,127,255}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end test_tor1;
+  end test_valves;
 end DHC_Marseille;
