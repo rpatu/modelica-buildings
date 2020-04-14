@@ -1058,42 +1058,51 @@ package DHC_Marseille
             Modelica.Media.Water.ConstantPropertyLiquidWater,
         dp_nominal=10000,
         m_flow_nominal=100)
-        annotation (Placement(transformation(extent={{-10,20},{10,40}})));
+        annotation (Placement(transformation(extent={{-10,40},{10,60}})));
       Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+          = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
         annotation (Placement(transformation(extent={{100,-60},{80,-40}})));
-      Modelica.Fluid.Sources.MassFlowSource_T source2(
-        redeclare package Medium =
-            Modelica.Media.Water.ConstantPropertyLiquidWater,
-        m_flow=100,
-        nPorts=1)
-        annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
-      Modelica.Fluid.Sources.MassFlowSource_T source1(
-        redeclare package Medium =
-            Modelica.Media.Water.ConstantPropertyLiquidWater,
-        m_flow=100,
-        nPorts=1)
-        annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
       Modelica.Fluid.Sources.FixedBoundary boundary1(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
-        annotation (Placement(transformation(extent={{100,20},{80,40}})));
-      Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=true)
-        annotation (Placement(transformation(extent={{-40,-20},{-20,0}})));
-      Modelica.Blocks.Sources.RealExpression realExpression
-        annotation (Placement(transformation(extent={{-40,60},{-20,80}})));
+          = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
+        annotation (Placement(transformation(extent={{100,40},{80,60}})));
+      Fluid.Movers.FlowControlled_dp fan2(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=100,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
+        inputType=Buildings.Fluid.Types.InputType.Constant,
+        constantHead=100)
+        annotation (Placement(transformation(extent={{-80,-60},{-60,-40}})));
+      Fluid.Movers.FlowControlled_dp fan1(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=100,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
+        inputType=Buildings.Fluid.Types.InputType.Constant,
+        constantHead=100)
+        annotation (Placement(transformation(extent={{-80,40},{-60,60}})));
+      Modelica.Blocks.Sources.BooleanPulse booleanPulse(width=50, period=1000)
+        annotation (Placement(transformation(extent={{-60,-20},{-40,0}})));
+      Modelica.Blocks.Sources.Pulse pulse(width=50, period=1000)
+        annotation (Placement(transformation(extent={{-60,80},{-40,100}})));
     equation
-      connect(source1.ports[1], valveLinear.port_a)
-        annotation (Line(points={{-80,30},{-10,30}}, color={0,127,255}));
       connect(valveLinear.port_b, boundary1.ports[1])
-        annotation (Line(points={{10,30},{80,30}}, color={0,127,255}));
-      connect(source2.ports[1], valveDiscrete.port_a)
-        annotation (Line(points={{-80,-50},{-10,-50}}, color={0,127,255}));
+        annotation (Line(points={{10,50},{46,50},{46,52},{80,52}},
+                                                   color={0,127,255}));
       connect(valveDiscrete.port_b, boundary2.ports[1])
-        annotation (Line(points={{10,-50},{80,-50}}, color={0,127,255}));
-      connect(booleanExpression.y, valveDiscrete.open) annotation (Line(points=
-              {{-19,-10},{0,-10},{0,-42}}, color={255,0,255}));
-      connect(realExpression.y, valveLinear.opening)
-        annotation (Line(points={{-19,70},{0,70},{0,38}}, color={0,0,127}));
+        annotation (Line(points={{10,-50},{46,-50},{46,-48},{80,-48}},
+                                                     color={0,127,255}));
+      connect(fan2.port_b, valveDiscrete.port_a)
+        annotation (Line(points={{-60,-50},{-10,-50}}, color={0,127,255}));
+      connect(fan2.port_a, boundary2.ports[2]) annotation (Line(points={{-80,
+              -50},{-90,-50},{-90,-80},{60,-80},{60,-52},{80,-52}}, color={0,
+              127,255}));
+      connect(fan1.port_b, valveLinear.port_a)
+        annotation (Line(points={{-60,50},{-10,50}}, color={0,127,255}));
+      connect(fan1.port_a, boundary1.ports[2]) annotation (Line(points={{-80,50},
+              {-90,50},{-90,20},{60,20},{60,48},{80,48}}, color={0,127,255}));
+      connect(booleanPulse.y, valveDiscrete.open) annotation (Line(points={{-39,
+              -10},{0,-10},{0,-42}}, color={255,0,255}));
+      connect(pulse.y, valveLinear.opening)
+        annotation (Line(points={{-39,90},{0,90},{0,58}}, color={0,0,127}));
       annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
             coordinateSystem(preserveAspectRatio=false)));
     end test_tor;
@@ -1105,8 +1114,8 @@ package DHC_Marseille
         dp_nominal=10000,
         m_flow_nominal=100)
         annotation (Placement(transformation(extent={{-10,-60},{10,-40}})));
-      Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
+      Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
         annotation (Placement(transformation(extent={{100,-60},{80,-40}})));
       Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=false)
         annotation (Placement(transformation(extent={{-40,-20},{-20,0}})));
@@ -1118,8 +1127,8 @@ package DHC_Marseille
         constantHead=100)
         annotation (Placement(transformation(extent={{-60,-60},{-40,-40}})));
     equation
-      connect(valveDiscrete.port_b, boundary2.ports[1]) annotation (Line(points
-            ={{10,-50},{58,-50},{58,-48},{80,-48}}, color={0,127,255}));
+      connect(valveDiscrete.port_b, boundary2.ports[1]) annotation (Line(points=
+             {{10,-50},{58,-50},{58,-48},{80,-48}}, color={0,127,255}));
       connect(booleanExpression.y, valveDiscrete.open) annotation (Line(points=
               {{-19,-10},{0,-10},{0,-42}}, color={255,0,255}));
       connect(boundary2.ports[2], fan.port_a) annotation (Line(points={{80,-52},
