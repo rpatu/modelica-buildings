@@ -1019,6 +1019,33 @@ First implementation.
 </html>"));
       end Carnot_TEva_modif;
     end Tests;
+
+    model basic_0
+      Fluid.Chillers.Carnot_TEva chi(
+        redeclare package Medium1 = Media.Water,
+        redeclare package Medium2 = Media.Water,
+        m1_flow_nominal=490/3.6,
+        m2_flow_nominal=810/3.6,
+        QEva_flow_nominal=-4000000,
+        dTEva_nominal=-7,
+        dTCon_nominal=5,
+        use_eta_Carnot_nominal=false,
+        etaCarnot_nominal=5.71,
+        COP_nominal=5.71,
+        TCon_nominal=298.15,
+        TEva_nominal=277.15,
+        dp1_nominal=0.41,
+        dp2_nominal=0.31,
+        QEva_flow_min=-4240000)
+        annotation (Placement(transformation(extent={{-12,-10},{8,10}})));
+      Modelica.Blocks.Sources.RealExpression realExpression(y=4 + 273.15)
+        annotation (Placement(transformation(extent={{-60,20},{-40,40}})));
+    equation
+      connect(realExpression.y, chi.TSet) annotation (Line(points={{-39,30},{
+              -26,30},{-26,9},{-14,9}}, color={0,0,127}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end basic_0;
   end GF;
 
   package PEM
@@ -1095,8 +1122,8 @@ First implementation.
         inputType=Buildings.Fluid.Types.InputType.Constant,
         constantHead=87000)
         annotation (Placement(transformation(extent={{-10,-30},{10,-10}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{30,-30},{50,-10}})));
       Modelica.Blocks.Interfaces.RealOutput y
         annotation (Placement(transformation(extent={{100,0},{120,20}})));
@@ -1109,8 +1136,8 @@ First implementation.
             extent={{-10,-10},{10,10}},
             rotation=90,
             origin={70,-10})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-60,30},{-80,50}})));
       Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
         tableOnFile=true,
@@ -1166,8 +1193,8 @@ First implementation.
     package Tests
       extends Modelica.Icons.ExamplesPackage;
       model test_0
-        Modelica.Fluid.Sources.FixedBoundary boundary(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+        Modelica.Fluid.Sources.FixedBoundary boundary(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
           annotation (Placement(transformation(
               extent={{10,-10},{-10,10}},
               rotation=-90,
@@ -1536,6 +1563,20 @@ First implementation.
     end test_mover;
   end test_valves;
 
+  package DEC
+    extends Modelica.Icons.VariantsPackage;
+    package Tests
+      extends Modelica.Icons.ExamplesPackage;
+    end Tests;
+  end DEC;
+
+  package DEG
+    extends Modelica.Icons.VariantsPackage;
+    package Tests
+      extends Modelica.Icons.ExamplesPackage;
+    end Tests;
+  end DEG;
+
   package Miscellaneous
     extends Modelica.Icons.VariantsPackage;
     package data_table
@@ -1582,5 +1623,41 @@ First implementation.
               coordinateSystem(preserveAspectRatio=false)));
       end table_b;
     end data_table;
+
+    model mass_flow
+      Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
+         Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=180,
+            origin={90,10})));
+      Modelica.Fluid.Sensors.MassFlowRate massFlowRate(redeclare package Medium
+          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+        annotation (Placement(transformation(extent={{20,0},{40,20}})));
+      Fluid.Movers.FlowControlled_dp fan(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=800,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
+        inputType=Buildings.Fluid.Types.InputType.Constant,
+        constantHead=870)
+        annotation (Placement(transformation(extent={{-40,0},{-20,20}})));
+      Modelica.Fluid.Sources.FixedBoundary entree_f(
+        redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater,
+        p=100000,
+        nPorts=1) annotation (Placement(transformation(
+            extent={{10,-10},{-10,10}},
+            rotation=180,
+            origin={-90,10})));
+    equation
+      connect(massFlowRate.port_b, sortie_f.ports[1])
+        annotation (Line(points={{40,10},{80,10}}, color={0,127,255}));
+      connect(fan.port_b, massFlowRate.port_a)
+        annotation (Line(points={{-20,10},{20,10}}, color={0,127,255}));
+      connect(entree_f.ports[1], fan.port_a)
+        annotation (Line(points={{-80,10},{-40,10}}, color={0,127,255}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end mass_flow;
   end Miscellaneous;
 end DHC_Marseille;
