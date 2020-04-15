@@ -253,10 +253,9 @@ package DHC_Marseille
         redeclare package Medium =
             Modelica.Media.Water.ConstantPropertyLiquidWater,
         dp_nominal=10000,
-        m_flow_nominal=500)
+        m_flow_nominal=500,
+        opening_min=0.000000000001)
         annotation (Placement(transformation(extent={{-20,-50},{-40,-70}})));
-      Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=true)
-        annotation (Placement(transformation(extent={{-62,-110},{-42,-90}})));
     equation
       connect(realExpression.y, chi.TSet) annotation (Line(points={{-79,30},{-16,30},
               {-16,9},{-12,9}}, color={0,0,127}));
@@ -340,10 +339,11 @@ package DHC_Marseille
         annotation (Line(points={{-60,-60},{-40,-60}}, color={0,127,255}));
       connect(valveDiscrete.port_a, chi.port_b2) annotation (Line(points={{-20,
               -60},{-14,-60},{-14,-6},{-10,-6}}, color={0,127,255}));
-      connect(booleanExpression.y, valveDiscrete.open) annotation (Line(points=
-              {{-41,-100},{-41,-99},{-30,-99},{-30,-68}}, color={255,0,255}));
-      annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-140,-140},
-                {140,140}}), graphics={
+      connect(GF_starting.active, valveDiscrete.open) annotation (Line(points={
+              {-230,-41},{-230,-80},{-30,-80},{-30,-68}}, color={255,0,255}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-360,
+                -160},{240,340}}),
+                             graphics={
             Rectangle(
               extent={{0,-54},{100,-66}},
               lineColor={0,0,255},
@@ -380,7 +380,8 @@ package DHC_Marseille
               lineThickness=1,
               fillColor={28,108,200},
               fillPattern=FillPattern.Solid)}),                      Diagram(
-            coordinateSystem(preserveAspectRatio=false, extent={{-140,-140},{140,140}})));
+            coordinateSystem(preserveAspectRatio=false, extent={{-360,-160},{
+                240,340}})));
     end Chiller_carnot;
 
     package Tests
@@ -652,16 +653,16 @@ package DHC_Marseille
           annotation (Placement(transformation(extent={{-80,-50},{-60,-30}})));
       equation
         connect(entree_c.ports[1], chiller_carnot.port_a1) annotation (Line(
-              points={{-60,40},{-36,40},{-36,4.28571},{-7.14286,4.28571}},
+              points={{-60,40},{-36,40},{-36,-1.2},{-1.33333,-1.2}},
                                                           color={0,127,255}));
         connect(chiller_carnot.port_b1, sortie_c.ports[1]) annotation (Line(
-              points={{7.14286,4.28571},{36,4.28571},{36,40},{60,40}},
+              points={{5.33333,-1.2},{36,-1.2},{36,40},{60,40}},
                                                       color={0,127,255}));
         connect(entree_f.ports[1], chiller_carnot.port_a2) annotation (Line(
-              points={{60,-40},{36,-40},{36,-4.28571},{7.14286,-4.28571}},
+              points={{60,-40},{36,-40},{36,-6},{5.33333,-6}},
                                                           color={0,127,255}));
         connect(chiller_carnot.port_b2, sortie_f.ports[1]) annotation (Line(
-              points={{-7.14286,-4.28571},{-36,-4.28571},{-36,-40},{-60,-40}},
+              points={{-1.33333,-6},{-36,-6},{-36,-40},{-60,-40}},
                                                               color={0,127,255}));
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
@@ -712,29 +713,311 @@ package DHC_Marseille
           annotation (Placement(transformation(extent={{-60,-80},{-40,-60}})));
       equation
         connect(chiller_carnot.port_b1, sortie_c.ports[1]) annotation (Line(
-              points={{7.14286,4.28571},{36,4.28571},{36,40},{60,40}}, color={0,
+              points={{5.33333,-1.2},{36,-1.2},{36,40},{60,40}},       color={0,
                 127,255}));
         connect(chiller_carnot.port_b2, sortie_f.ports[1]) annotation (Line(
-              points={{-7.14286,-4.28571},{-36,-4.28571},{-36,-40},{-60,-40}},
+              points={{-1.33333,-6},{-36,-6},{-36,-40},{-60,-40}},
               color={0,127,255}));
         connect(fan.port_a, boundary.ports[1]) annotation (Line(points={{60,-30},
                 {90,-30},{90,-60}}, color={0,127,255}));
-        connect(fan.port_b, chiller_carnot.port_a2) annotation (Line(points={{
-                40,-30},{36,-30},{36,-4.28571},{7.14286,-4.28571}}, color={0,
+        connect(fan.port_b, chiller_carnot.port_a2) annotation (Line(points={{40,-30},
+                {36,-30},{36,-6},{5.33333,-6}},                     color={0,
                 127,255}));
         connect(entree_c.ports[1], temperature.port_a)
           annotation (Line(points={{-80,40},{-70,40}}, color={0,127,255}));
         connect(temperature.port_b, chiller_carnot.port_a1) annotation (Line(
-              points={{-50,40},{-36,40},{-36,4.28571},{-7.14286,4.28571}},
+              points={{-50,40},{-36,40},{-36,-1.2},{-1.33333,-1.2}},
               color={0,127,255}));
-        connect(temperature.T, chiller_carnot.TT200_in) annotation (Line(points=
-               {{-60,51},{-60,68},{0.714286,68},{0.714286,10}}, color={0,0,127}));
-        connect(booleanExpression.y, chiller_carnot.on) annotation (Line(points=
-               {{-39,-70},{-26,-70},{-26,-9.28571},{-10,-9.28571}}, color={255,
+        connect(temperature.T, chiller_carnot.TT200_in) annotation (Line(points={{-60,51},
+                {-60,68},{2.33333,68},{2.33333,2}},             color={0,0,127}));
+        connect(booleanExpression.y, chiller_carnot.on) annotation (Line(points={{-39,-70},
+                {-26,-70},{-26,-8.8},{-2.66667,-8.8}},              color={255,
                 0,255}));
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end test_carnot_1;
+
+      model test_gf_simple
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end test_gf_simple;
+
+      model Carnot_TEva
+        "Test model for chiller based on Carnot efficiency and evaporator outlet temperature control signal"
+        extends Modelica.Icons.Example;
+       package Medium1 = Buildings.Media.Water "Medium model";
+       package Medium2 = Buildings.Media.Water "Medium model";
+
+        parameter Modelica.SIunits.TemperatureDifference dTEva_nominal=-10
+          "Temperature difference evaporator outlet-inlet";
+        parameter Modelica.SIunits.TemperatureDifference dTCon_nominal=10
+          "Temperature difference condenser outlet-inlet";
+        parameter Real COPc_nominal = 3 "Chiller COP";
+        parameter Modelica.SIunits.HeatFlowRate QEva_flow_nominal = -100E3
+          "Evaporator heat flow rate";
+        parameter Modelica.SIunits.MassFlowRate m2_flow_nominal=
+          QEva_flow_nominal/dTEva_nominal/4200
+          "Nominal mass flow rate at chilled water side";
+
+        Buildings.Fluid.Chillers.Carnot_TEva chi(
+          redeclare package Medium1 = Medium1,
+          redeclare package Medium2 = Medium2,
+          dTEva_nominal=dTEva_nominal,
+          dTCon_nominal=dTCon_nominal,
+          m2_flow_nominal=m2_flow_nominal,
+          show_T=true,
+          QEva_flow_nominal=QEva_flow_nominal,
+          allowFlowReversal1=false,
+          allowFlowReversal2=false,
+          use_eta_Carnot_nominal=true,
+          etaCarnot_nominal=0.3,
+          dp1_nominal=6000,
+          dp2_nominal=6000) "Chiller model"
+          annotation (Placement(transformation(extent={{10,-10},{30,10}})));
+        Buildings.Fluid.Sources.MassFlowSource_T sou1(nPorts=1,
+          redeclare package Medium = Medium1,
+          use_T_in=false,
+          use_m_flow_in=true,
+          T=298.15)
+          annotation (Placement(transformation(extent={{-50,-4},{-30,16}})));
+        Buildings.Fluid.Sources.MassFlowSource_T sou2(nPorts=1,
+          redeclare package Medium = Medium2,
+          m_flow=m2_flow_nominal,
+          use_T_in=false,
+          T=295.15)
+          annotation (Placement(transformation(extent={{80,-16},{60,4}})));
+        Buildings.Fluid.Sources.Boundary_pT sin1(
+          redeclare package Medium = Medium1,
+          nPorts=1)
+          annotation (Placement(
+              transformation(
+              extent={{10,-10},{-10,10}},
+              origin={70,30})));
+        Buildings.Fluid.Sources.Boundary_pT sin2(nPorts=1,
+          redeclare package Medium = Medium2)
+          annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
+              origin={-40,-30})));
+        Modelica.Blocks.Sources.Ramp TEvaLvg(
+          duration=60,
+          startTime=1800,
+          offset=273.15 + 6,
+          height=10) "Control signal for evaporator leaving temperature"
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Modelica.Blocks.Math.Gain mCon_flow(k=-1/cp1_default/dTEva_nominal)
+          "Condenser mass flow rate"
+          annotation (Placement(transformation(extent={{-80,4},{-60,24}})));
+        Modelica.Blocks.Math.Add QCon_flow(k2=-1) "Condenser heat flow rate"
+          annotation (Placement(transformation(extent={{48,-50},{68,-30}})));
+
+        final parameter Modelica.SIunits.SpecificHeatCapacity cp1_default=
+          Medium1.specificHeatCapacityCp(Medium1.setState_pTX(
+            Medium1.p_default,
+            Medium1.T_default,
+            Medium1.X_default))
+          "Specific heat capacity of medium 1 at default medium state";
+      equation
+        connect(sou1.ports[1], chi.port_a1)    annotation (Line(
+            points={{-30,6},{10,6}},
+            color={0,127,255},
+            smooth=Smooth.None));
+        connect(sou2.ports[1], chi.port_a2)    annotation (Line(
+            points={{60,-6},{30,-6}},
+            color={0,127,255},
+            smooth=Smooth.None));
+        connect(sin2.ports[1], chi.port_b2)    annotation (Line(
+            points={{-30,-30},{0,-30},{0,-6},{10,-6}},
+            color={0,127,255},
+            smooth=Smooth.None));
+        connect(TEvaLvg.y, chi.TSet) annotation (Line(points={{-39,50},{-10,50},{-10,
+                9},{8,9}},
+                        color={0,0,127}));
+        connect(chi.P, QCon_flow.u1) annotation (Line(points={{31,0},{40,0},{40,-34},{
+                46,-34}}, color={0,0,127}));
+        connect(chi.QEva_flow, QCon_flow.u2) annotation (Line(points={{31,-9},{36,-9},
+                {36,-46},{46,-46}}, color={0,0,127}));
+        connect(QCon_flow.y, mCon_flow.u) annotation (Line(points={{69,-40},{80,-40},
+                {80,-60},{-92,-60},{-92,14},{-82,14}},color={0,0,127}));
+        connect(mCon_flow.y, sou1.m_flow_in)
+          annotation (Line(points={{-59,14},{-52,14}},          color={0,0,127}));
+        connect(chi.port_b1, sin1.ports[1]) annotation (Line(points={{30,6},{50,6},{
+                50,30},{60,30}}, color={0,127,255}));
+        annotation (experiment(Tolerance=1e-6, StopTime=3600),
+      __Dymola_Commands(file="modelica://Buildings/Resources/Scripts/Dymola/Fluid/Chillers/Examples/Carnot_TEva.mos"
+              "Simulate and plot"),
+          Documentation(
+      info="<html>
+<p>
+Example that simulates a chiller whose efficiency is scaled based on the
+Carnot cycle.
+The chiller takes as an input the evaporator leaving water temperature.
+The condenser mass flow rate is computed in such a way that it has
+a temperature difference equal to <code>dTEva_nominal</code>.
+</p>
+</html>",
+      revisions="<html>
+<ul>
+<li>
+May 15, 2019, by Jianjun Hu:<br/>
+Replaced fluid source. This is for 
+<a href=\"https://github.com/ibpsa/modelica-ibpsa/issues/1072\"> #1072</a>.
+</li>
+<li>
+November 25, 2015, by Michael Wetter:<br/>
+First implementation.
+</li>
+</ul>
+</html>"));
+      end Carnot_TEva;
+
+      model Carnot_TEva_modif
+        "Test model for chiller based on Carnot efficiency and evaporator outlet temperature control signal"
+        extends Modelica.Icons.Example;
+       package Medium1 = Buildings.Media.Water "Medium model";
+       package Medium2 = Buildings.Media.Water "Medium model";
+
+        parameter Modelica.SIunits.TemperatureDifference dTEva_nominal=-10
+          "Temperature difference evaporator outlet-inlet";
+        parameter Modelica.SIunits.TemperatureDifference dTCon_nominal=10
+          "Temperature difference condenser outlet-inlet";
+        parameter Real COPc_nominal = 3 "Chiller COP";
+        parameter Modelica.SIunits.HeatFlowRate QEva_flow_nominal = -100E3
+          "Evaporator heat flow rate";
+        parameter Modelica.SIunits.MassFlowRate m2_flow_nominal=
+          QEva_flow_nominal/dTEva_nominal/4200
+          "Nominal mass flow rate at chilled water side";
+
+        Buildings.Fluid.Chillers.Carnot_TEva chi(
+          redeclare package Medium1 = Medium1,
+          redeclare package Medium2 = Medium2,
+          dTEva_nominal=dTEva_nominal,
+          dTCon_nominal=dTCon_nominal,
+          m2_flow_nominal=m2_flow_nominal,
+          show_T=true,
+          QEva_flow_nominal=QEva_flow_nominal,
+          allowFlowReversal1=false,
+          allowFlowReversal2=false,
+          use_eta_Carnot_nominal=true,
+          etaCarnot_nominal=0.3,
+          dp1_nominal=6000,
+          dp2_nominal=6000) "Chiller model"
+          annotation (Placement(transformation(extent={{10,-10},{30,10}})));
+        Buildings.Fluid.Sources.MassFlowSource_T sou1(nPorts=1,
+          redeclare package Medium = Medium1,
+          use_T_in=false,
+          use_m_flow_in=true,
+          T=298.15)
+          annotation (Placement(transformation(extent={{-50,-4},{-30,16}})));
+        Buildings.Fluid.Sources.MassFlowSource_T sou2(nPorts=1,
+          redeclare package Medium = Medium2,
+          m_flow=m2_flow_nominal,
+          use_T_in=false,
+          T=295.15)
+          annotation (Placement(transformation(extent={{80,-16},{60,4}})));
+        Buildings.Fluid.Sources.Boundary_pT sin1(
+          redeclare package Medium = Medium1,
+          nPorts=1)
+          annotation (Placement(
+              transformation(
+              extent={{10,-10},{-10,10}},
+              origin={70,30})));
+        Buildings.Fluid.Sources.Boundary_pT sin2(
+          redeclare package Medium = Medium2, nPorts=1)
+          annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
+              origin={-130,-30})));
+        Modelica.Blocks.Sources.Ramp TEvaLvg(
+          duration=60,
+          startTime=1800,
+          offset=273.15 + 6,
+          height=10) "Control signal for evaporator leaving temperature"
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Modelica.Blocks.Math.Gain mCon_flow(k=-1/cp1_default/dTEva_nominal)
+          "Condenser mass flow rate"
+          annotation (Placement(transformation(extent={{-80,4},{-60,24}})));
+        Modelica.Blocks.Math.Add QCon_flow(k2=-1) "Condenser heat flow rate"
+          annotation (Placement(transformation(extent={{48,-50},{68,-30}})));
+
+        final parameter Modelica.SIunits.SpecificHeatCapacity cp1_default=
+          Medium1.specificHeatCapacityCp(Medium1.setState_pTX(
+            Medium1.p_default,
+            Medium1.T_default,
+            Medium1.X_default))
+          "Specific heat capacity of medium 1 at default medium state";
+        Modelica.Fluid.Valves.ValveDiscrete valveDiscrete(
+          redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater,
+          dp_nominal=10000,
+          m_flow_nominal=m2_flow_nominal,
+          opening_min=0.000000000000001)
+          annotation (Placement(transformation(extent={{-60,-18},{-80,-38}})));
+        Modelica.Blocks.Sources.BooleanPulse booleanPulse(width=50, period=1000)
+          annotation (Placement(transformation(extent={{-120,-90},{-100,-70}})));
+        Modelica.Fluid.Sensors.MassFlowRate FT121(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater) annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=180,
+              origin={-30,-28})));
+      equation
+        connect(sou1.ports[1], chi.port_a1)    annotation (Line(
+            points={{-30,6},{10,6}},
+            color={0,127,255},
+            smooth=Smooth.None));
+        connect(sou2.ports[1], chi.port_a2)    annotation (Line(
+            points={{60,-6},{30,-6}},
+            color={0,127,255},
+            smooth=Smooth.None));
+        connect(TEvaLvg.y, chi.TSet) annotation (Line(points={{-39,50},{-10,50},{-10,
+                9},{8,9}},
+                        color={0,0,127}));
+        connect(chi.P, QCon_flow.u1) annotation (Line(points={{31,0},{40,0},{40,-34},{
+                46,-34}}, color={0,0,127}));
+        connect(chi.QEva_flow, QCon_flow.u2) annotation (Line(points={{31,-9},{36,-9},
+                {36,-46},{46,-46}}, color={0,0,127}));
+        connect(QCon_flow.y, mCon_flow.u) annotation (Line(points={{69,-40},{80,-40},
+                {80,-60},{-92,-60},{-92,14},{-82,14}},color={0,0,127}));
+        connect(mCon_flow.y, sou1.m_flow_in)
+          annotation (Line(points={{-59,14},{-52,14}},          color={0,0,127}));
+        connect(chi.port_b1, sin1.ports[1]) annotation (Line(points={{30,6},{50,6},{
+                50,30},{60,30}}, color={0,127,255}));
+        connect(sin2.ports[1], valveDiscrete.port_b) annotation (Line(points={{
+                -120,-30},{-82,-30},{-82,-28},{-80,-28}}, color={0,127,255}));
+        connect(booleanPulse.y, valveDiscrete.open) annotation (Line(points={{
+                -99,-80},{-70,-80},{-70,-36}}, color={255,0,255}));
+        connect(valveDiscrete.port_a, FT121.port_b)
+          annotation (Line(points={{-60,-28},{-40,-28}}, color={0,127,255}));
+        connect(FT121.port_a, chi.port_b2) annotation (Line(points={{-20,-28},{
+                -6,-28},{-6,-6},{10,-6}}, color={0,127,255}));
+        annotation (experiment(Tolerance=1e-6, StopTime=3600),
+      __Dymola_Commands(file="modelica://Buildings/Resources/Scripts/Dymola/Fluid/Chillers/Examples/Carnot_TEva.mos"
+              "Simulate and plot"),
+          Documentation(
+      info="<html>
+<p>
+Example that simulates a chiller whose efficiency is scaled based on the
+Carnot cycle.
+The chiller takes as an input the evaporator leaving water temperature.
+The condenser mass flow rate is computed in such a way that it has
+a temperature difference equal to <code>dTEva_nominal</code>.
+</p>
+</html>",
+      revisions="<html>
+<ul>
+<li>
+May 15, 2019, by Jianjun Hu:<br/>
+Replaced fluid source. This is for 
+<a href=\"https://github.com/ibpsa/modelica-ibpsa/issues/1072\"> #1072</a>.
+</li>
+<li>
+November 25, 2015, by Michael Wetter:<br/>
+First implementation.
+</li>
+</ul>
+</html>"));
+      end Carnot_TEva_modif;
     end Tests;
   end GF;
 
@@ -788,7 +1071,7 @@ package DHC_Marseille
               fillColor={255,255,255})}));
     end pem;
 
-    model pem_gf
+    model pem_1groupe
       extends Fluid.Interfaces.PartialTwoPort_modif;
       Modelica.Fluid.Sources.FixedBoundary boundary(redeclare package Medium =
             Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
@@ -799,21 +1082,22 @@ package DHC_Marseille
       Fluid.Sources.Boundary_pT bou1(
         redeclare package Medium = Media.Water,
         p=100000,
+        use_T_in=true,
         T=288.15,
         nPorts=1) annotation (Placement(transformation(
             extent={{-10,-10},{10,10}},
             rotation=90,
-            origin={-50,-70})));
+            origin={-20,-70})));
       Fluid.Movers.FlowControlled_dp fan(
         redeclare package Medium = Media.Water,
         m_flow_nominal=1000,
         redeclare Fluid.Movers.Data.Generic per,
         inputType=Buildings.Fluid.Types.InputType.Constant,
         constantHead=87000)
-        annotation (Placement(transformation(extent={{-40,-30},{-20,-10}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
-            Modelica.Media.Water.ConstantPropertyLiquidWater)
-        annotation (Placement(transformation(extent={{0,-30},{20,-10}})));
+        annotation (Placement(transformation(extent={{-10,-30},{10,-10}})));
+      Modelica.Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium
+          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+        annotation (Placement(transformation(extent={{30,-30},{50,-10}})));
       Modelica.Blocks.Interfaces.RealOutput y
         annotation (Placement(transformation(extent={{100,0},{120,20}})));
       Modelica.Fluid.Sensors.Pressure PT200(redeclare package Medium =
@@ -824,22 +1108,42 @@ package DHC_Marseille
           Placement(transformation(
             extent={{-10,-10},{10,10}},
             rotation=90,
-            origin={50,-10})));
+            origin={70,-10})));
+      Modelica.Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium
+          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+        annotation (Placement(transformation(extent={{-60,30},{-80,50}})));
+      Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
+        tableOnFile=true,
+        tableName="tab1",
+        fileName=ModelicaServices.ExternalReferences.loadResource(
+            "modelica://Buildings/Data/pem.txt"),
+        columns={2,3,4},
+        extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic)
+        annotation (Placement(transformation(extent={{-100,-100},{-80,-80}})));
+      Modelica.Thermal.HeatTransfer.Celsius.ToKelvin toKelvin
+        annotation (Placement(transformation(extent={{-60,-100},{-40,-80}})));
     equation
-      connect(boundary.ports[1], port_b) annotation (Line(points={{-90,
-              -3.55271e-15},{-90,40},{-50,40},{-50,90}}, color={0,127,255}));
-      connect(bou1.ports[1], fan.port_a) annotation (Line(points={{-50,-60},{
-              -50,-20},{-40,-20}}, color={0,127,255}));
+      connect(bou1.ports[1], fan.port_a) annotation (Line(points={{-20,-60},{
+              -20,-20},{-10,-20}}, color={0,127,255}));
       connect(fan.port_b, TT200.port_a)
-        annotation (Line(points={{-20,-20},{0,-20}}, color={0,127,255}));
+        annotation (Line(points={{10,-20},{30,-20}}, color={0,127,255}));
       connect(PT200.port, port_a)
         annotation (Line(points={{28,40},{50,40},{50,90}}, color={0,127,255}));
       connect(FQT200.port_b, port_a)
-        annotation (Line(points={{50,0},{50,90}}, color={0,127,255}));
-      connect(TT200.port_b, FQT200.port_a) annotation (Line(points={{20,-20},{
-              36,-20},{36,-20},{50,-20}}, color={0,127,255}));
+        annotation (Line(points={{70,0},{70,90},{50,90}},
+                                                  color={0,127,255}));
+      connect(TT200.port_b, FQT200.port_a) annotation (Line(points={{50,-20},{
+              70,-20}},                   color={0,127,255}));
       connect(TT200.T, y)
-        annotation (Line(points={{10,-9},{10,10},{110,10}}, color={0,0,127}));
+        annotation (Line(points={{40,-9},{40,10},{110,10}}, color={0,0,127}));
+      connect(boundary.ports[1], TT201.port_b) annotation (Line(points={{-90,
+              -3.55271e-15},{-90,40},{-80,40}}, color={0,127,255}));
+      connect(TT201.port_a, port_b) annotation (Line(points={{-60,40},{-50,40},
+              {-50,90}}, color={0,127,255}));
+      connect(combiTimeTable.y[1], toKelvin.Celsius)
+        annotation (Line(points={{-79,-90},{-62,-90}}, color={0,0,127}));
+      connect(toKelvin.Kelvin, bou1.T_in) annotation (Line(points={{-39,-90},{
+              -24,-90},{-24,-82}}, color={0,0,127}));
       annotation (Icon(graphics={
             Rectangle(
               extent={{-100,16},{100,-16}},
@@ -857,41 +1161,89 @@ package DHC_Marseille
               pattern=LinePattern.None,
               fillPattern=FillPattern.HorizontalCylinder,
               fillColor={255,255,255})}));
-    end pem_gf;
+    end pem_1groupe;
 
     package Tests
       extends Modelica.Icons.ExamplesPackage;
       model test_0
+        Modelica.Fluid.Sources.FixedBoundary boundary(redeclare package Medium
+            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+          annotation (Placement(transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=-90,
+              origin={-90,-10})));
+        Fluid.Sources.Boundary_pT bou1(
+          redeclare package Medium = Media.Water,
+          p=100000,
+          use_T_in=true,
+          T=288.15,
+          nPorts=1) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={-50,-70})));
         Fluid.Movers.FlowControlled_dp fan(
           redeclare package Medium = Media.Water,
           m_flow_nominal=1000,
           redeclare Fluid.Movers.Data.Generic per,
           inputType=Buildings.Fluid.Types.InputType.Constant,
           constantHead=87000)
-          annotation (Placement(transformation(extent={{20,-50},{40,-30}})));
-        Fluid.Sources.Boundary_pT bou(
-          redeclare package Medium = Media.Water,
-          p=100000,
-          T=293.15,
-          nPorts=1) annotation (Placement(transformation(
+          annotation (Placement(transformation(extent={{-40,-30},{-20,-10}})));
+        Modelica.Fluid.Sensors.TemperatureTwoPort TT200(redeclare package
+            Medium = Modelica.Media.Water.ConstantPropertyLiquidWater)
+          annotation (Placement(transformation(extent={{0,-30},{20,-10}})));
+        Modelica.Fluid.Sensors.Pressure PT200(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater)
+          annotation (Placement(transformation(extent={{-30,40},{-10,60}})));
+        Modelica.Fluid.Sensors.MassFlowRate FQT200(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater) annotation (
+            Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=90,
-              origin={-40,-50})));
-        Fluid.Sources.Boundary_pT bou1(
-          redeclare package Medium = Media.Water,
-          p=100000,
-          T=293.15,
-          nPorts=1) annotation (Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=90,
-              origin={0,-50})));
-        GF.Chiller_carnot chiller_carnot
-          annotation (Placement(transformation(extent={{-24,36},{4,64}})));
+              origin={50,-10})));
+        Modelica.Fluid.Sensors.TemperatureTwoPort TT201(redeclare package
+            Medium = Modelica.Media.Water.ConstantPropertyLiquidWater)
+          annotation (Placement(transformation(extent={{-60,30},{-80,50}})));
+        Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
+          tableOnFile=true,
+          tableName="tab1",
+          fileName=ModelicaServices.ExternalReferences.loadResource(
+              "modelica://Buildings/Data/pem.txt"),
+          columns={2,3,4},
+          extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic)
+          annotation (Placement(transformation(extent={{-140,-100},{-120,-80}})));
+        inner Modelica.Fluid.System system
+          annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
+        Modelica.Fluid.Valves.ValveDiscrete valveDiscrete(
+          redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater,
+          dp_nominal=10000,
+          m_flow_nominal=100)
+          annotation (Placement(transformation(extent={{40,30},{20,50}})));
+        Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=true)
+          annotation (Placement(transformation(extent={{0,60},{20,80}})));
+        Modelica.Thermal.HeatTransfer.Celsius.ToKelvin toKelvin annotation (
+            Placement(transformation(extent={{-100,-100},{-80,-80}})));
       equation
-        connect(bou.ports[1], fan.port_b) annotation (Line(points={{-40,-40},{
-                -60,-40},{-60,20},{60,20},{60,-40},{40,-40}}, color={0,127,255}));
-        connect(bou1.ports[1], fan.port_a) annotation (Line(points={{
-                6.66134e-16,-40},{20,-40}}, color={0,127,255}));
+        connect(bou1.ports[1],fan. port_a) annotation (Line(points={{-50,-60},{
+                -50,-20},{-40,-20}}, color={0,127,255}));
+        connect(fan.port_b,TT200. port_a)
+          annotation (Line(points={{-20,-20},{0,-20}}, color={0,127,255}));
+        connect(TT200.port_b,FQT200. port_a) annotation (Line(points={{20,-20},
+                {50,-20}},                  color={0,127,255}));
+        connect(boundary.ports[1], TT201.port_b) annotation (Line(points={{-90,
+                0},{-90,40},{-80,40}}, color={0,127,255}));
+        connect(FQT200.port_b, valveDiscrete.port_a) annotation (Line(points={{
+                50,0},{50,40},{40,40}}, color={0,127,255}));
+        connect(valveDiscrete.port_b, TT201.port_a)
+          annotation (Line(points={{20,40},{-60,40}}, color={0,127,255}));
+        connect(valveDiscrete.port_b, PT200.port)
+          annotation (Line(points={{20,40},{-20,40}}, color={0,127,255}));
+        connect(booleanExpression.y, valveDiscrete.open) annotation (Line(
+              points={{21,70},{30,70},{30,48}}, color={255,0,255}));
+        connect(combiTimeTable.y[1], toKelvin.Celsius)
+          annotation (Line(points={{-119,-90},{-102,-90}}, color={0,0,127}));
+        connect(toKelvin.Kelvin, bou1.T_in) annotation (Line(points={{-79,-90},
+                {-54,-90},{-54,-82}}, color={0,0,127}));
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end test_0;
@@ -991,7 +1343,7 @@ package DHC_Marseille
   end Controls_a;
 
   model Plant
-    PEM.pem_gf pem_gf(redeclare package Medium = Media.Water)
+    PEM.pem_1groupe pem_gf(redeclare package Medium = Media.Water)
       annotation (Placement(transformation(extent={{0,-60},{20,-40}})));
     GF.Chiller_carnot chiller_carnot(redeclare package Medium1 = Media.Water,
         redeclare package Medium2 = Media.Water,
@@ -1024,23 +1376,28 @@ package DHC_Marseille
       annotation (Placement(transformation(extent={{-20,60},{0,80}})));
   equation
     connect(pem_gf.y, chiller_carnot.TT200_in) annotation (Line(points={{21,-49},
-            {32,-49},{32,-14},{11,-14},{11,-4}}, color={0,0,127}));
-    connect(pem_gf.port_a, chiller_carnot.port_b1) annotation (Line(points={{15,
-            -41},{15,-28},{28,-28},{28,4},{20,4}}, color={0,127,255}));
-    connect(chiller_carnot.port_a1, pem_gf.port_b) annotation (Line(points={{0,
-            4},{-8,4},{-8,-41},{5,-41}}, color={0,127,255}));
-    connect(chiller_carnot.port_a2, sortie_f.ports[1]) annotation (Line(points=
-            {{20,16},{40,16},{40,30},{80,30}}, color={0,127,255}));
+            {32,-49},{32,-14},{13.2667,-14},{13.2667,7.2}},
+                                                 color={0,0,127}));
+    connect(pem_gf.port_a, chiller_carnot.port_b1) annotation (Line(points={{15,-41},
+            {15,-28},{28,-28},{28,11.68},{17.4667,11.68}},
+                                                   color={0,127,255}));
+    connect(chiller_carnot.port_a1, pem_gf.port_b) annotation (Line(points={{8.13333,
+            11.68},{-8,11.68},{-8,-41},{5,-41}},
+                                         color={0,127,255}));
+    connect(chiller_carnot.port_a2, sortie_f.ports[1]) annotation (Line(points={{17.4667,
+            18.4},{40,18.4},{40,30},{80,30}},  color={0,127,255}));
     connect(entree_f.ports[1], massFlowRate.port_a) annotation (Line(points={{
             -80,30},{-70,30},{-70,30},{-60,30}}, color={0,127,255}));
     connect(massFlowRate.port_b, chiller_carnot.port_b2) annotation (Line(
-          points={{-40,30},{-20,30},{-20,16},{0,16}}, color={0,127,255}));
+          points={{-40,30},{-20,30},{-20,18.4},{8.13333,18.4}},
+                                                      color={0,127,255}));
     connect(ramp.y, entree_f.m_flow_in) annotation (Line(points={{-159,29},{
             -131.5,29},{-131.5,38},{-100,38}}, color={0,0,127}));
     connect(massFlowRate.m_flow, control_0_1.u)
       annotation (Line(points={{-50,41},{-50,65},{-20,65}}, color={0,0,127}));
     connect(control_0_1.GF1, chiller_carnot.on)
-      annotation (Line(points={{-9,59},{-9,23},{-4,23}}, color={255,0,255}));
+      annotation (Line(points={{-9,59},{-9,22.32},{6.26667,22.32}},
+                                                         color={255,0,255}));
     annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
           coordinateSystem(preserveAspectRatio=false)));
   end Plant;
@@ -1051,7 +1408,8 @@ package DHC_Marseille
         redeclare package Medium =
             Modelica.Media.Water.ConstantPropertyLiquidWater,
         dp_nominal=10000,
-        m_flow_nominal=100)
+        m_flow_nominal=100,
+        opening_min=0.0001)
         annotation (Placement(transformation(extent={{-10,-60},{10,-40}})));
       Modelica.Fluid.Valves.ValveLinear valveLinear(
         redeclare package Medium =
@@ -1059,11 +1417,11 @@ package DHC_Marseille
         dp_nominal=10000,
         m_flow_nominal=100)
         annotation (Placement(transformation(extent={{-10,40},{10,60}})));
-      Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
+      Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
         annotation (Placement(transformation(extent={{100,-60},{80,-40}})));
-      Modelica.Fluid.Sources.FixedBoundary boundary1(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
+      Modelica.Fluid.Sources.FixedBoundary boundary1(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
         annotation (Placement(transformation(extent={{100,40},{80,60}})));
       Fluid.Movers.FlowControlled_dp fan2(
         redeclare package Medium = Media.Water,
@@ -1112,7 +1470,8 @@ package DHC_Marseille
         redeclare package Medium =
             Modelica.Media.Water.ConstantPropertyLiquidWater,
         dp_nominal=10000,
-        m_flow_nominal=100)
+        m_flow_nominal=100,
+        opening_min=0.00001)
         annotation (Placement(transformation(extent={{-10,-60},{10,-40}})));
       Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium =
             Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
@@ -1139,5 +1498,89 @@ package DHC_Marseille
       annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
             coordinateSystem(preserveAspectRatio=false)));
     end test_tor1;
+
+    model test_mover
+      Modelica.Fluid.Valves.ValveDiscrete valveDiscrete(
+        redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater,
+        dp_nominal=10000,
+        m_flow_nominal=100,
+        opening_min=0.001)
+        annotation (Placement(transformation(extent={{-10,-20},{10,0}})));
+      Modelica.Fluid.Sources.FixedBoundary boundary2(
+        redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater,
+        p=100000,
+        nPorts=1)
+        annotation (Placement(transformation(extent={{100,-20},{80,0}})));
+      Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=false)
+        annotation (Placement(transformation(extent={{-40,20},{-20,40}})));
+      Fluid.Sources.MassFlowSource_T           sou2(
+        nPorts=1,
+        redeclare package Medium = Media.Water,
+        m_flow=100,
+        use_T_in=false,
+        T=295.15)
+        annotation (Placement(transformation(extent={{-100,-20},{-80,0}})));
+      inner Modelica.Fluid.System system
+        annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
+    equation
+      connect(valveDiscrete.port_b,boundary2. ports[1]) annotation (Line(points={{10,-10},
+              {58,-10},{58,-10},{80,-10}},          color={0,127,255}));
+      connect(booleanExpression.y,valveDiscrete. open) annotation (Line(points={{-19,30},
+              {0,30},{0,-2}},              color={255,0,255}));
+      connect(sou2.ports[1], valveDiscrete.port_a)
+        annotation (Line(points={{-80,-10},{-10,-10}}, color={0,127,255}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end test_mover;
   end test_valves;
+
+  package Miscellaneous
+    extends Modelica.Icons.VariantsPackage;
+    package data_table
+      model table
+        Modelica.Blocks.Sources.CombiTimeTable
+                                          Q_TFP(
+          tableOnFile=true,
+          table=[0,200E3; 6,200E3; 6,50E3; 18,50E3; 18,75E3; 24,75E3],
+          tableName="tab1",
+          fileName=ModelicaServices.ExternalReferences.loadResource(
+              "modelica://Buildings/Data/distribution/essai.txt"),
+          columns={2,3,4,5,6,7,8,9,10,11},
+          extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic,
+          offset={0})
+          annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
+        Modelica.Blocks.Interfaces.RealOutput y
+          annotation (Placement(transformation(extent={{20,20},{40,40}})));
+        Modelica.Blocks.Interfaces.RealOutput y1
+          annotation (Placement(transformation(extent={{20,0},{40,20}})));
+      equation
+        connect(Q_TFP.y[2], y) annotation (Line(points={{-59,30},{-16.5,30},{
+                -16.5,30},{30,30}}, color={0,0,127}));
+        connect(Q_TFP.y[3], y1) annotation (Line(points={{-59,30},{-18,30},{-18,
+                10},{30,10}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end table;
+
+      model table_b
+        Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
+          tableOnFile=true,
+          tableName="tab1",
+          fileName=ModelicaServices.ExternalReferences.loadResource(
+              "modelica://Buildings/Data/pem.txt"),
+          columns={2,3,4},
+          extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic)
+          annotation (Placement(transformation(extent={{-20,-20},{0,0}})));
+        Modelica.Thermal.HeatTransfer.Celsius.ToKelvin toKelvin
+          annotation (Placement(transformation(extent={{20,-20},{40,0}})));
+      equation
+        connect(combiTimeTable.y[1], toKelvin.Celsius)
+          annotation (Line(points={{1,-10},{18,-10}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end table_b;
+    end data_table;
+  end Miscellaneous;
 end DHC_Marseille;
