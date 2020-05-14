@@ -209,6 +209,11 @@ its class name ends with the string <code>Beta</code>.
         <td valign=\"top\">Three way valves with opening characteristics based on a user-provided table.
         </td>
     </tr>
+    <tr><td valign=\"top\">Buildings.Fluid.CHPs
+        </td>
+        <td valign=\"top\">Package with model for combined heat and power device.
+        </td>
+    </tr>
     <tr><td valign=\"top\">Buildings.Fluid.Chillers.AbsorptionIndirectSteam
         </td>
         <td valign=\"top\">Indirect steam heated absorption chiller based on performance curves.
@@ -385,6 +390,12 @@ its class name ends with the string <code>Beta</code>.
     <tr><td colspan=\"2\"><b>Buildings.Fluid</b>
         </td>
     </tr>
+    <tr><td valign=\"top\">Buildings.Fluid.Actuators.BaseClasses.ActuatorSignal<br/>
+		   Buildings.Fluid.Actuators.Dampers.PressureIndependent
+        </td>
+        <td valign=\"top\">Added the computation of the damper opening.
+        </td>
+    </tr>
     <tr><td valign=\"top\">
                            Buildings.Fluid.Actuators.BaseClasses.PartialTwoWayValve<br/>
                            Buildings.Fluid.Actuators.Valves.TwoWayEqualPercentage<br/>
@@ -405,6 +416,17 @@ its class name ends with the string <code>Beta</code>.
                            This is for <a href=\"https://github.com/ibpsa/modelica-ibpsa/issues/1230\">IBPSA, #1230</a>.
         </td>
     </tr>
+    <tr><td valign=\"top\">Buildings.Fluid.HeatExchangers.DXCoils.AirCooled.MultiStage<br/>
+                           Buildings.Fluid.HeatExchangers.DXCoils.AirCooled.SingleSpeed<br/>
+                           Buildings.Fluid.HeatExchangers.DXCoils.AirCooled.VariableSpeed<br/>
+                           Buildings.Fluid.HeatExchangers.DXCoils.WaterCooled.MultiStage<br/>
+                           Buildings.Fluid.HeatExchangers.DXCoils.WaterCooled.SingleSpeed<br/>
+                           Buildings.Fluid.HeatExchangers.DXCoils.WaterCooled.VariableSpeed
+        </td>
+        <td valign=\"top\">Corrected wrong <code>min</code> and <code>max</code> attribute for change in humidity.<br/>
+                           This is for <a href=\"https://github.com/lbl-srg/modelica-buildings/issues/1933\">#1933</a>.
+        </td>
+    </tr>
     <tr><td valign=\"top\">Buildings.Fluid.Storage.Stratified<br/>
                            Buildings.Fluid.Storage.StratifiedEnhanced<br/>
                            Buildings.Fluid.Storage.StratifiedEnhancedInternalHex
@@ -419,11 +441,20 @@ its class name ends with the string <code>Beta</code>.
                            This is for <a href=\"https://github.com/lbl-srg/modelica-buildings/issues/1636\">#1636</a>.
         </td>
     </tr>
+    <tr><td colspan=\"2\"><b>Buildings.HeatTransfer</b>
+        </td>
+    </tr>
+    <tr><td valign=\"top\">Buildings.HeatTransfer.Convection.Exterior
+        </td>
+        <td valign=\"top\">Set wind direction modifier to a constant as wind speed approaches zero.<br/>
+                           This is for <a href=\"https://github.com/lbl-srg/modelica-buildings/issues/1923\">#1923</a>.
+        </td>
+    </tr>
     <tr><td colspan=\"2\"><b>Buildings.ThermalZones.Detailed.Validation.BESTEST.Cases6xx</b>
         </td>
     </tr>
     <tr><td valign=\"top\">Buildings.ThermalZones.Detailed.Validation.BESTEST.Cases6xx.Case600<br/>
-                           Buildings.ThermalZones.Detailed.Validation.BESTEST.Cases6xx.Case600FF<br/>
+                           Buildings.ThermalZones.Detailed.Validation.BESTEST.Cases6xx.Case600FF
         </td>
         <td valign=\"top\">Changed computation of time averaged values to avoid a time event every hour.<br/>
                            This is for <a href=\"https://github.com/lbl-srg/modelica-buildings/issues/1714\">#1714</a>.
@@ -435,7 +466,7 @@ its class name ends with the string <code>Beta</code>.
     <tr><td valign=\"top\">Buildings.ThermalZones.ReducedOrder.RC.OneElement<br/>
                            Buildings.ThermalZones.ReducedOrder.RC.TwoElements<br/>
                            Buildings.ThermalZones.ReducedOrder.RC.ThreeElements<br/>
-                           Buildings.ThermalZones.ReducedOrder.RC.FourElements<br/>
+                           Buildings.ThermalZones.ReducedOrder.RC.FourElements
         </td>
         <td valign=\"top\">Added option to also simulate moisture balance in room air volume.
                            This can be enabled by setting the parameter <code>use_moisture_balance = true</code>.<br/>
@@ -492,6 +523,19 @@ its class name ends with the string <code>Beta</code>.
     <b style=\"color:blue\">non-backward compatible</b> way:
     </p>
     <table class=\"releaseTable\" summary=\"summary\" border=\"1\" cellspacing=0 cellpadding=2 style=\"border-collapse:collapse;\">
+    <tr><td colspan=\"2\"><b>Buildings.Airflow</b>
+        </td>
+    </tr>
+    <tr><td valign=\"top\">Buildings.Airflow.Multizone
+        </td>
+        <td valign=\"top\">Set parameters <code>m_flow_small</code>, <code>m1_flow_small</code>
+                           and <code>m2_flow_small</code> to <code>final</code> so that they do
+                           no longer appear on the GUI. These parameters are not used by models
+                           in this package.
+                           This is for <a href=\"https://github.com/lbl-srg/modelica-buildings/issues/1362\">IBPSA, #1362</a>.<br/>
+                           For Dymola, a conversion script makes this change.
+        </td>
+    </tr>
     <tr><td colspan=\"2\"><b>Buildings.Controls.OBC.CDL</b>
         </td>
     </tr>
@@ -508,6 +552,14 @@ its class name ends with the string <code>Beta</code>.
                            This refactoring also removes the parameter <code>strict</code> that
                            was used in the output limiter. The new implementation enforces a strict check by default.<br/>
                            This is for <a href=\"https://github.com/lbl-srg/modelica-buildings/issues/1878\">#1878</a>.<br/>
+                           For Dymola, a conversion script makes this change.
+        </td>
+    </tr>
+    <tr><td valign=\"top\">Buildings.Controls.OBC.CDL.Continuous.LimPID
+        </td>
+        <td valign=\"top\">Changed the default values for the output limiter from <code>yMin=-yMax</code> to <code>yMin=0</code>
+                           and from <code>yMax</code> being unspecified to <code>yMax=1</code>.<br/>
+                           This is for <a href=\"https://github.com/lbl-srg/modelica-buildings/issues/1888\">#1888</a>.<br/>
                            For Dymola, a conversion script makes this change.
         </td>
     </tr>
@@ -745,7 +797,7 @@ its class name ends with the string <code>Beta</code>.
                            <a href=\"https://github.com/ibpsa/modelica-ibpsa/issues/1205\">IBPSA, #1205</a>.
         </td>
     </tr>
-    <tr><td colspan=\"2\"><b>Buildings.ThermalZones.D" + "etailed</b>
+    <tr><td colspan=\"2\"><b>Buildings.ThermalZones.Detailed</b>
         </td>
     </tr>
     <tr><td valign=\"top\">Buildings.ThermalZones.Detailed.Constructions.Examples.ExteriorWallTwoWindows<br/>
