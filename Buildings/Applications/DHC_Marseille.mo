@@ -43,17 +43,17 @@ package DHC_Marseille
         annotation (Placement(transformation(extent={{-140,10},{-100,50}})));
       Modelica.Blocks.Interfaces.RealInput u1
         annotation (Placement(transformation(extent={{-140,-50},{-100,-10}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-60,50},{-40,70}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TCout(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TCout(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-40,-70},{-60,-50}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort THOut(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort THOut(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{40,50},{60,70}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{60,-70},{40,-50}})));
     equation
       connect(u1, electricReformulatedEIR.TSet) annotation (Line(points={{-120,
@@ -138,17 +138,17 @@ package DHC_Marseille
         annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
       Modelica.Blocks.Sources.RealExpression realExpression(y=4 + 273.15)
         annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-80,50},{-60,70}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TT211(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TT211(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{60,-4},{80,16}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TCout(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TCout(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-60,-70},{-80,-50}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{140,-30},{120,-10}})));
       Modelica.Fluid.Valves.ValveLinear CV121(
         redeclare package Medium =
@@ -405,11 +405,11 @@ package DHC_Marseille
           T=282.15,
           nPorts=1) annotation (Placement(transformation(extent={{80,-40},{60,-20}})));
 
-        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
           annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
-        Modelica.Fluid.Sources.FixedBoundary sortie_c(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
+        Modelica.Fluid.Sources.FixedBoundary sortie_c(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
            Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=180,
@@ -449,8 +449,8 @@ package DHC_Marseille
           annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
         Modelica.Blocks.Sources.RealExpression realExpression(y=4 + 273.15)
           annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
-        Modelica.Fluid.Sources.FixedBoundary sortie_c(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
+        Modelica.Fluid.Sources.FixedBoundary sortie_c(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
            Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=180,
@@ -462,8 +462,8 @@ package DHC_Marseille
           T=293.15,
           nPorts=1) annotation (Placement(transformation(extent={{-100,60},{-80,
                   80}})));
-        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
           annotation (Placement(transformation(extent={{-100,-80},{-80,-60}})));
         Modelica.Fluid.Sources.MassFlowSource_T entree_f(
           redeclare package Medium =
@@ -513,8 +513,8 @@ package DHC_Marseille
           annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
         Modelica.Blocks.Sources.RealExpression realExpression(y=4 + 273.15)
           annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
-        Modelica.Fluid.Sources.FixedBoundary sortie_c(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
+        Modelica.Fluid.Sources.FixedBoundary sortie_c(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
            Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=180,
@@ -526,8 +526,8 @@ package DHC_Marseille
           T=293.15,
           nPorts=1) annotation (Placement(transformation(extent={{-100,60},{-80,
                   80}})));
-        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
           annotation (Placement(transformation(extent={{-100,-80},{-80,-60}})));
         Modelica.Fluid.Sources.MassFlowSource_T entree_f(
           redeclare package Medium =
@@ -576,11 +576,11 @@ package DHC_Marseille
           T=298.15,
           nPorts=1) annotation (Placement(transformation(extent={{-80,40},{-60,60}})));
 
-        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
           annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
-        Modelica.Fluid.Sources.FixedBoundary sortie_c(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
+        Modelica.Fluid.Sources.FixedBoundary sortie_c(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
            Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=180,
@@ -635,8 +635,8 @@ package DHC_Marseille
           T=298.15,
           nPorts=1) annotation (Placement(transformation(extent={{-80,30},{-60,
                   50}})));
-        Modelica.Fluid.Sources.FixedBoundary sortie_c(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
+        Modelica.Fluid.Sources.FixedBoundary sortie_c(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
            Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=180,
@@ -648,8 +648,8 @@ package DHC_Marseille
           T=282.15,
           nPorts=1) annotation (Placement(transformation(extent={{80,-50},{60,
                   -30}})));
-        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
           annotation (Placement(transformation(extent={{-80,-50},{-60,-30}})));
       equation
         connect(entree_c.ports[1], chiller_carnot.port_a1) annotation (Line(
@@ -679,14 +679,14 @@ package DHC_Marseille
           T=298.15,
           nPorts=1) annotation (Placement(transformation(extent={{-100,30},{-80,
                   50}})));
-        Modelica.Fluid.Sources.FixedBoundary sortie_c(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
+        Modelica.Fluid.Sources.FixedBoundary sortie_c(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
            Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=180,
               origin={70,40})));
-        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
           annotation (Placement(transformation(extent={{-80,-50},{-60,-30}})));
         Modelica.Fluid.Sources.Boundary_pT boundary(
           redeclare package Medium =
@@ -1038,17 +1038,17 @@ First implementation.
         annotation (Placement(transformation(extent={{-160,-40},{-140,-20}})));
       Modelica.Blocks.Sources.RealExpression realExpression(y=4 + 273.15)
         annotation (Placement(transformation(extent={{-250,-4},{-230,16}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-230,30},{-210,50}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TT211(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TT211(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-90,-20},{-70,0}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TCout(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TCout(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-220,-100},{-240,-80}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-10,-60},{-30,-40}})));
       Modelica.Fluid.Valves.ValveLinear CV121(
         redeclare package Medium =
@@ -1400,17 +1400,17 @@ First implementation.
         annotation (Placement(transformation(extent={{-120,-100},{-100,-80}})));
       Modelica.Blocks.Sources.RealExpression realExpression(y=4 + 273.15)
         annotation (Placement(transformation(extent={{-210,-64},{-190,-44}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-190,-30},{-170,-10}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TT211(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TT211(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-50,-80},{-30,-60}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TCout(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TCout(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-180,-160},{-200,-140}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{30,-120},{10,-100}})));
       Modelica.Fluid.Valves.ValveLinear CV121(
         redeclare package Medium =
@@ -1557,17 +1557,17 @@ First implementation.
         annotation (Placement(transformation(extent={{-160,-40},{-140,-20}})));
       Modelica.Blocks.Sources.RealExpression realExpression(y=4 + 273.15)
         annotation (Placement(transformation(extent={{-250,-4},{-230,16}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-230,30},{-210,50}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TT211(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TT211(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-90,-20},{-70,0}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TCout(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TCout(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-220,-100},{-240,-80}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-10,-60},{-30,-40}})));
       Modelica.Fluid.Valves.ValveLinear CV121(
         redeclare package Medium =
@@ -1978,8 +1978,8 @@ First implementation.
         inputType=Buildings.Fluid.Types.InputType.Constant,
         constantHead=87000)
         annotation (Placement(transformation(extent={{-10,-30},{10,-10}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{30,-30},{50,-10}})));
       Modelica.Blocks.Interfaces.RealOutput y
         annotation (Placement(transformation(extent={{100,0},{120,20}})));
@@ -1992,8 +1992,8 @@ First implementation.
             extent={{-10,-10},{10,10}},
             rotation=90,
             origin={70,-10})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-60,30},{-80,50}})));
       Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
         tableOnFile=true,
@@ -2062,8 +2062,8 @@ First implementation.
     package Tests
       extends Modelica.Icons.ExamplesPackage;
       model test_0
-        Modelica.Fluid.Sources.FixedBoundary boundary(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+        Modelica.Fluid.Sources.FixedBoundary boundary(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
           annotation (Placement(transformation(
               extent={{10,-10},{-10,10}},
               rotation=-90,
@@ -2313,11 +2313,11 @@ First implementation.
         dp_nominal=10000,
         m_flow_nominal=100)
         annotation (Placement(transformation(extent={{-10,40},{10,60}})));
-      Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
+      Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
         annotation (Placement(transformation(extent={{100,-60},{80,-40}})));
-      Modelica.Fluid.Sources.FixedBoundary boundary1(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
+      Modelica.Fluid.Sources.FixedBoundary boundary1(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
         annotation (Placement(transformation(extent={{100,40},{80,60}})));
       Fluid.Movers.FlowControlled_dp fan2(
         redeclare package Medium = Media.Water,
@@ -2369,8 +2369,8 @@ First implementation.
         m_flow_nominal=100,
         opening_min=0.00001)
         annotation (Placement(transformation(extent={{-10,-60},{10,-40}})));
-      Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
+      Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=2)
         annotation (Placement(transformation(extent={{100,-60},{80,-40}})));
       Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=false)
         annotation (Placement(transformation(extent={{-40,-20},{-20,0}})));
@@ -2454,8 +2454,8 @@ First implementation.
         Modelica.Fluid.Sensors.TemperatureTwoPort temperature(redeclare package
             Medium = Modelica.Media.Water.ConstantPropertyLiquidWater)
           annotation (Placement(transformation(extent={{-28,0},{-8,20}})));
-        Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+        Modelica.Fluid.Sources.FixedBoundary boundary2(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
           annotation (Placement(transformation(extent={{180,0},{160,20}})));
         Modelica.Fluid.Sensors.TemperatureTwoPort temperature1(redeclare
             package Medium = Modelica.Media.Water.ConstantPropertyLiquidWater)
@@ -2595,8 +2595,8 @@ First implementation.
       end table_c;
 
       model mass_flow_table
-        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
+        Modelica.Fluid.Sources.FixedBoundary sortie_f(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1) annotation (
            Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=180,
@@ -2721,8 +2721,8 @@ First implementation.
             extent={{-10,-10},{10,10}},
             rotation=180,
             origin={90,10})));
-      Modelica.Fluid.Sensors.MassFlowRate massFlowRate(redeclare package Medium
-          = Modelica.Media.Water.ConstantPropertyLiquidWater)
+      Modelica.Fluid.Sensors.MassFlowRate massFlowRate(redeclare package Medium =
+            Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{20,0},{40,20}})));
       Fluid.Movers.FlowControlled_dp fan(
         redeclare package Medium = Media.Water,
@@ -3020,8 +3020,8 @@ First implementation.
           annotation (Placement(transformation(extent={{-160,-40},{-140,-20}})));
         Modelica.Blocks.Sources.RealExpression realExpression(y=4 + 273.15)
           annotation (Placement(transformation(extent={{-250,-4},{-230,16}})));
-        Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater)
+        Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater)
           annotation (Placement(transformation(extent={{-230,30},{-210,50}})));
         Modelica.Fluid.Sensors.TemperatureTwoPort TT211(redeclare package
             Medium =
@@ -3031,8 +3031,8 @@ First implementation.
             Medium =
               Modelica.Media.Water.ConstantPropertyLiquidWater)
           annotation (Placement(transformation(extent={{-220,-100},{-240,-80}})));
-        Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium
-            = Modelica.Media.Water.ConstantPropertyLiquidWater)
+        Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater)
           annotation (Placement(transformation(extent={{-10,-60},{-30,-40}})));
         Modelica.Fluid.Valves.ValveLinear CV121(
           redeclare package Medium =
@@ -3310,12 +3310,15 @@ First implementation.
     extends Modelica.Icons.ExamplesPackage;
       model sea_water
 
+      package Med_mode = Modelica.Media.Water.ConstantPropertyLiquidWater;
+      replaceable package Med_buil = Buildings.Media.Water;
+      replaceable package espoir =
+            Buildings.Applications.DHC_Marseille.Media.Sea_Water;
 
 
         Fluid.HeatExchangers.PlateHeatExchangerEffectivenessNTU hex(
-          redeclare replaceable package Medium1 =
-              Buildings.Applications.Media.Water_b,
-          redeclare package Medium2 = Buildings.Media.Water,
+          redeclare replaceable package Medium1 = Med_mode,
+          redeclare package Medium2 = espoir,
           m1_flow_nominal=50,
           m2_flow_nominal=50,
           dp1_nominal=10,
@@ -3353,6 +3356,54 @@ First implementation.
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end sea_water;
+
+      model sea_water_bis
+
+      package Med_mode = Modelica.Media.Water.ConstantPropertyLiquidWater;
+      replaceable package Med_buil = Buildings.Media.Water;
+
+
+        Fluid.HeatExchangers.PlateHeatExchangerEffectivenessNTU hex(
+          redeclare replaceable package Medium1 = Med_mode,
+          redeclare package Medium2 =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m1_flow_nominal=50,
+          m2_flow_nominal=50,
+          dp1_nominal=10,
+          dp2_nominal=12,
+          configuration=Buildings.Fluid.Types.HeatExchangerConfiguration.CounterFlow,
+          Q_flow_nominal=50,
+          T_a1_nominal=303.15,
+          T_a2_nominal=323.15)
+          annotation (Placement(transformation(extent={{-20,0},{0,20}})));
+
+        Fluid.Sources.MassFlowSource_T boundary(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow=60,
+          nPorts=1)
+          annotation (Placement(transformation(extent={{-100,40},{-80,60}})));
+        Fluid.Sources.Boundary_pT bou(redeclare package Medium =
+              Buildings.Media.Water,                                          nPorts=1)
+          annotation (Placement(transformation(extent={{60,40},{40,60}})));
+        Fluid.Sources.MassFlowSource_T boundary1(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow=50,
+          nPorts=1) annotation (Placement(transformation(extent={{60,-20},{40,0}})));
+        Fluid.Sources.Boundary_pT bou1(redeclare package Medium =
+              Buildings.Media.Water,                                         nPorts=
+             1) annotation (Placement(transformation(extent={{-100,-20},{-80,0}})));
+      equation
+        connect(boundary.ports[1], hex.port_a1) annotation (Line(points={{-80,50},{-50,
+                50},{-50,16},{-20,16}}, color={0,127,255}));
+        connect(hex.port_b1, bou.ports[1]) annotation (Line(points={{0,16},{20,16},{20,
+                50},{40,50}}, color={0,127,255}));
+        connect(bou1.ports[1], hex.port_b2) annotation (Line(points={{-80,-10},{-50,-10},
+                {-50,4},{-20,4}}, color={0,127,255}));
+        connect(hex.port_a2, boundary1.ports[1]) annotation (Line(points={{0,4},{22,4},
+                {22,-10},{40,-10}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end sea_water_bis;
     end Tests;
   end heat_exchanger;
 
