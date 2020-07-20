@@ -43,13 +43,13 @@ package DHC_Marseille
         annotation (Placement(transformation(extent={{-140,10},{-100,50}})));
       Modelica.Blocks.Interfaces.RealInput u1
         annotation (Placement(transformation(extent={{-140,-50},{-100,-10}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort THIn(redeclare package Medium =
+      Modelica.Fluid.Sensors.TemperatureTwoPort TEIn(redeclare package Medium =
             Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-60,50},{-40,70}})));
       Modelica.Fluid.Sensors.TemperatureTwoPort TCout(redeclare package Medium =
             Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{-40,-70},{-60,-50}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort THOut(redeclare package Medium =
+      Modelica.Fluid.Sensors.TemperatureTwoPort TEOut(redeclare package Medium =
             Modelica.Media.Water.ConstantPropertyLiquidWater)
         annotation (Placement(transformation(extent={{40,50},{60,70}})));
       Modelica.Fluid.Sensors.TemperatureTwoPort TCIn(redeclare package Medium =
@@ -60,13 +60,13 @@ package DHC_Marseille
               -30},{-66,-30},{-66,-3},{-12,-3}}, color={0,0,127}));
       connect(u, electricReformulatedEIR.on) annotation (Line(points={{-120,30},
               {-66,30},{-66,3},{-12,3}}, color={255,0,255}));
-      connect(port_a1, THIn.port_a)
+      connect(port_a1,TEIn. port_a)
         annotation (Line(points={{-100,60},{-60,60}}, color={0,127,255}));
-      connect(THIn.port_b, electricReformulatedEIR.port_a1) annotation (Line(
+      connect(TEIn.port_b, electricReformulatedEIR.port_a1) annotation (Line(
             points={{-40,60},{-20,60},{-20,6},{-10,6}}, color={0,127,255}));
-      connect(electricReformulatedEIR.port_b1, THOut.port_a) annotation (Line(
+      connect(electricReformulatedEIR.port_b1,TEOut. port_a) annotation (Line(
             points={{10,6},{20,6},{20,60},{40,60}}, color={0,127,255}));
-      connect(THOut.port_b, port_b1)
+      connect(TEOut.port_b, port_b1)
         annotation (Line(points={{60,60},{100,60}}, color={0,127,255}));
       connect(port_a2, TCIn.port_a)
         annotation (Line(points={{100,-60},{60,-60}}, color={0,127,255}));

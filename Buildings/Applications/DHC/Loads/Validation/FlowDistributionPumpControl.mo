@@ -195,7 +195,6 @@ model FlowDistributionPumpControl
     m_flow_nominal=m_flow_nominal,
     have_pum=true,
     typCtr=Buildings.Applications.DHC.Loads.Types.PumpControlType.ConstantSpeed,
-
     dp_nominal=dp_nominal,
     dpDis_nominal=dpDis_nominal,
     dpMin=dpSet,
@@ -203,6 +202,7 @@ model FlowDistributionPumpControl
     nPorts_a1=5,
     nPorts_b1=5) "Distribution system with pump controlled at constant speed"
     annotation (Placement(transformation(extent={{-10,70},{10,90}})));
+
   Buildings.Controls.OBC.CDL.Continuous.Sources.Constant THeaWatSup(k=
         T_aHeaWat_nominal) "Heating water supply temperature"
     annotation (Placement(transformation(extent={{-180,-10},{-160,10}})));

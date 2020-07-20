@@ -123,13 +123,13 @@ model BuildingTimeSeries
     redeclare package Medium = Medium,
     m_flow_nominal=terUniCoo.mChiWat_flow_nominal * facScaCoo,
     typDis=Buildings.Applications.DHC.Loads.Types.DistributionType.ChilledWater,
-
     have_pum=true,
     dp_nominal=100000,
     nPorts_b1=1,
     nPorts_a1=1)
     "Chilled water distribution system"
     annotation (Placement(transformation(extent={{120,-270},{140,-250}})));
+
   Buildings.Controls.OBC.CDL.Continuous.MultiSum mulSum(nin=2)
     annotation (Placement(transformation(extent={{212,68},{232,88}})));
   DHC.Loads.Validation.BaseClasses.FanCoil2PipeCooling terUniCoo(
