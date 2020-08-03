@@ -8367,7 +8367,7 @@ Chiller:Electric:ReformulatedEIR,
       PLRMinUnl =           0.10,
       PLRMax =              1.08,
       mEva_flow_nominal =   489.8/3.6,
-      mCon_flow_nominal =   812.7/3.6,
+      mCon_flow_nominal =   812.7*1027/3600,
       TEvaLvg_nominal =     273.15 + 4,
       TConLvg_nominal =     273.15 + 30,
       TEvaLvgMin =          273.15 + 3,
@@ -8377,39 +8377,11 @@ Chiller:Electric:ReformulatedEIR,
       capFunT =             {-1.7230420474572905,2.0951199761277017,-0.45860548199599205,-0.16172392675222405,-0.0032717235552301013,0.08161126570424629},
       EIRFunT =             {-38.64675945263674,10.242746151997949,-0.13772426361445136,1.1239274158573656,-0.0010321594530661796,-0.2587034936640318},
       EIRFunPLR =           {2.3188380507593607,-0.2085116665288377,0.005036353957720704,-99.7632310463642,-58208.45092080386,-4636412.886166745,0.000000E+00,5.154390167738681,0.000000E+00,0.000000E+00},
-      etaMotor =            1.0) annotation (
+      etaMotor =            1.0)
+      "Quantum Chiller"
+      annotation (
     defaultComponentName="datChi",
-    defaultComponentPrefixes="parameter",
-    Documentation(info=
-                   "<html>
-Performance data for chiller model.
-This data corresponds to the following EnergyPlus model:
-<pre>
-Chiller:Electric:ReformulatedEIR,
-    ReformEIRChiller McQuay WSC 471kW/5.89COP/Vanes,  !- Name
-    471200,                  !- Reference Capacity {W}
-    5.89,                    !- Reference COP {W/W}
-    8.89,                    !- Reference Leaving Chilled Water Temperature {C}
-    33.52,                   !- Reference Leaving Condenser Water Temperature {C}
-    0.01035,                 !- Reference Chilled Water Flow Rate {m3/s}
-    0.01924,                 !- Reference Condenser Water Flow Rate {m3/s}
-    ReformEIRChiller McQuay WSC 471kW/5.89COP/Vanes CAPFT,  !- Cooling Capacity Function of Temperature Curve Name
-    ReformEIRChiller McQuay WSC 471kW/5.89COP/Vanes EIRFT,  !- Electric Input to Cooling Output Ratio Function of Temperature Curve Name
-    ReformEIRChiller McQuay WSC 471kW/5.89COP/Vanes EIRFPLR,  !- Electric Input to Cooling Output Ratio Function of Part Load Ratio Curve Name
-    0.10,                    !- Minimum Part Load Ratio
-    1.08,                    !- Maximum Part Load Ratio
-    1.0,                     !- Optimum Part Load Ratio
-    0.10,                    !- Minimum Unloading Ratio
-    Chilled Water Side Inlet Node,  !- Chilled Water Inlet Node Name
-    Chilled Water Side Outlet Node,  !- Chilled Water Outlet Node Name
-    Condenser Side Inlet Node,  !- Condenser Inlet Node Name
-    Condenser Side Outlet Node,  !- Condenser Outlet Node Name
-    1.0,                     !- Compressor Motor Efficiency
-    2.0,                     !- Leaving Chilled Water Lower Temperature Limit {C}
-    ConstantFlow,            !- Chiller Flow Mode Type
-    0.0;                     !- Design Heat Recovery Water Flow Rate {m3/s}
-</pre>
-</html>"));
+    defaultComponentPrefixes="parameter");
 annotation(preferredView="info",
  Documentation(info="<html>
 <p>
