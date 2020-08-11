@@ -43,6 +43,131 @@ package DHC_Marseille
               preserveAspectRatio=false)));
     end Control_0;
 
+    model opposite
+      Modelica.Blocks.Interfaces.RealInput u
+        annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
+      Modelica.Blocks.Interfaces.RealOutput y
+        annotation (Placement(transformation(extent={{100,-10},{120,10}})));
+    equation
+      y = 1-u;
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
+            Rectangle(
+              extent={{-100,40},{100,-40}},
+              lineColor={28,108,200},
+              fillColor={255,255,255},
+              fillPattern=FillPattern.Solid),
+            Text(
+              extent={{-100,40},{100,-40}},
+              lineColor={28,108,200},
+              fillColor={255,255,255},
+              fillPattern=FillPattern.None,
+              textString="1-u"),
+            Text(
+              extent={{-100,100},{100,60}},
+              lineColor={28,108,200},
+              fillColor={255,255,255},
+              fillPattern=FillPattern.None,
+              textString="%name")}),                                 Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end opposite;
+
+    model dp_law_hot
+
+      parameter Modelica.SIunits.Pressure W1(displayUnit="bar") = 30000;
+      parameter Modelica.SIunits.Pressure W2(displayUnit="bar") = 1100000;
+      parameter Modelica.SIunits.Conversions.NonSIunits.Temperature_degC T_min = -4;
+      parameter Modelica.SIunits.Conversions.NonSIunits.Temperature_degC T_max = 18;
+
+      Modelica.Blocks.Interfaces.RealInput T_ext
+        annotation (Placement(transformation(extent={{-140,60},{-100,100}})));
+      Modelica.Blocks.Interfaces.RealOutput y
+        annotation (Placement(transformation(extent={{100,-10},{120,10}})));
+
+    equation
+
+        if T_ext< T_min then
+        y = W2;
+        elseif T_ext>= T_min and T_ext <= T_max then
+        y = (sqrt(W2) - (sqrt(W2)-sqrt(W1))/(T_max-T_min)*(T_ext-T_min))^2;
+        else
+        y = W1;
+        end if;
+
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Text(
+              extent={{-100,140},{100,100}},
+              lineColor={28,108,200},
+              textString="%name"),           Rectangle(
+              extent={{-100,100},{100,-100}},
+              fillColor={210,210,210},
+              fillPattern=FillPattern.Solid,
+              borderPattern=BorderPattern.Raised),
+            Line(points={{-60,60},{-60,-60},{-60,-60},{60,-60}}, color={28,108,200}),
+            Polygon(
+              points={{-54,60},{-66,60},{-60,80},{-54,60}},
+              lineColor={28,108,200},
+              fillColor={28,108,200},
+              fillPattern=FillPattern.Solid),
+            Polygon(
+              points={{6,-10},{-6,-10},{0,10},{6,-10}},
+              lineColor={28,108,200},
+              origin={70,-60},
+              rotation=270,
+              fillColor={28,108,200},
+              fillPattern=FillPattern.Solid),
+            Line(points={{-70,20},{-40,20},{20,-40},{50,-40}}, color={255,255,0},
+              thickness=1)}),                                        Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end dp_law_hot;
+
+    model dp_law_cold
+
+      parameter Modelica.SIunits.Pressure W1(displayUnit="bar") = 30000;
+      parameter Modelica.SIunits.Pressure W2(displayUnit="bar") = 1100000;
+      parameter Modelica.SIunits.Conversions.NonSIunits.Temperature_degC T_min = 18;
+      parameter Modelica.SIunits.Conversions.NonSIunits.Temperature_degC T_max = 34;
+
+
+      Modelica.Blocks.Interfaces.RealInput T_ext
+        annotation (Placement(transformation(extent={{-140,60},{-100,100}})));
+      Modelica.Blocks.Interfaces.RealOutput y
+        annotation (Placement(transformation(extent={{100,-10},{120,10}})));
+
+    equation
+
+        if T_ext< T_min then
+        y = W1;
+        elseif T_ext>= T_min and T_ext <= T_max then
+        y = (sqrt(W2) - (sqrt(W2)-sqrt(W1))/(T_max-T_min)*(T_max-T_ext))^2;
+        else
+        y = W2;
+        end if;
+
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Text(
+              extent={{-100,140},{100,100}},
+              lineColor={28,108,200},
+              textString="%name"),           Rectangle(
+              extent={{-100,100},{100,-100}},
+              fillColor={210,210,210},
+              fillPattern=FillPattern.Solid,
+              borderPattern=BorderPattern.Raised),
+            Line(points={{-60,60},{-60,-60},{-60,-60},{60,-60}}, color={28,108,200}),
+            Polygon(
+              points={{-54,60},{-66,60},{-60,80},{-54,60}},
+              lineColor={28,108,200},
+              fillColor={28,108,200},
+              fillPattern=FillPattern.Solid),
+            Polygon(
+              points={{6,-10},{-6,-10},{0,10},{6,-10}},
+              lineColor={28,108,200},
+              origin={70,-60},
+              rotation=270,
+              fillColor={28,108,200},
+              fillPattern=FillPattern.Solid),
+            Line(points={{-70,20},{-40,20},{20,-40},{50,-40}}, color={255,255,0},
+              thickness=1)}),                                        Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end dp_law_cold;
+
       package Tests
       extends Modelica.Icons.ExamplesPackage;
         model switch
@@ -58,34 +183,39 @@ package DHC_Marseille
           annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
                 coordinateSystem(preserveAspectRatio=false)));
         end switch;
+
+        model loi_eau
+        Modelica.Blocks.Sources.Ramp ramp(
+          height=50,
+          duration=100,
+          offset=-10)
+          annotation (Placement(transformation(extent={{-60,0},{-40,20}})));
+        dp_law_hot dp_law_hot1(T_min(displayUnit="degC"))
+          annotation (Placement(transformation(extent={{0,0},{20,20}})));
+        dp_law_cold dp_law_cold1
+          annotation (Placement(transformation(extent={{0,-40},{20,-20}})));
+        equation
+        connect(ramp.y, dp_law_hot1.T_ext) annotation (Line(points={{-39,10},{
+                -19.5,10},{-19.5,18},{-2,18}}, color={0,0,127}));
+        connect(ramp.y, dp_law_cold1.T_ext) annotation (Line(points={{-39,10},{
+                -20,10},{-20,-22},{-2,-22}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+        end loi_eau;
       end Tests;
 
-    model opposite
-      Modelica.Blocks.Interfaces.RealInput u
-        annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
-      Modelica.Blocks.Interfaces.RealOutput y
-        annotation (Placement(transformation(extent={{100,-10},{120,10}})));
-    equation
-      y = 1-u;
-      annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
-              Rectangle(
-              extent={{-100,40},{100,-40}},
-              lineColor={28,108,200},
-              fillColor={255,255,255},
-              fillPattern=FillPattern.Solid), Text(
-              extent={{-100,40},{100,-40}},
-              lineColor={28,108,200},
-              fillColor={255,255,255},
-              fillPattern=FillPattern.None,
-              textString="1-u")}),                                   Diagram(
-            coordinateSystem(preserveAspectRatio=false)));
-    end opposite;
   end Controls_a;
 
   package Plant
     extends Modelica.Icons.VariantsPackage;
     package Tests
       extends Modelica.Icons.ExamplesPackage;
+      model test0
+        TFP.TFP_duo tFP_duo
+          annotation (Placement(transformation(extent={{-40,60},{-20,80}})));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end test0;
     end Tests;
   end Plant;
 
@@ -2563,8 +2693,6 @@ package DHC_Marseille
       end basic_1;
 
       model constr
-        TFP_single tFP_single(redeclare package Medium1 = Buildings.Media.Water)
-          annotation (Placement(transformation(extent={{-20,8},{20,48}})));
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end constr;
@@ -2689,28 +2817,6 @@ package DHC_Marseille
     end Tests;
 
 
-    model TFP__single_bis
-    extends Fluid.Interfaces.PartialEightPortInterface;
-      Fluid.Chillers.ElectricReformulatedEIR electricReformulatedEIR(redeclare
-          package Medium1 = Buildings.Media.Water)
-        annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
-      annotation (Icon(graphics={                                       Rectangle(
-              extent={{-60,80},{60,-80}},
-              lineColor={28,108,200},
-              fillColor={238,46,47},
-              fillPattern=FillPattern.Solid)}));
-    end TFP__single_bis;
-
-    model TFP_single
-      extends Fluid.Interfaces.PartialEightPortInterface;
-      annotation (Diagram(coordinateSystem(extent={{-200,-200},{200,200}})), Icon(
-            coordinateSystem(extent={{-200,-200},{200,200}}), graphics={Rectangle(
-              extent={{-60,80},{60,-80}},
-              lineColor={28,108,200},
-              fillColor={238,46,47},
-              fillPattern=FillPattern.Solid)}));
-    end TFP_single;
-
     model TFP_duo
       extends Fluid.Interfaces.PartialEightPortInterface;
 
@@ -2719,6 +2825,7 @@ package DHC_Marseille
       parameter Real T_set_hot = 61;
       parameter Real T_set_hot_max = 63;
       parameter Real T_set_hot_min = 41;
+      parameter Real T_set_cold_max = 14;
       parameter Real T_set_cold = 4;
 
       Fluid.FixedResistances.Junction jun(
@@ -2790,11 +2897,21 @@ package DHC_Marseille
             origin={70,190})));
       Fluid.Chillers.ElectricReformulatedEIR TFPA(redeclare package Medium1 =
             Buildings.Media.Water, redeclare package Medium2 =
-            Buildings.Media.Water)
+            Buildings.Media.Water,
+        m1_flow_nominal=m_flow_hot,
+        m2_flow_nominal=m_flow_cold/2,
+        dp1_nominal=70000,
+        dp2_nominal=70000,
+        per=Fluid.Chillers.Data.ElectricReformulatedEIR.ReformEIRChiller_York_YS_1758kW_5_84COP_Valve())
         annotation (Placement(transformation(extent={{-40,-20},{-20,0}})));
       Fluid.Chillers.ElectricReformulatedEIR TFPB(redeclare package Medium1 =
             Buildings.Media.Water, redeclare package Medium2 =
-            Buildings.Media.Water)
+            Buildings.Media.Water,
+        m1_flow_nominal=m_flow_hot,
+        m2_flow_nominal=m_flow_cold/2,
+        dp1_nominal=70000,
+        dp2_nominal=70000,
+        per=Fluid.Chillers.Data.ElectricReformulatedEIR.ReformEIRChiller_York_YS_1758kW_5_84COP_Valve())
         annotation (Placement(transformation(extent={{20,-20},{40,0}})));
       Fluid.FixedResistances.Junction jun4(
         redeclare package Medium = Buildings.Media.Water,
@@ -2817,7 +2934,7 @@ package DHC_Marseille
         CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
         dpValve_nominal=10) annotation (Placement(
             transformation(
-            extent={{-10,10},{10,-10}},
+            extent={{-10,-10},{10,10}},
             rotation=90,
             origin={50,-190})));
       Fluid.Actuators.Valves.TwoWayLinear CV123(
@@ -2900,7 +3017,8 @@ package DHC_Marseille
             rotation=-90,
             origin={10,120})));
       Modelica.Blocks.Interfaces.IntegerInput mode
-        annotation (Placement(transformation(extent={{-320,240},{-280,280}})));
+        annotation (Placement(transformation(extent={{-360,100},{-280,180}}),
+            iconTransformation(extent={{-360,100},{-280,180}})));
       Modelica.Blocks.Sources.RealExpression XV521_switch(y=if mode == 1 then 1
              else 0)
         annotation (Placement(transformation(extent={{-260,260},{-240,280}})));
@@ -2913,7 +3031,7 @@ package DHC_Marseille
       Modelica.Blocks.Sources.RealExpression XV112B_switch(y=if mode == 1 or mode ==
             3 then 1 else 0)
         annotation (Placement(transformation(extent={{-260,-80},{-240,-60}})));
-      Modelica.Blocks.Sources.RealExpression limit_hot(y=T_set_hot_max)
+      Modelica.Blocks.Sources.RealExpression limit_hot_max(y=T_set_hot_max)
         annotation (Placement(transformation(extent={{-260,200},{-240,220}})));
       Modelica.Blocks.Math.RealToBoolean TFPA_on(threshold=0.5)
         annotation (Placement(transformation(extent={{-200,20},{-180,40}})));
@@ -2931,14 +3049,17 @@ package DHC_Marseille
             rotation=0,
             origin={-210,210})));
       Modelica.Thermal.HeatTransfer.Celsius.FromKelvin fromKelvin
-        annotation (Placement(transformation(extent={{-260,170},{-240,190}})));
-      Modelica.Blocks.Sources.RealExpression limit_cold(y=T_set_hot_min)
+        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+            rotation=-90,
+            origin={-320,240})));
+      Modelica.Blocks.Sources.RealExpression limit_hot_min(y=T_set_hot_min)
         annotation (Placement(transformation(extent={{-260,140},{-240,160}})));
       Controls.Continuous.LimPID conPID1(
         controllerType=Modelica.Blocks.Types.SimpleController.PI,
         k=3,
         Ti=1,
-        initType=Modelica.Blocks.Types.InitPID.NoInit) annotation (Placement(
+        initType=Modelica.Blocks.Types.InitPID.NoInit,
+        reverseActing=false)                           annotation (Placement(
             transformation(
             extent={{-10,-10},{10,10}},
             rotation=0,
@@ -2947,11 +3068,51 @@ package DHC_Marseille
         annotation (Placement(transformation(extent={{-260,110},{-240,130}})));
       Modelica.Blocks.Math.Min min1
         annotation (Placement(transformation(extent={{-180,140},{-160,160}})));
-      Modelica.Blocks.Sources.RealExpression CV123_reg(y=if mode == 1 or mode
-             == 3 then 166 else 332)
+      Modelica.Blocks.Sources.RealExpression CV123_reg(y=if mode == 1 or mode == 3
+             then 166 else 332)
         annotation (Placement(transformation(extent={{140,-100},{160,-80}})));
       Controls_a.opposite opposite
         annotation (Placement(transformation(extent={{-20,170},{0,190}})));
+      Modelica.Blocks.Interfaces.RealInput DEC_TT521
+        annotation (Placement(transformation(extent={{-360,-280},{-280,-200}}),
+            iconTransformation(extent={{-360,-280},{-280,-200}})));
+      Modelica.Blocks.Interfaces.RealInput PEM_TT200
+        annotation (Placement(transformation(extent={{-362,-200},{-282,-120}}),
+            iconTransformation(extent={{-362,-200},{-282,-120}})));
+      Modelica.Blocks.Math.Max max1
+        annotation (Placement(transformation(extent={{-260,-260},{-240,-240}})));
+      Modelica.Blocks.Math.Min min2
+        annotation (Placement(transformation(extent={{-220,-240},{-200,-220}})));
+      Modelica.Blocks.Sources.RealExpression limit_hot_min1(y=T_set_cold_max)
+        annotation (Placement(transformation(extent={{-260,-220},{-240,-200}})));
+      Controls.Continuous.LimPID conPID2(
+        controllerType=Modelica.Blocks.Types.SimpleController.PI,
+        k=3,
+        Ti=1,
+        initType=Modelica.Blocks.Types.InitPID.NoInit,
+        reverseActing=false)                           annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={-170,-170})));
+      Modelica.Blocks.Sources.RealExpression limit_hot_min2(y=T_set_hot)
+        annotation (Placement(transformation(extent={{-260,-120},{-240,-100}})));
+      Controls.Continuous.LimPID conPID4(
+        controllerType=Modelica.Blocks.Types.SimpleController.PI,
+        k=3,
+        Ti=1,
+        initType=Modelica.Blocks.Types.InitPID.NoInit,
+        reverseActing=false)                           annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={-170,-110})));
+      Modelica.Blocks.Math.Min min3
+        annotation (Placement(transformation(extent={{-140,-240},{-120,-220}})));
+      Controls_a.opposite opposite1
+        annotation (Placement(transformation(extent={{-40,-260},{-20,-240}})));
+      Modelica.Thermal.HeatTransfer.Celsius.FromKelvin fromKelvin2
+        annotation (Placement(transformation(extent={{-100,-270},{-120,-250}})));
     equation
       connect(port_a1, jun.port_1) annotation (Line(points={{-100,80},{-140,80},
               {-140,280},{10,280},{10,260}},
@@ -3009,20 +3170,20 @@ package DHC_Marseille
               -230},{120,-30},{100,-30}}, color={0,127,255}));
       connect(FT521.port_b, CV523.port_a)
         annotation (Line(points={{10,80},{10,60}}, color={238,46,47}));
-      connect(FT521.V_flow, FT_PID_521.u_m) annotation (Line(points={{21,90},{
-              50,90},{50,100},{210,100},{210,118}}, color={0,0,127}));
+      connect(FT521.V_flow, FT_PID_521.u_m) annotation (Line(points={{21,90},{50,90},
+              {50,100},{210,100},{210,118}}, color={0,0,127}));
       connect(const.y, FT_PID_521.u_s)
         annotation (Line(points={{181,130},{198,130}}, color={0,0,127}));
-      connect(FT_PID_521.y, CV523.y) annotation (Line(points={{221,130},{240,
-              130},{240,50},{22,50}}, color={0,0,127}));
+      connect(FT_PID_521.y, CV523.y) annotation (Line(points={{221,130},{240,130},{240,
+              50},{22,50}}, color={0,0,127}));
       connect(CV123.port_a, FT121.port_a)
         annotation (Line(points={{50,-100},{50,-110}}, color={0,127,255}));
       connect(FT121.port_b, jun7.port_2)
         annotation (Line(points={{50,-130},{50,-140}}, color={0,127,255}));
-      connect(FT121.V_flow, FT_PID_123.u_m) annotation (Line(points={{61,-120},
-              {190,-120},{190,-102}}, color={0,0,127}));
-      connect(FT_PID_123.y, CV123.y) annotation (Line(points={{201,-90},{220,-90},
-              {220,-60},{80,-60},{80,-90},{62,-90}}, color={0,0,127}));
+      connect(FT121.V_flow, FT_PID_123.u_m) annotation (Line(points={{61,-120},{190,
+              -120},{190,-102}}, color={0,0,127}));
+      connect(FT_PID_123.y, CV123.y) annotation (Line(points={{201,-90},{220,-90},{220,
+              -60},{80,-60},{80,-90},{62,-90}}, color={0,0,127}));
       connect(port_a4, TT121.port_a) annotation (Line(points={{100,-80},{100,
               -280},{80,-280}}, color={0,127,255}));
       connect(TT121.port_b, jun5.port_1) annotation (Line(points={{60,-280},{50,
@@ -3059,31 +3220,59 @@ package DHC_Marseille
               -140,-13},{-42,-13}}, color={0,0,127}));
       connect(cons_cold.y, TFPB.TSet) annotation (Line(points={{-239,50},{-140,50},{
               -140,8},{8,8},{8,-13},{18,-13}}, color={0,0,127}));
-      connect(limit_hot.y, conPID3.u_s)
+      connect(limit_hot_max.y, conPID3.u_s)
         annotation (Line(points={{-239,210},{-222,210}}, color={0,0,127}));
       connect(TT511.T, fromKelvin.Kelvin) annotation (Line(points={{90,271},{90,300},
-              {-320,300},{-320,180},{-262,180}}, color={0,0,127}));
-      connect(fromKelvin.Celsius, conPID3.u_m) annotation (Line(points={{-239,180},{
-              -210,180},{-210,198}}, color={0,0,127}));
-      connect(limit_cold.y, conPID1.u_s)
+              {-320,300},{-320,252}},            color={0,0,127}));
+      connect(fromKelvin.Celsius, conPID3.u_m) annotation (Line(points={{-320,229},{
+              -320,190},{-210,190},{-210,198}},
+                                     color={0,0,127}));
+      connect(limit_hot_min.y, conPID1.u_s)
         annotation (Line(points={{-239,150},{-222,150}}, color={0,0,127}));
       connect(fromKelvin1.Celsius, conPID1.u_m) annotation (Line(points={{-239,120},
               {-210,120},{-210,138}}, color={0,0,127}));
-      connect(TT521.T, fromKelvin1.Kelvin) annotation (Line(points={{-1,120},{
-              -180,120},{-180,100},{-280,100},{-280,120},{-262,120}}, color={0,
-              0,127}));
-      connect(conPID3.y, min1.u1) annotation (Line(points={{-199,210},{-190,210},
-              {-190,156},{-182,156}}, color={0,0,127}));
-      connect(conPID1.y, min1.u2) annotation (Line(points={{-199,150},{-190,150},
-              {-190,144},{-182,144}}, color={0,0,127}));
-      connect(min1.y, CV522.y) annotation (Line(points={{-159,150},{-90,150},{
-              -90,162},{-50,162}}, color={0,0,127}));
+      connect(TT521.T, fromKelvin1.Kelvin) annotation (Line(points={{-1,120},{-180,120},
+              {-180,100},{-280,100},{-280,120},{-262,120}}, color={0,0,127}));
+      connect(conPID3.y, min1.u1) annotation (Line(points={{-199,210},{-190,210},{-190,
+              156},{-182,156}}, color={0,0,127}));
+      connect(conPID1.y, min1.u2) annotation (Line(points={{-199,150},{-190,150},{-190,
+              144},{-182,144}}, color={0,0,127}));
+      connect(min1.y, CV522.y) annotation (Line(points={{-159,150},{-90,150},{-90,162},
+              {-50,162}}, color={0,0,127}));
       connect(CV123_reg.y, FT_PID_123.u_s)
         annotation (Line(points={{161,-90},{178,-90}}, color={0,0,127}));
-      connect(min1.y, opposite.u) annotation (Line(points={{-159,150},{-90,150},
-              {-90,168},{-30,168},{-30,180},{-22,180}}, color={0,0,127}));
-      connect(opposite.y, CV521.y) annotation (Line(points={{1,180},{32,180},{
-              32,210},{22,210}}, color={0,0,127}));
+      connect(min1.y, opposite.u) annotation (Line(points={{-159,150},{-90,150},{-90,
+              168},{-30,168},{-30,180},{-22,180}}, color={0,0,127}));
+      connect(opposite.y, CV521.y) annotation (Line(points={{1,180},{32,180},{32,210},
+              {22,210}}, color={0,0,127}));
+      connect(PEM_TT200, max1.u1) annotation (Line(points={{-322,-160},{-268,-160},{
+              -268,-244},{-262,-244}}, color={0,0,127}));
+      connect(DEC_TT521, max1.u2) annotation (Line(points={{-320,-240},{-274,-240},{
+              -274,-256},{-262,-256}}, color={0,0,127}));
+      connect(limit_hot_min1.y, min2.u1) annotation (Line(points={{-239,-210},{-232,
+              -210},{-232,-224},{-222,-224}}, color={0,0,127}));
+      connect(max1.y, min2.u2) annotation (Line(points={{-239,-250},{-232,-250},{-232,
+              -236},{-222,-236}}, color={0,0,127}));
+      connect(conPID4.y, min3.u1) annotation (Line(points={{-159,-110},{-148,-110},{
+              -148,-224},{-142,-224}}, color={0,0,127}));
+      connect(conPID2.y, min3.u2) annotation (Line(points={{-159,-170},{-154,-170},{
+              -154,-236},{-142,-236}}, color={0,0,127}));
+      connect(min3.y, CV122.y) annotation (Line(points={{-119,-230},{-80,-230},{-80,
+              -188},{-30,-188},{-30,-198}}, color={0,0,127}));
+      connect(min3.y, opposite1.u) annotation (Line(points={{-119,-230},{-80,-230},{
+              -80,-250},{-42,-250}}, color={0,0,127}));
+      connect(opposite1.y, CV121.y) annotation (Line(points={{-19,-250},{26,-250},{26,
+              -190},{38,-190}}, color={0,0,127}));
+      connect(min2.y, conPID2.u_s) annotation (Line(points={{-199,-230},{-192,-230},
+              {-192,-170},{-182,-170}}, color={0,0,127}));
+      connect(TT121.T, fromKelvin2.Kelvin) annotation (Line(points={{70,-269},{70,-260},
+              {-98,-260}}, color={0,0,127}));
+      connect(fromKelvin2.Celsius, conPID2.u_m) annotation (Line(points={{-121,-260},
+              {-170,-260},{-170,-182}}, color={0,0,127}));
+      connect(fromKelvin.Celsius, conPID4.u_m) annotation (Line(points={{-320,229},{
+              -320,-132},{-170,-132},{-170,-122}}, color={0,0,127}));
+      connect(limit_hot_min2.y, conPID4.u_s)
+        annotation (Line(points={{-239,-110},{-182,-110}}, color={0,0,127}));
       annotation (Diagram(coordinateSystem(extent={{-280,-280},{280,280}})), Icon(
             coordinateSystem(extent={{-280,-280},{280,280}}), graphics={Rectangle(
               extent={{-60,80},{60,-80}},
@@ -4223,6 +4412,203 @@ package DHC_Marseille
 
   package DEC
     extends Modelica.Icons.VariantsPackage;
+    model DEC
+      extends Fluid.Interfaces.PartialFourPort;
+
+      parameter Modelica.SIunits.Conversions.NonSIunits.Temperature_degC T_cons_solo = 53.5;
+       parameter Modelica.SIunits.Conversions.NonSIunits.Temperature_degC T_cons_ret = 46;
+
+
+      Fluid.FixedResistances.Junction jun4(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={100,-100,-100},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{10,10},{-10,-10}},
+            rotation=180,
+            origin={-20,60})));
+      Fluid.FixedResistances.Junction jun1(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={100,-100,-100},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{-10,10},{10,-10}},
+            rotation=0,
+            origin={-20,-60})));
+      Fluid.Actuators.Valves.TwoWayLinear CV501(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=m_flow_hot,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(
+            transformation(
+            extent={{-10,10},{10,-10}},
+            rotation=270,
+            origin={-20,0})));
+      Controls_a.dp_law_hot dp_law_hot
+        annotation (Placement(transformation(extent={{-180,160},{-160,180}})));
+      Fluid.Sensors.Pressure PT511(redeclare package Medium =
+            Buildings.Media.Water)
+        annotation (Placement(transformation(extent={{60,60},{80,80}})));
+      Fluid.Sensors.Pressure PT521(redeclare package Medium =
+            Buildings.Media.Water)
+        annotation (Placement(transformation(extent={{60,-60},{80,-40}})));
+      Fluid.Sensors.RelativePressure PDT511(redeclare package Medium =
+            Buildings.Media.Water) annotation (Placement(transformation(
+            extent={{-10,10},{10,-10}},
+            rotation=-90,
+            origin={50,10})));
+      Controls.Continuous.LimPID conPID1(
+        controllerType=Modelica.Blocks.Types.SimpleController.PI,
+        k=3,
+        Ti=1,
+        initType=Modelica.Blocks.Types.InitPID.NoInit,
+        reverseActing=false)                           annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={-130,170})));
+      Modelica.Blocks.Interfaces.RealInput T_ext
+        annotation (Placement(transformation(extent={{-240,160},{-200,200}})));
+      Modelica.Blocks.Sources.RealExpression dp_set(y=dp_max)
+        annotation (Placement(transformation(extent={{-200,120},{-180,140}})));
+      Controls.Continuous.LimPID conPID2(
+        controllerType=Modelica.Blocks.Types.SimpleController.PI,
+        k=3,
+        Ti=1,
+        initType=Modelica.Blocks.Types.InitPID.NoInit,
+        reverseActing=false)                           annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={-150,130})));
+      Fluid.Sensors.TemperatureTwoPort TT521(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{-10,10},{10,-10}},
+            rotation=180,
+            origin={30,-60})));
+      Modelica.Blocks.Sources.RealExpression dp_set1(y=dp_max)
+        annotation (Placement(transformation(extent={{-200,40},{-180,60}})));
+      Modelica.Blocks.Sources.RealExpression dp_set2(y=dp_max)
+        annotation (Placement(transformation(extent={{-200,-20},{-180,0}})));
+      Modelica.Blocks.Sources.BooleanExpression TFP_solo
+        annotation (Placement(transformation(extent={{-200,10},{-180,30}})));
+      Controls.Continuous.LimPID conPID3(
+        controllerType=Modelica.Blocks.Types.SimpleController.PI,
+        k=3,
+        Ti=1,
+        initType=Modelica.Blocks.Types.InitPID.NoInit,
+        reverseActing=false)                           annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={-110,20})));
+      Modelica.Blocks.Logical.Switch switch1
+        annotation (Placement(transformation(extent={{-160,10},{-140,30}})));
+      Modelica.Blocks.Math.UnitConversions.To_degC to_degC annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={-110,-10})));
+      Modelica.Blocks.Math.MinMax minMax(nu=3)
+        annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
+    equation
+      connect(jun4.port_3,CV501. port_a)
+        annotation (Line(points={{-20,50},{-20,10}},      color={0,127,255}));
+      connect(CV501.port_b, jun1.port_3)
+        annotation (Line(points={{-20,-10},{-20,-50}},
+                                                     color={0,127,255}));
+      connect(port_a1, port_a1)
+        annotation (Line(points={{-100,60},{-100,60}}, color={0,127,255}));
+      connect(jun4.port_2, port_b1)
+        annotation (Line(points={{-10,60},{100,60}},color={0,127,255}));
+      connect(jun4.port_2, PT511.port)
+        annotation (Line(points={{-10,60},{70,60}},color={0,127,255}));
+      connect(PDT511.port_a, port_b1)
+        annotation (Line(points={{50,20},{50,60},{100,60}}, color={0,127,255}));
+      connect(PDT511.port_b, port_a2)
+        annotation (Line(points={{50,0},{50,-60},{100,-60}}, color={0,127,255}));
+      connect(jun1.port_1, port_b2)
+        annotation (Line(points={{-30,-60},{-100,-60}},
+                                                      color={0,127,255}));
+      connect(port_a1, jun4.port_1)
+        annotation (Line(points={{-100,60},{-30,60}},
+                                                    color={0,127,255}));
+      connect(PDT511.p_rel, conPID1.u_m) annotation (Line(points={{59,10},{120,10},{
+              120,148},{-130,148},{-130,158}}, color={0,0,127}));
+      connect(dp_law_hot.y, conPID1.u_s)
+        annotation (Line(points={{-159,170},{-142,170}}, color={0,0,127}));
+      connect(dp_law_hot.T_ext, T_ext) annotation (Line(points={{-182,178},{-193,178},
+              {-193,180},{-220,180}}, color={0,0,127}));
+      connect(PT511.p, conPID2.u_m) annotation (Line(points={{81,70},{88,70},{88,112},
+              {-150,112},{-150,118}}, color={0,0,127}));
+      connect(dp_set.y, conPID2.u_s)
+        annotation (Line(points={{-179,130},{-162,130}}, color={0,0,127}));
+      connect(jun1.port_2, TT521.port_b)
+        annotation (Line(points={{-10,-60},{20,-60}}, color={0,127,255}));
+      connect(TT521.port_a, port_a2)
+        annotation (Line(points={{40,-60},{100,-60}}, color={0,127,255}));
+      connect(port_a2, PT521.port)
+        annotation (Line(points={{100,-60},{70,-60}}, color={0,127,255}));
+      connect(dp_set1.y, switch1.u1) annotation (Line(points={{-179,50},{-172,50},{-172,
+              28},{-162,28}}, color={0,0,127}));
+      connect(dp_set2.y, switch1.u3) annotation (Line(points={{-179,-10},{-172,-10},
+              {-172,12},{-162,12}}, color={0,0,127}));
+      connect(TFP_solo.y, switch1.u2)
+        annotation (Line(points={{-179,20},{-162,20}}, color={255,0,255}));
+      connect(switch1.y, conPID3.u_s)
+        annotation (Line(points={{-139,20},{-122,20}}, color={0,0,127}));
+      connect(conPID3.u_m, to_degC.y)
+        annotation (Line(points={{-110,8},{-110,1}}, color={0,0,127}));
+      connect(to_degC.u, TT521.T) annotation (Line(points={{-110,-22},{-110,-40},{30,
+              -40},{30,-49}}, color={0,0,127}));
+      connect(conPID3.y, minMax.u[1]) annotation (Line(points={{-99,20},{-90,20},
+              {-90,-5.33333},{-80,-5.33333}},
+                                         color={0,0,127}));
+      connect(minMax.yMax, CV501.y) annotation (Line(points={{-59,-4},{-46,-4},
+              {-46,0},{-32,0}},
+                           color={0,0,127}));
+      connect(conPID2.y, minMax.u[2]) annotation (Line(points={{-139,130},{-84,
+              130},{-84,-10},{-80,-10}},
+                                    color={0,0,127}));
+      connect(conPID1.y, minMax.u[3]) annotation (Line(points={{-119,170},{-86,
+              170},{-86,-14.6667},{-80,-14.6667}},
+                                              color={0,0,127}));
+      annotation (Diagram(coordinateSystem(extent={{-200,-180},{200,200}})), Icon(
+            coordinateSystem(extent={{-200,-180},{200,200}}), graphics={
+            Rectangle(
+              extent={{-100,80},{100,40}},
+              lineColor={0,0,0},
+              fillPattern=FillPattern.HorizontalCylinder,
+              fillColor={0,127,255}),
+            Rectangle(
+              extent={{-100,-40},{100,-80}},
+              lineColor={0,0,0},
+              fillPattern=FillPattern.HorizontalCylinder,
+              fillColor={0,127,255}),
+        Polygon(
+          points={{2,18},{-38,60},{-38,-20},{2,18}},
+          lineColor={0,0,0},
+          fillColor=DynamicSelect({0,0,0}, y*{255,255,255}),
+          fillPattern=FillPattern.Solid,
+              origin={-18,2},
+              rotation=270),
+        Polygon(
+          points={{-2,-20},{38,20},{38,-60},{-2,-20}},
+          lineColor={0,0,0},
+          fillColor={255,255,255},
+          fillPattern=FillPattern.Solid,
+              origin={20,-2},
+              rotation=270),
+        Line(
+          points={{0,20},{0,-20}},
+              origin={20,0},
+              rotation=270),
+            Rectangle(
+              extent={{40,20},{80,-20}},
+              lineColor={0,0,0},
+              fillColor={210,210,210},
+              fillPattern=FillPattern.Solid)}));
+    end DEC;
+
     package Tests
       extends Modelica.Icons.ExamplesPackage;
       model combi_0
@@ -4298,6 +4684,61 @@ package DHC_Marseille
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end combi_0;
+
+      model test_sqrt
+        parameter Real u=3;
+
+        Modelica.Blocks.Interfaces.RealOutput y
+          annotation (Placement(transformation(extent={{100,-10},{120,10}})));
+      equation
+        y = sqrt(u)^2;
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end test_sqrt;
+
+      model test_switch
+        Modelica.Blocks.Logical.Switch switch1
+          annotation (Placement(transformation(extent={{-40,20},{-20,40}})));
+        Modelica.Blocks.Sources.RealExpression dp_set1(y=10)
+          annotation (Placement(transformation(extent={{-100,50},{-80,70}})));
+        Modelica.Blocks.Sources.RealExpression dp_set2(y=5)
+          annotation (Placement(transformation(extent={{-100,-10},{-80,10}})));
+        Modelica.Blocks.Sources.BooleanExpression TFP_solo(y=true)
+          annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
+      equation
+        connect(dp_set1.y, switch1.u1) annotation (Line(points={{-79,60},{-72,
+                60},{-72,38},{-42,38}}, color={0,0,127}));
+        connect(dp_set2.y, switch1.u3) annotation (Line(points={{-79,0},{-72,0},
+                {-72,22},{-42,22}}, color={0,0,127}));
+        connect(TFP_solo.y, switch1.u2)
+          annotation (Line(points={{-79,30},{-42,30}}, color={255,0,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end test_switch;
+
+      model pid
+        Modelica.Blocks.Sources.RealExpression dp_set(y=10)
+          annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
+        Controls.Continuous.LimPID conPID2(
+          controllerType=Modelica.Blocks.Types.SimpleController.PI,
+          k=3,
+          Ti=1,
+          initType=Modelica.Blocks.Types.InitPID.NoInit,
+          reverseActing=false)                           annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={-30,70})));
+        Modelica.Blocks.Sources.Ramp ramp(height=15, duration=100)
+          annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
+      equation
+        connect(ramp.y, conPID2.u_m) annotation (Line(points={{-59,30},{-30,30},
+                {-30,58}}, color={0,0,127}));
+        connect(dp_set.y, conPID2.u_s)
+          annotation (Line(points={{-59,70},{-42,70}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end pid;
     end Tests;
   end DEC;
 
