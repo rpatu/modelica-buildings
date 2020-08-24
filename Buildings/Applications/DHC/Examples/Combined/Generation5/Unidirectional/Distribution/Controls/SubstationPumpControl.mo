@@ -36,7 +36,7 @@ model SubstationPumpControl
     yMax=1,
     k=0.5,
     Ti=240,
-    reverseAction=true,
+    reverseActing=false,
     yMin=yMin,
     y_reset=0)
     annotation (Placement(transformation(extent={{-40,130},{-20,150}})));
@@ -69,7 +69,7 @@ model SubstationPumpControl
     yMax=1,
     k=0.5,
     Ti=240,
-    reverseAction=true,
+    reverseActing=false,
     yMin=yMin,
     y_reset=yMin)
     annotation (Placement(transformation(extent={{-40,-100},{-20,-80}})));

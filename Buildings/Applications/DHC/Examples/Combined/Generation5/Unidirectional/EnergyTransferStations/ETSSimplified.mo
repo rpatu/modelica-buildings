@@ -282,7 +282,7 @@ model ETSSimplified
     Ti=120,
     yMax=1,
     controllerType=Buildings.Controls.OBC.CDL.Types.SimpleController.PI,
-    reverseAction=true,
+    reverseActing=false,
     yMin=0,
     reset=Buildings.Controls.OBC.CDL.Types.Reset.Parameter)
     "PI controller for chilled water supply"
