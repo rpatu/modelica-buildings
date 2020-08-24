@@ -54,7 +54,7 @@ model FanCoil2PipeHeating
     final k=k,
     final Ti=Ti,
     controllerType=Buildings.Controls.OBC.CDL.Types.SimpleController.PI,
-    final reverseAction=false,
+    final reverseActing=true,
     reset=Buildings.Controls.OBC.CDL.Types.Reset.Parameter)
     "PI controller"
     annotation (Placement(transformation(extent={{-10,210},{10,230}})));
@@ -99,7 +99,7 @@ model FanCoil2PipeHeating
     annotation (Placement(transformation(
         extent={{10,-10},{-10,10}},
         rotation=0,
-        origin={150,0})));
+        origin={112,0})));
   Buildings.Applications.DHC.Loads.SimpleRoomODE TLoaODE(
     TOutHea_nominal=273.15 - 5,
     TIndHea_nominal=T_aLoaHea_nominal,
