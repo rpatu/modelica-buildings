@@ -168,6 +168,5 @@ See <a href=\"https://github.com/ibpsa/modelica-ibpsa/issues/1050\">#1050</a>.
           fillColor={0,127,255},
           textString="%name")}),
     Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{
-            100,100}}),
-                    graphics));
+            100,100}})));
 end EightPort;
