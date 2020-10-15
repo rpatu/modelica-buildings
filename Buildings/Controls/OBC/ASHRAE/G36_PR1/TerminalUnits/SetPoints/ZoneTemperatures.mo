@@ -235,8 +235,8 @@ block ZoneTemperatures
   Buildings.Controls.OBC.CDL.Continuous.Product pro3
     "Output product of the two inputs"
     annotation (Placement(transformation(extent={{80,-120},{100,-100}})));
-  Buildings.Controls.OBC.CDL.Logical.Timer tim
-    "Measure unpopulated time when the zone is in occupied mode"
+  Buildings.Controls.OBC.CDL.Logical.Timer tim(final t=300)
+    "Check whether the zone has been unpopulated for 5 minutes continuously during occupied mode"
     annotation (Placement(transformation(extent={{-220,-280},{-200,-260}})));
   Buildings.Controls.OBC.CDL.Logical.TrueHoldWithReset truHol(duration=60)
     "When the zone is unpopulated by more than 5 minute and then becomes populated, hold the change by 1 minute"
@@ -260,9 +260,6 @@ block ZoneTemperatures
   Buildings.Controls.OBC.CDL.Discrete.TriggeredSampler heaSetSam
     "Sample current heating setpoint when zone becomes unpopulated by 5 minutes"
     annotation (Placement(transformation(extent={{40,-320},{60,-300}})));
-  Buildings.Controls.OBC.CDL.Continuous.GreaterEqualThreshold greThr(threshold=300)
-    "Check whether the zone has been unpopulated for 5 minutes continuously during occupied mode"
-    annotation (Placement(transformation(extent={{-160,-280},{-140,-260}})));
   Buildings.Controls.OBC.CDL.Continuous.Add add1 "Adjust heating setpoint"
     annotation (Placement(transformation(extent={{140,240},{160,260}})));
   Buildings.Controls.OBC.CDL.Continuous.Add add2 "Adjust cooling setpoint"
@@ -378,13 +375,13 @@ protected
     annotation (Placement(transformation(extent={{-220,-420},{-200,-400}})));
   Buildings.Controls.OBC.CDL.Logical.Not not5  "Other than occupied mode"
     annotation (Placement(transformation(extent={{-280,-400},{-260,-380}})));
-  Buildings.Controls.OBC.CDL.Continuous.LessEqual lesEqu
+  Buildings.Controls.OBC.CDL.Continuous.Less les
     "Check if occupied cooling setpoint is less than unoccupied one"
     annotation (Placement(transformation(extent={{20,-550},{40,-530}})));
-  Buildings.Controls.OBC.CDL.Continuous.GreaterEqual greEqu1
+  Buildings.Controls.OBC.CDL.Continuous.Greater gre
     "Check if occupied heating setpoint is greater than unoccupied one"
     annotation (Placement(transformation(extent={{20,-610},{40,-590}})));
-  Buildings.Controls.OBC.CDL.Continuous.GreaterEqual greEqu2
+  Buildings.Controls.OBC.CDL.Continuous.Greater gre2
     "Check whether heating setpoint exceeds cooling setpoint minus 0.56 degC"
     annotation (Placement(transformation(extent={{220,-590},{240,-570}})));
   Buildings.Controls.OBC.CDL.Logical.Switch swi
@@ -845,10 +842,6 @@ equation
       color={255,0,255}));
   connect(and10.y, tim.u)
     annotation (Line(points={{-258,-270},{-222,-270}}, color={255,0,255}));
-  connect(tim.y, greThr.u)
-    annotation (Line(points={{-198,-270},{-162,-270}}, color={0,0,127}));
-  connect(greThr.y, truHol.u)
-    annotation (Line(points={{-138,-270},{-102,-270}}, color={255,0,255}));
   connect(truHol.y, edg1.u)
     annotation (Line(points={{-78,-270},{-42,-270}}, color={255,0,255}));
   connect(edg1.y, cooSetSam.trigger)
@@ -1021,13 +1014,13 @@ equation
     annotation (Line(points={{-76,610},{-60,610},{-60,380},{280,380},{280,-220},
           {-300,-220},{-300,-600},{-182,-600}},
                                             color={255,0,255}));
-  connect(swi17.y,lesEqu. u1)
+  connect(swi17.y, les.u1)
     annotation (Line(points={{-158,-540},{18,-540}}, color={0,0,127}));
-  connect(lesEqu.y, swi9.u2)
+  connect(les.y, swi9.u2)
     annotation (Line(points={{42,-540},{98,-540}}, color={255,0,255}));
-  connect(swi18.y, greEqu1.u1)
+  connect(swi18.y, gre.u1)
     annotation (Line(points={{-158,-600},{18,-600}}, color={0,0,127}));
-  connect(greEqu1.y, swi8.u2)
+  connect(gre.y, swi8.u2)
     annotation (Line(points={{42,-600},{98,-600}}, color={255,0,255}));
   connect(swi17.y, swi9.u1)
     annotation (Line(points={{-158,-540},{-100,-540},{-100,-520},{80,-520},{80,-532},
@@ -1035,29 +1028,25 @@ equation
   connect(swi18.y, swi8.u1)
     annotation (Line(points={{-158,-600},{-100,-600},{-100,-580},{80,-580},{80,-592},
           {98,-592}},       color={0,0,127}));
-  connect(TZonCooSetUno,lesEqu. u2)
-    annotation (Line(points={{-440,490},{-400,490},{-400,-560},{0,-560},
-      {0,-548},{18,-548}}, color={0,0,127}));
+  connect(TZonCooSetUno, les.u2) annotation (Line(points={{-440,490},{-400,490},
+          {-400,-560},{0,-560},{0,-548},{18,-548}}, color={0,0,127}));
   connect(TZonCooSetUno, swi9.u3)
     annotation (Line(points={{-440,490},{-400,490},{-400,-560},{80,-560},
       {80,-548},{98,-548}}, color={0,0,127}));
-  connect(TZonHeaSetUno, greEqu1.u2)
-    annotation (Line(points={{-440,410},{-406,410},{-406,-620},{0,-620},
-      {0,-608},{18,-608}}, color={0,0,127}));
+  connect(TZonHeaSetUno, gre.u2) annotation (Line(points={{-440,410},{-406,410},
+          {-406,-620},{0,-620},{0,-608},{18,-608}}, color={0,0,127}));
   connect(TZonHeaSetUno, swi8.u3)
     annotation (Line(points={{-440,410},{-406,410},{-406,-620},{80,-620},
       {80,-608},{98,-608}}, color={0,0,127}));
   connect(swi9.y, addPar.u)
     annotation (Line(points={{122,-540},{140,-540},{140,-580},{158,-580}},
       color={0,0,127}));
-  connect(greEqu2.y, swi7.u2)
+  connect(gre2.y, swi7.u2)
     annotation (Line(points={{242,-580},{278,-580}}, color={255,0,255}));
-  connect(swi8.y, greEqu2.u1)
-    annotation (Line(points={{122,-600},{206,-600},{206,-580},{218,-580}},
-      color={0,0,127}));
-  connect(addPar.y, greEqu2.u2)
-    annotation (Line(points={{182,-580},{200,-580},{200,-588},{218,-588}},
-      color={0,0,127}));
+  connect(swi8.y, gre2.u1) annotation (Line(points={{122,-600},{206,-600},{206,
+          -580},{218,-580}}, color={0,0,127}));
+  connect(addPar.y, gre2.u2) annotation (Line(points={{182,-580},{200,-580},{
+          200,-588},{218,-588}}, color={0,0,127}));
   connect(swi8.y, swi7.u3)
     annotation (Line(points={{122,-600},{260,-600},{260,-588},{278,-588}},
       color={0,0,127}));
@@ -1072,7 +1061,6 @@ equation
       color={0,0,127}));
   connect(reaToInt.y, yAla)
     annotation (Line(points={{182,-390},{360,-390}}, color={255,127,0}));
-
   connect(pro6.y, add3.u1) annotation (Line(points={{102,150},{110,150},{110,
           134},{118,134}}, color={0,0,127}));
   connect(pro.y, add3.u2) annotation (Line(points={{102,110},{110,110},{110,122},
@@ -1101,6 +1089,8 @@ equation
           -136},{158,-136}}, color={0,0,127}));
   connect(add8.y, swi11.u3) annotation (Line(points={{182,-130},{190,-130},{190,
           -138},{218,-138}}, color={0,0,127}));
+  connect(tim.passed, truHol.u) annotation (Line(points={{-198,-278},{-150,-278},
+          {-150,-270},{-102,-270}}, color={255,0,255}));
 annotation (
   defaultComponentName="TZonSet",
   Icon(coordinateSystem(extent={{-100,-140},{100,140}}),
@@ -1216,7 +1206,7 @@ annotation (
           fillPattern=FillPattern.Solid,
           pattern=LinePattern.None),
         Rectangle(
-          extent={{-412,-228},{330,-366}},
+          extent={{-412,-224},{330,-362}},
           lineColor={0,0,0},
           fillColor={215,215,215},
           fillPattern=FillPattern.Solid,
@@ -1252,7 +1242,7 @@ annotation (
           fillPattern=FillPattern.Solid,
           textString="Local setpoints adjustment"),
         Text(
-          extent={{-288,-264},{-36,-358}},
+          extent={{-254,-290},{-2,-384}},
           lineColor={0,0,255},
           fillColor={215,215,215},
           fillPattern=FillPattern.Solid,
