@@ -6415,196 +6415,13 @@ has a higher priority to fire as alternative.split[2]).
       connect(combiTimeTable.y[1], boundary1.T_in) annotation (Line(points={{-119,70},
               {-110,70},{-110,-120},{140,-120},{140,-66},{102,-66}}, color={0,0,127}));
       annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-            coordinateSystem(preserveAspectRatio=false)));
+            coordinateSystem(preserveAspectRatio=false)),
+          experiment(
+            StopTime=2244600,
+            Interval=600,
+            __Dymola_Algorithm="Dassl"));
     end Cold_exchanger_basic;
 
-    model Cold_exchanger_basic_bis
-      Fluid.HeatExchangers.PlateHeatExchangerEffectivenessNTU RJF(
-        redeclare package Medium1 = Media.Sea_Water,
-        redeclare package Medium2 = Buildings.Media.Water,
-        m1_flow_nominal=1025*747.6/3600,
-        m2_flow_nominal=1001*726.2/3600,
-        dp1_nominal=69900,
-        dp2_nominal=61900,
-        configuration=Buildings.Fluid.Types.HeatExchangerConfiguration.CounterFlow,
-        use_Q_flow_nominal=true,
-        Q_flow_nominal=4250,
-          T_a1_nominal=283.65,
-          T_a2_nominal=277.15)
-        annotation (Placement(transformation(extent={{0,0},{20,20}})));
-
-      Fluid.Sources.MassFlowSource_T boundary(
-        redeclare package Medium = Media.Sea_Water,
-          use_m_flow_in=false,
-          m_flow=20,
-          use_T_in=false,
-          T=288.15,
-        nPorts=1)
-        annotation (Placement(transformation(extent={{-100,60},{-80,80}})));
-      Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
-            Media.Sea_Water, m_flow_nominal=1025*747/3600)
-        annotation (Placement(transformation(extent={{-40,60},{-20,80}})));
-
-      Fluid.Sources.Boundary_pT bou(
-        redeclare package Medium = Media.Sea_Water,
-        p=100000,
-        nPorts=1) annotation (Placement(transformation(extent={{100,60},{80,80}})));
-      Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
-            Media.Sea_Water, m_flow_nominal=1025*747/3600)
-        annotation (Placement(transformation(extent={{40,60},{60,80}})));
-      Fluid.Sources.MassFlowSource_T boundary1(
-        redeclare package Medium = Buildings.Media.Water,
-          use_m_flow_in=false,
-          m_flow=100,
-          use_T_in=false,
-          T=283.15,
-        nPorts=1)
-        annotation (Placement(transformation(extent={{100,-80},{80,-60}})));
-      Fluid.Sources.Boundary_pT bou1(
-        redeclare package Medium = Buildings.Media.Water,
-        p=100000,
-        nPorts=1)
-        annotation (Placement(transformation(extent={{-100,-80},{-80,-60}})));
-      Fluid.Sensors.TemperatureTwoPort senTem2(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=726.2/3600,
-        T_start=283.15)
-        annotation (Placement(transformation(extent={{60,-80},{40,-60}})));
-      Fluid.Sensors.TemperatureTwoPort senTem3(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=726.2/3600,
-        T_start=283.15)
-        annotation (Placement(transformation(extent={{-50,-80},{-70,-60}})));
-      Fluid.Sensors.Pressure PT221(redeclare package Medium = Media.Sea_Water)
-        annotation (Placement(transformation(extent={{50,-46},{30,-26}})));
-      Fluid.Sensors.Pressure PT1(redeclare package Medium = Media.Sea_Water)
-        annotation (Placement(transformation(extent={{-40,-48},{-60,-28}})));
-    equation
-      connect(boundary.ports[1],senTem. port_a)
-        annotation (Line(points={{-80,70},{-40,70}}, color={0,127,255}));
-      connect(senTem1.port_b,bou. ports[1])
-        annotation (Line(points={{60,70},{80,70}}, color={0,127,255}));
-      connect(senTem2.port_a,boundary1. ports[1])
-        annotation (Line(points={{60,-70},{80,-70}}, color={0,127,255}));
-      connect(bou1.ports[1],senTem3. port_b)
-        annotation (Line(points={{-80,-70},{-70,-70}}, color={0,127,255}));
-      connect(senTem2.port_b, RJF.port_a2) annotation (Line(points={{40,-70},{32,-70},
-              {32,4},{20,4}}, color={0,127,255}));
-      connect(RJF.port_b2, senTem3.port_a) annotation (Line(points={{0,4},{-26,4},{-26,
-              -70},{-50,-70}}, color={0,127,255}));
-      connect(senTem.port_b, RJF.port_a1) annotation (Line(points={{-20,70},{-12,70},
-              {-12,16},{0,16}}, color={0,127,255}));
-      connect(RJF.port_b1, senTem1.port_a) annotation (Line(points={{20,16},{30,16},
-              {30,70},{40,70}}, color={0,127,255}));
-        connect(senTem2.port_b, PT221.port)
-          annotation (Line(points={{40,-70},{40,-46}}, color={0,127,255}));
-        connect(senTem3.port_a, PT1.port)
-          annotation (Line(points={{-50,-70},{-50,-48}}, color={0,127,255}));
-      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-            coordinateSystem(preserveAspectRatio=false)));
-    end Cold_exchanger_basic_bis;
-
-    model Cold_exchanger_basic_change
-
-      Fluid.HeatExchangers.PlateHeatExchangerEffectivenessNTU RJF(
-        redeclare package Medium1 = Media.Sea_Water,
-        redeclare package Medium2 = Buildings.Media.Water,
-        m1_flow_nominal=1025*747.6/3600,
-        m2_flow_nominal=1001*726.2/3600,
-        dp1_nominal=69900,
-        dp2_nominal=61900,
-        configuration=Buildings.Fluid.Types.HeatExchangerConfiguration.CounterFlow,
-        use_Q_flow_nominal=true,
-        Q_flow_nominal=4250,
-        T_a1_nominal=283.65,
-        T_a2_nominal=277.15)
-        annotation (Placement(transformation(extent={{0,0},{20,20}})));
-
-      Fluid.Sources.MassFlowSource_T boundary(
-        redeclare package Medium = Media.Sea_Water,
-        use_m_flow_in=true,
-        m_flow=1025*747/3600,
-        use_T_in=true,
-        T=288.15,
-        nPorts=1)
-        annotation (Placement(transformation(extent={{-72,60},{-52,80}})));
-      Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
-            Media.Sea_Water, m_flow_nominal=1025*747/3600)
-        annotation (Placement(transformation(extent={{-40,60},{-20,80}})));
-      Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
-        tableOnFile=true,
-        tableName="tab1",
-        fileName=ModelicaServices.ExternalReferences.loadResource("modelica://Buildings/Data/rjf.txt"),
-        columns={2,3,4,5,6,7,8,9,10})
-        annotation (Placement(transformation(extent={{-140,60},{-120,80}})));
-
-      Fluid.Sources.Boundary_pT bou(
-        redeclare package Medium = Media.Sea_Water,
-        p=100000,
-        nPorts=1) annotation (Placement(transformation(extent={{100,60},{80,80}})));
-      Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
-            Media.Sea_Water, m_flow_nominal=1025*747/3600)
-        annotation (Placement(transformation(extent={{40,60},{60,80}})));
-      Fluid.Sources.MassFlowSource_T boundary1(
-        redeclare package Medium = Buildings.Media.Water,
-        use_m_flow_in=true,
-        m_flow=726.2/3600,
-        use_T_in=true,
-        T=281.15,
-        nPorts=1)
-        annotation (Placement(transformation(extent={{100,-80},{80,-60}})));
-      Fluid.Sources.Boundary_pT bou1(
-        redeclare package Medium = Buildings.Media.Water,
-        p=100000,
-        nPorts=1)
-        annotation (Placement(transformation(extent={{-100,-80},{-80,-60}})));
-      Fluid.Sensors.TemperatureTwoPort senTem2(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=726.2/3600,
-        T_start=283.15)
-        annotation (Placement(transformation(extent={{60,-80},{40,-60}})));
-      Fluid.Sensors.TemperatureTwoPort senTem3(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=726.2/3600,
-        T_start=283.15)
-        annotation (Placement(transformation(extent={{-50,-80},{-70,-60}})));
-      Fluid.Sensors.Pressure PT221(redeclare package Medium = Media.Sea_Water)
-        annotation (Placement(transformation(extent={{50,-46},{30,-26}})));
-      Fluid.Sensors.Pressure PT1(redeclare package Medium = Media.Sea_Water)
-        annotation (Placement(transformation(extent={{-40,-48},{-60,-28}})));
-    equation
-      connect(boundary.ports[1],senTem. port_a)
-        annotation (Line(points={{-52,70},{-40,70}}, color={0,127,255}));
-      connect(combiTimeTable.y[7], boundary.m_flow_in) annotation (Line(points={{-119,
-              70},{-92,70},{-92,78},{-74,78}}, color={0,0,127}));
-      connect(combiTimeTable.y[5], boundary.T_in) annotation (Line(points={{-119,70},
-              {-92,70},{-92,74},{-74,74}}, color={0,0,127}));
-      connect(senTem1.port_b,bou. ports[1])
-        annotation (Line(points={{60,70},{80,70}}, color={0,127,255}));
-      connect(senTem2.port_a,boundary1. ports[1])
-        annotation (Line(points={{60,-70},{80,-70}}, color={0,127,255}));
-      connect(bou1.ports[1],senTem3. port_b)
-        annotation (Line(points={{-80,-70},{-70,-70}}, color={0,127,255}));
-      connect(senTem2.port_b, RJF.port_a2) annotation (Line(points={{40,-70},{32,-70},
-              {32,4},{20,4}}, color={0,127,255}));
-      connect(RJF.port_b2, senTem3.port_a) annotation (Line(points={{0,4},{-26,4},{-26,
-              -70},{-50,-70}}, color={0,127,255}));
-      connect(senTem.port_b, RJF.port_a1) annotation (Line(points={{-20,70},{-12,70},
-              {-12,16},{0,16}}, color={0,127,255}));
-      connect(RJF.port_b1, senTem1.port_a) annotation (Line(points={{20,16},{30,16},
-              {30,70},{40,70}}, color={0,127,255}));
-      connect(combiTimeTable.y[8], boundary1.m_flow_in) annotation (Line(points={{-119,
-              70},{-110,70},{-110,-120},{140,-120},{140,-62},{102,-62}}, color={0,0,
-              127}));
-      connect(combiTimeTable.y[1], boundary1.T_in) annotation (Line(points={{-119,70},
-              {-110,70},{-110,-120},{140,-120},{140,-66},{102,-66}}, color={0,0,127}));
-      connect(senTem2.port_b, PT221.port)
-        annotation (Line(points={{40,-70},{40,-46}}, color={0,127,255}));
-      connect(senTem3.port_a, PT1.port)
-        annotation (Line(points={{-50,-70},{-50,-48}}, color={0,127,255}));
-      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-            coordinateSystem(preserveAspectRatio=false)));
-    end Cold_exchanger_basic_change;
   end Tests;
 
   end RJF;
@@ -8472,6 +8289,29 @@ First implementation.
               coordinateSystem(preserveAspectRatio=false)));
       end aaa;
     end parts;
+
+    package Regulation
+      model test_0
+        Modelica.Blocks.Sources.Constant const(k=0.5)
+          annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
+        Modelica.Blocks.Sources.Constant const1(k=1)
+          annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
+        Modelica.Blocks.Continuous.LimPID PID(controllerType=Modelica.Blocks.Types.SimpleController.PI)
+          annotation (Placement(transformation(extent={{-20,0},{0,20}})));
+      equation
+        connect(const.y, PID.u_m) annotation (Line(points={{-79,-30},{-10,-30},
+                {-10,-2}}, color={0,0,127}));
+        connect(const1.y, PID.u_s) annotation (Line(points={{-79,30},{-50,30},{
+                -50,10},{-22,10}}, color={0,0,127}));
+        annotation (
+          Icon(coordinateSystem(preserveAspectRatio=false)),
+          Diagram(coordinateSystem(preserveAspectRatio=false)),
+          experiment(
+            StopTime=100,
+            Interval=1,
+            __Dymola_Algorithm="Dassl"));
+      end test_0;
+    end Regulation;
   end Miscellaneous;
 
   package heat_exchanger
