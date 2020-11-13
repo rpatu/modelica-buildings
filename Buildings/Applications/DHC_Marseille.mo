@@ -672,6 +672,10 @@ has a higher priority to fire as alternative.split[2]).
             coordinateSystem(preserveAspectRatio=false)));
     end WaitBefore;
 
+  package GF
+    extends Modelica.Icons.VariantsPackage;
+  end GF;
+
     package DEC
       extends Modelica.Icons.VariantsPackage;
       model DEC_controls_parallel
