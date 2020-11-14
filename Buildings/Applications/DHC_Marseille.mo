@@ -5101,7 +5101,7 @@ has a higher priority to fire as alternative.split[2]).
           nPorts=1)
           annotation (Placement(transformation(extent={{240,40},{220,60}})));
         Fluid.Sources.Boundary_pT bou2(redeclare package Medium =
-              Buildings.Applications.DHC_Marseille.Media.Sea_Water, nPorts=2)
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water, nPorts=1)
           annotation (Placement(transformation(extent={{240,-80},{220,-60}})));
         Fluid.Sensors.TemperatureTwoPort Tevapent(redeclare package Medium =
               Buildings.Media.Water, m_flow_nominal=350/3.6)
@@ -5158,7 +5158,7 @@ has a higher priority to fire as alternative.split[2]).
         Fluid.FixedResistances.Junction jun2(
           redeclare package Medium =
               Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-          m_flow_nominal={190/3.6,-190/3.6,-190/3.6*2},
+          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
           dp_nominal={0,0,0}) annotation (Placement(transformation(
               extent={{10,10},{-10,-10}},
               rotation=90,
@@ -5203,12 +5203,19 @@ has a higher priority to fire as alternative.split[2]).
           annotation (Placement(transformation(extent={{-200,200},{-180,220}})));
         Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium =
               Buildings.Media.Water, m_flow_nominal=190/3.6)
-          annotation (Placement(transformation(extent={{180,-60},{200,-40}})));
+          annotation (Placement(transformation(extent={{190,-80},{210,-60}})));
         Fluid.Sensors.TemperatureTwoPort TT521(redeclare package Medium =
               Buildings.Media.Water,
           m_flow_nominal=216/3.6,
           T_start=323.15)
           annotation (Placement(transformation(extent={{-60,20},{-40,40}})));
+        Fluid.FixedResistances.Junction jun3(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
+          dp_nominal={0,0,0}) annotation (Placement(transformation(
+              extent={{-10,10},{10,-10}},
+              rotation=0,
+              origin={160,-70})));
       equation
             for j in 1:12 loop
             temperatures[j]=combiTimeTable.y[j];
@@ -5323,19 +5330,21 @@ has a higher priority to fire as alternative.split[2]).
                 86,16},{86,110},{100,110}}, color={0,127,255}));
         connect(jun2.port_2, cold_exchanger.port_a1) annotation (Line(points={{190,20},
                 {190,0},{136,0},{136,-40}}, color={0,127,255}));
-        connect(cold_exchanger.port_b1, bou2.ports[1]) annotation (Line(points={{136,-60},
-                {136,-68},{220,-68}}, color={0,127,255}));
         connect(combiTimeTable.y[2], boundary1.T_in) annotation (Line(points={{
                 -219,110},{-180,110},{-180,114},{-162,114}}, color={0,0,127}));
-        connect(heat_exchanger.port_b1, TT201.port_a) annotation (Line(points={
-                {36,60},{98,60},{98,18},{160,18},{160,-50},{180,-50}}, color={0,
-                127,255}));
-        connect(TT201.port_b, bou2.ports[2]) annotation (Line(points={{200,-50},
-                {210,-50},{210,-72},{220,-72}}, color={0,127,255}));
         connect(chi.port_a1, TT521.port_b) annotation (Line(points={{-38,16},{
                 -40,16},{-40,30}}, color={0,127,255}));
         connect(jun7.port_2, TT521.port_a) annotation (Line(points={{-70,40},{
                 -70,34},{-60,34},{-60,30}}, color={0,127,255}));
+        connect(cold_exchanger.port_b1, jun3.port_1) annotation (Line(points={{
+                136,-60},{136,-70},{150,-70}}, color={0,127,255}));
+        connect(jun3.port_2, TT201.port_a)
+          annotation (Line(points={{170,-70},{190,-70}}, color={0,127,255}));
+        connect(bou2.ports[1], TT201.port_b)
+          annotation (Line(points={{220,-70},{210,-70}}, color={0,127,255}));
+        connect(heat_exchanger.port_b1, jun3.port_3) annotation (Line(points={{
+                36,60},{36,40},{150,40},{150,-20},{160,-20},{160,-60}}, color={
+                0,127,255}));
         annotation (
           Icon(coordinateSystem(preserveAspectRatio=false)),
           Diagram(coordinateSystem(preserveAspectRatio=false)),
