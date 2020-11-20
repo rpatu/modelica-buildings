@@ -674,6 +674,161 @@ has a higher priority to fire as alternative.split[2]).
 
   package GF
     extends Modelica.Icons.VariantsPackage;
+    model PID_Valve_evap
+      Modelica.Blocks.Math.Add TDT(k1=-1, k2=1)
+        annotation (Placement(transformation(extent={{-40,40},{-20,60}})));
+      Controls.Continuous.LimPID TDT_PID(
+        controllerType=Modelica.Blocks.Types.SimpleController.PI,
+        k=2.5,
+        Ti=1.7)
+        annotation (Placement(transformation(extent={{0,80},{20,100}})));
+      Controls.Continuous.LimPID DPT_PID(
+          controllerType=Modelica.Blocks.Types.SimpleController.PI,
+          k=3,
+          Ti=1)
+          annotation (Placement(transformation(extent={{0,-60},{20,-40}})));
+      Modelica.Blocks.Math.MinMax maxi(nu=3)
+        annotation (Placement(transformation(extent={{60,0},{80,20}})));
+      Controls.Continuous.LimPID T_PID(
+          controllerType=Modelica.Blocks.Types.SimpleController.PI,
+          k=3,
+          Ti=15) annotation (Placement(transformation(extent={{0,0},{20,20}})));
+      Modelica.Blocks.Interfaces.RealInput PEM_TT200 annotation (Placement(
+            transformation(
+            extent={{-20,-20},{20,20}},
+            rotation=0,
+            origin={-120,80})));
+      Modelica.Blocks.Interfaces.RealInput TT211 annotation (Placement(
+            transformation(
+            extent={{-20,-20},{20,20}},
+            rotation=0,
+            origin={-122,0})));
+      Modelica.Blocks.Interfaces.RealInput DPT annotation (Placement(
+            transformation(
+            extent={{-20,-20},{20,20}},
+            rotation=0,
+            origin={-120,-80})));
+        Modelica.Blocks.Sources.RealExpression TDT_set(y=5)
+          annotation (Placement(transformation(extent={{-40,80},{-20,100}})));
+      Modelica.Blocks.Sources.RealExpression realExpression1(y=30 + 273.15)
+        annotation (Placement(transformation(extent={{-40,0},{-20,20}})));
+      Modelica.Blocks.Sources.RealExpression DPT_set(y=0.9*100000)
+          annotation (Placement(transformation(extent={{-40,-60},{-20,-40}})));
+        Modelica.Blocks.Interfaces.RealOutput y
+          annotation (Placement(transformation(extent={{100,0},{120,20}})));
+    equation
+        connect(TT211, TDT.u2) annotation (Line(points={{-122,0},{-80,0},{-80,
+                44},{-42,44}}, color={0,0,127}));
+        connect(PEM_TT200, TDT.u1) annotation (Line(points={{-120,80},{-80,80},
+                {-80,56},{-42,56}}, color={0,0,127}));
+        connect(TDT.y, TDT_PID.u_m) annotation (Line(points={{-19,50},{10,50},{
+                10,78}}, color={0,0,127}));
+        connect(TDT_PID.y, maxi.u[1]) annotation (Line(points={{21,90},{40,90},
+                {40,14.6667},{60,14.6667}}, color={0,0,127}));
+        connect(TDT_set.y, TDT_PID.u_s)
+          annotation (Line(points={{-19,90},{-2,90}}, color={0,0,127}));
+        connect(T_PID.u_s, realExpression1.y)
+          annotation (Line(points={{-2,10},{-19,10}}, color={0,0,127}));
+        connect(TT211, T_PID.u_m) annotation (Line(points={{-122,0},{-80,0},{
+                -80,-20},{10,-20},{10,-2}}, color={0,0,127}));
+        connect(DPT_set.y, DPT_PID.u_s)
+          annotation (Line(points={{-19,-50},{-2,-50}}, color={0,0,127}));
+        connect(DPT, DPT_PID.u_m) annotation (Line(points={{-120,-80},{10,-80},
+                {10,-62}}, color={0,0,127}));
+        connect(T_PID.y, maxi.u[2]) annotation (Line(points={{21,10},{40,10},{
+                40,10},{60,10}}, color={0,0,127}));
+        connect(DPT_PID.y, maxi.u[3]) annotation (Line(points={{21,-50},{42,-50},
+                {42,5.33333},{60,5.33333}}, color={0,0,127}));
+        connect(maxi.yMin, y) annotation (Line(points={{81,4},{88,4},{88,10},{
+                110,10}}, color={0,0,127}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
+                                    Rectangle(
+            extent={{-100,-100},{100,100}},
+            lineColor={0,0,127},
+            fillColor={255,255,255},
+            fillPattern=FillPattern.Solid),
+            Rectangle(
+              extent={{-6,-20},{66,-66}},
+              lineColor={255,255,255},
+              fillColor={255,255,255},
+              fillPattern=FillPattern.Solid),
+            Text(
+              visible=(controllerType == Modelica.Blocks.Types.SimpleController.PI),
+              extent={{-28,-22},{72,-62}},
+              lineColor={0,0,0},
+              textString="PI",
+              fillPattern=FillPattern.Solid,
+              fillColor={175,175,175}),
+            Polygon(
+              points={{-80,90},{-88,68},{-72,68},{-80,90}},
+              lineColor={192,192,192},
+              fillColor={192,192,192},
+              fillPattern=FillPattern.Solid),
+            Line(points={{-80,78},{-80,-90}}, color={192,192,192}),
+            Line(points={{-80,-80},{-80,-20},{30,60},{80,60}}, color={0,0,127}),
+            Line(points={{-90,-80},{82,-80}}, color={192,192,192}),
+            Polygon(
+              points={{90,-80},{68,-72},{68,-88},{90,-80}},
+              lineColor={192,192,192},
+              fillColor={192,192,192},
+              fillPattern=FillPattern.Solid),
+            Line(
+              visible=strict,
+              points={{30,60},{81,60}},
+              color={255,0,0},
+              smooth=Smooth.None)}),                                 Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end PID_Valve_evap;
+
+  package Tests
+    extends Modelica.Icons.ExamplesPackage;
+    model test_pid
+      Modelica.Blocks.Math.Add TDT(k1=-1, k2=1)
+        annotation (Placement(transformation(extent={{-40,20},{-20,40}})));
+      Modelica.Blocks.Sources.Constant TDT_Set(k=5)
+        "Scaled differential pressure setpoint"
+        annotation (Placement(transformation(extent={{-40,60},{-20,80}})));
+      Controls.Continuous.LimPID TDT_PID(
+            controllerType=Modelica.Blocks.Types.SimpleController.PI,
+            k=2.5,
+            Ti=1.7)
+        annotation (Placement(transformation(extent={{0,60},{20,80}})));
+          Modelica.Blocks.Sources.RealExpression realExpression(y=15)
+            annotation (Placement(transformation(extent={{-100,40},{-80,60}})));
+          Modelica.Blocks.Sources.RealExpression realExpression1(y=22)
+            annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
+    equation
+          connect(TDT.y, TDT_PID.u_m) annotation (Line(points={{-19,30},{10,30},
+                  {10,58}}, color={0,0,127}));
+          connect(TDT_Set.y, TDT_PID.u_s)
+            annotation (Line(points={{-19,70},{-2,70}}, color={0,0,127}));
+          connect(realExpression.y, TDT.u1) annotation (Line(points={{-79,50},{
+                  -60,50},{-60,36},{-42,36}}, color={0,0,127}));
+          connect(realExpression1.y, TDT.u2) annotation (Line(points={{-79,10},
+                  {-60,10},{-60,24},{-42,24}}, color={0,0,127}));
+          annotation (Icon(coordinateSystem(preserveAspectRatio=false)),
+              Diagram(coordinateSystem(preserveAspectRatio=false)));
+    end test_pid;
+
+    model test_dpt
+      Controls.Continuous.LimPID DPT_PID(
+            controllerType=Modelica.Blocks.Types.SimpleController.PI,
+            k=3,
+            Ti=1)
+            annotation (Placement(transformation(extent={{-20,40},{0,60}})));
+      Modelica.Blocks.Sources.RealExpression DPT_set(y=0.9)
+            annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+      Modelica.Blocks.Sources.RealExpression DPT_set1(y=1)
+            annotation (Placement(transformation(extent={{-60,0},{-40,20}})));
+    equation
+          connect(DPT_set.y, DPT_PID.u_s)
+            annotation (Line(points={{-39,50},{-22,50}}, color={0,0,127}));
+          connect(DPT_set1.y, DPT_PID.u_m) annotation (Line(points={{-39,10},{
+                  -10,10},{-10,38}}, color={0,0,127}));
+          annotation (Icon(coordinateSystem(preserveAspectRatio=false)),
+              Diagram(coordinateSystem(preserveAspectRatio=false)));
+    end test_dpt;
+  end Tests;
   end GF;
 
     package DEC
@@ -1984,16 +2139,80 @@ has a higher priority to fire as alternative.split[2]).
 
   package Plant
     extends Modelica.Icons.VariantsPackage;
-    model GF_solo
-      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-            coordinateSystem(preserveAspectRatio=false)));
-    end GF_solo;
 
     package Tests
       extends Modelica.Icons.ExamplesPackage;
       model test0
-        TFP.TFP_duo tFP_duo
-          annotation (Placement(transformation(extent={{-40,60},{-20,80}})));
+        import Media;
+        import Media;
+        import Media;
+        TFP.TFP_solo tFP_solo
+          annotation (Placement(transformation(extent={{-100,-20},{-80,0}})));
+        RJC.Heat_exchanger heat_exchanger
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-50,10})));
+        RJF.Cold_exchanger cold_exchanger
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-50,-50})));
+        GF.Chiller chiller annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=180,
+              origin={40,90})));
+        PEM.PEM_simple pEM_simple annotation (Placement(transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=0,
+              origin={90,10})));
+        Fluid.FixedResistances.Junction jun2(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
+          dp_nominal={0,0,0}) annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=90,
+              origin={70,50})));
+        Fluid.FixedResistances.Junction jun1(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
+          dp_nominal={0,0,0}) annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=90,
+              origin={-10,30})));
+        Fluid.FixedResistances.Junction jun4(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
+          dp_nominal={0,0,0}) annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=90,
+              origin={20,-10})));
+        Fluid.FixedResistances.Junction jun5(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
+          dp_nominal={0,0,0}) annotation (Placement(transformation(
+              extent={{-10,10},{10,-10}},
+              rotation=0,
+              origin={20,-70})));
+      equation
+        connect(pEM_simple.port_b, jun2.port_2) annotation (Line(points={{80,10},
+                {70,10},{70,40}}, color={0,127,255}));
+        connect(jun2.port_1, chiller.port_a1) annotation (Line(points={{70,60},
+                {70,84},{50,84}}, color={0,127,255}));
+        connect(jun2.port_3, jun1.port_1) annotation (Line(points={{60,50},{-10,
+                50},{-10,40}}, color={0,127,255}));
+        connect(jun1.port_3, heat_exchanger.port_a1) annotation (Line(points={{
+                -20,30},{-44,30},{-44,20}}, color={0,127,255}));
+        connect(chiller.port_b1, jun4.port_1) annotation (Line(points={{30,84},
+                {20,84},{20,0}}, color={0,127,255}));
+        connect(heat_exchanger.port_b1, jun4.port_3) annotation (Line(points={{
+                -44,0},{-44,-10},{10,-10}}, color={0,127,255}));
+        connect(cold_exchanger.port_b1, jun5.port_1) annotation (Line(points={{
+                -44,-60},{-44,-70},{10,-70}}, color={0,127,255}));
+        connect(jun4.port_2, jun5.port_3) annotation (Line(points={{20,-20},{20,
+                -60},{20,-60}}, color={0,127,255}));
+        connect(jun1.port_2, cold_exchanger.port_a1) annotation (Line(points={{
+                -10,20},{-10,-28},{-44,-28},{-44,-40}}, color={0,127,255}));
+        connect(jun5.port_2, pEM_simple.port_a) annotation (Line(points={{30,
+                -70},{120,-70},{120,10},{100,10}}, color={0,127,255}));
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end test0;
@@ -2031,15 +2250,17 @@ has a higher priority to fire as alternative.split[2]).
       annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
             coordinateSystem(preserveAspectRatio=false)));
 
-
+      parameter Buildings.Fluid.Chillers.Data.ElectricReformulatedEIR.Generic per
+        "Performance data"
+        annotation (choicesAllMatching = true);
               // Chiller parameters
       parameter Modelica.SIunits.MassFlowRate m_flow_chi_evap_nominal= 800 * 1027 / 3600
         "Nominal mass flow rate at condenser water in the chillers";
       parameter Modelica.SIunits.MassFlowRate m_flow_chi_cond_nominal= 500 * 1000 / 3600
         "Nominal mass flow rate at evaporator water in the chillers";
-      parameter Modelica.SIunits.PressureDifference dp1_chi_nominal = 0.38*1000
+      parameter Modelica.SIunits.PressureDifference dp1_chi_nominal = 0.38*100000
         "Nominal pressure";
-      parameter Modelica.SIunits.PressureDifference dp2_chi_nominal = 0.31*1000
+      parameter Modelica.SIunits.PressureDifference dp2_chi_nominal = 0.31*100000
         "Nominal pressure";
 
 
@@ -2051,49 +2272,29 @@ has a higher priority to fire as alternative.split[2]).
         m2_flow_nominal=m_flow_chi_evap_nominal,
         dp1_nominal=dp1_chi_nominal,
         dp2_nominal=dp2_chi_nominal,
-        per=Fluid.Chillers.Data.ElectricReformulatedEIR.ReformEIRChiller_Carrier_19EX_5148kW_6_34COP_Vanes())
+        per=per)
         annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
       Modelica.Blocks.Interfaces.BooleanInput u
-        annotation (Placement(transformation(extent={{-140,10},{-100,50}})));
-      Modelica.Blocks.Interfaces.RealInput T_cons
-        annotation (Placement(transformation(extent={{-140,-50},{-100,-10}})));
-      Fluid.Sensors.TemperatureTwoPort TCin(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water, m_flow_nominal=m_flow_chi_cond_nominal)
-        annotation (Placement(transformation(extent={{-50,50},{-30,70}})));
+        annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
       Fluid.Sensors.TemperatureTwoPort TT211(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water, m_flow_nominal=m_flow_chi_cond_nominal)
+            Buildings.Applications.DHC_Marseille.Media.Sea_Water, m_flow_nominal=m_flow_chi_cond_nominal,
+        T_start=278.15)
         annotation (Placement(transformation(extent={{30,50},{50,70}})));
-      Fluid.Sensors.TemperatureTwoPort TEin(redeclare package Medium =
-            Buildings.Media.Water,          m_flow_nominal=m_flow_chi_evap_nominal)
-        annotation (Placement(transformation(extent={{50,-70},{30,-50}})));
-      Fluid.Sensors.TemperatureTwoPort TEout(redeclare package Medium =
+      Fluid.Sensors.TemperatureTwoPort TT111(redeclare package Medium =
             Buildings.Media.Water,           m_flow_nominal=m_flow_chi_evap_nominal)
         annotation (Placement(transformation(extent={{-40,-70},{-60,-50}})));
-      Modelica.Blocks.Interfaces.RealOutput y annotation (Placement(
-            transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=-90,
-            origin={-30,-110})));
       Modelica.Blocks.Interfaces.RealInput PEM_TT200 annotation (Placement(
             transformation(
             extent={{-20,-20},{20,20}},
             rotation=0,
-            origin={-120,110})));
-      Fluid.Sensors.Pressure PT211(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water)
-        annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={10,40})));
-      Fluid.Sensors.Pressure PT221(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water)
-        annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
-      Fluid.Sensors.MassFlowRate senMasFlo annotation (Placement(transformation(
+            origin={-120,100})));
+      Fluid.Sensors.MassFlowRate senMasFlo(redeclare package Medium =
+            Buildings.Media.Water)         annotation (Placement(transformation(
             extent={{10,-10},{-10,10}},
             rotation=270,
             origin={20,-30})));
       Controls.Continuous.LimPID FT_PID(k=4, Ti=10)
-        annotation (Placement(transformation(extent={{100,0},{120,20}})));
+        annotation (Placement(transformation(extent={{60,-10},{80,10}})));
       Fluid.Actuators.Valves.TwoWayLinear CV121(
         redeclare package Medium = Buildings.Media.Water,
         m_flow_nominal=m_flow_chi_cond_nominal,
@@ -2103,114 +2304,68 @@ has a higher priority to fire as alternative.split[2]).
             transformation(
             extent={{-20,-20},{20,20}},
             rotation=0,
-            origin={-120,-110})));
-      Modelica.Blocks.Math.Add TDT(k1=1, k2=-1)
-        annotation (Placement(transformation(extent={{60,160},{80,180}})));
-      Modelica.Blocks.Sources.Constant TDT_Set(k=5)
-        "Scaled differential pressure setpoint"
-        annotation (Placement(transformation(extent={{60,200},{80,220}})));
-      Controls.Continuous.LimPID TDT_PID(
-        controllerType=Modelica.Blocks.Types.SimpleController.PI,
-        k=2.5,
-        Ti=1.7)
-        annotation (Placement(transformation(extent={{100,200},{120,220}})));
+            origin={-120,-100})));
       Fluid.Actuators.Valves.TwoWayLinear CV211(
         redeclare package Medium = Buildings.Media.Water,
         m_flow_nominal=m_flow_chi_cond_nominal,
         CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
         dpValve_nominal=10)
-        annotation (Placement(transformation(extent={{60,50},{80,70}})));
-      Modelica.Blocks.Sources.Constant TT_Set(k=30)
-        "Scaled differential pressure setpoint"
-        annotation (Placement(transformation(extent={{60,120},{80,140}})));
-      Controls.Continuous.LimPID TT_PID(
-        controllerType=Modelica.Blocks.Types.SimpleController.PI,
-        k=3,
-        Ti=1)
-        annotation (Placement(transformation(extent={{100,120},{120,140}})));
-      Modelica.Blocks.Math.MinMax maxi(nu=3)
-        annotation (Placement(transformation(extent={{160,120},{180,140}})));
-      Modelica.Blocks.Sources.Constant TDT_Set1(k=0.4)
-        "Scaled differential pressure setpoint"
-        annotation (Placement(transformation(extent={{60,280},{80,300}})));
-      Controls.Continuous.LimPID TDT_PID1(
-        controllerType=Modelica.Blocks.Types.SimpleController.PI,
-        k=3,
-        Ti=15)
-        annotation (Placement(transformation(extent={{100,280},{120,300}})));
-      Modelica.Blocks.Math.Add TDT1(k1=1, k2=-1)
-        annotation (Placement(transformation(extent={{60,240},{80,260}})));
+        annotation (Placement(transformation(extent={{70,50},{90,70}})));
+      Fluid.Sensors.RelativePressure DPT(redeclare package Medium =
+            Buildings.Applications.DHC_Marseille.Media.Sea_Water) annotation (Placement(transformation(
+            extent={{10,-10},{-10,10}},
+            rotation=180,
+            origin={-10,60})));
+      Controls_a.GF.PID_Valve_evap pID_Valve_evap
+        annotation (Placement(transformation(extent={{40,100},{60,120}})));
+      Modelica.Blocks.Sources.RealExpression realExpression(y=4 + 273.15)
+        annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
     equation
-      connect(T_cons, electricReformulatedEIR.TSet) annotation (Line(points={{-120,-30},
-              {-66,-30},{-66,-3},{-12,-3}}, color={0,0,127}));
-      connect(u, electricReformulatedEIR.on) annotation (Line(points={{-120,30},
-              {-66,30},{-66,3},{-12,3}}, color={255,0,255}));
-      connect(port_a1, TCin.port_a)
-        annotation (Line(points={{-100,60},{-50,60}}, color={0,127,255}));
-      connect(TCin.port_b, electricReformulatedEIR.port_a1) annotation (Line(points={{-30,60},
-              {-20,60},{-20,6},{-10,6}},         color={0,127,255}));
+      connect(u, electricReformulatedEIR.on) annotation (Line(points={{-120,0},{-66,
+              0},{-66,3},{-12,3}},       color={255,0,255}));
       connect(electricReformulatedEIR.port_b1,TT211. port_a) annotation (Line(
             points={{10,6},{20,6},{20,60},{30,60}}, color={0,127,255}));
-      connect(port_b2,TEout. port_b)
+      connect(port_b2,TT111. port_b)
         annotation (Line(points={{-100,-60},{-60,-60}}, color={0,127,255}));
-      connect(TEout.port_a, electricReformulatedEIR.port_b2) annotation (Line(
+      connect(TT111.port_a, electricReformulatedEIR.port_b2) annotation (Line(
             points={{-40,-60},{-20,-60},{-20,-6},{-10,-6}}, color={0,127,255}));
-      connect(TEout.T, y) annotation (Line(points={{-50,-49},{-50,-40},{-30,-40},
-              {-30,-110}}, color={0,0,127}));
-      connect(senMasFlo.port_a, TEin.port_b)
-        annotation (Line(points={{20,-40},{20,-60},{30,-60}}, color={0,127,255}));
       connect(electricReformulatedEIR.port_a2, senMasFlo.port_b)
         annotation (Line(points={{10,-6},{20,-6},{20,-20}}, color={0,127,255}));
-      connect(TEin.port_a, CV121.port_b)
-        annotation (Line(points={{50,-60},{60,-60}}, color={0,127,255}));
       connect(CV121.port_a, port_a2)
         annotation (Line(points={{80,-60},{100,-60}}, color={0,127,255}));
 
-      connect(senMasFlo.m_flow, FT_PID.u_m) annotation (Line(points={{31,-30},{
-              110,-30},{110,-2}}, color={0,0,127}));
-      connect(FT_PID.y, CV121.y) annotation (Line(points={{121,10},{140,10},{
-              140,-40},{70,-40},{70,-48}}, color={0,0,127}));
-      connect(PEM_TT200, TDT.u1) annotation (Line(points={{-120,110},{-60,110},
-              {-60,176},{58,176}}, color={0,0,127}));
-      connect(TT211.T, TDT.u2)
-        annotation (Line(points={{40,71},{40,164},{58,164}}, color={0,0,127}));
-      connect(TDT_Set.y, TDT_PID.u_s)
-        annotation (Line(points={{81,210},{98,210}}, color={0,0,127}));
-      connect(TDT.y, TDT_PID.u_m) annotation (Line(points={{81,170},{110,170},{
-              110,198}}, color={0,0,127}));
+      connect(senMasFlo.m_flow, FT_PID.u_m) annotation (Line(points={{31,-30},{70,-30},
+              {70,-12}},          color={0,0,127}));
+      connect(FT_PID.y, CV121.y) annotation (Line(points={{81,0},{100,0},{100,-40},{
+              70,-40},{70,-48}},           color={0,0,127}));
       connect(TT211.port_b, CV211.port_a)
-        annotation (Line(points={{50,60},{60,60}}, color={0,127,255}));
+        annotation (Line(points={{50,60},{70,60}}, color={0,127,255}));
       connect(CV211.port_b, port_b1)
-        annotation (Line(points={{80,60},{100,60}}, color={0,127,255}));
-      connect(TT_Set.y, TT_PID.u_s)
-        annotation (Line(points={{81,130},{98,130}}, color={0,0,127}));
-      connect(TT211.T, TT_PID.u_m) annotation (Line(points={{40,71},{40,88},{
-              110,88},{110,118}}, color={0,0,127}));
-      connect(port_a1, PT221.port)
-        annotation (Line(points={{-100,60},{-70,60}}, color={0,127,255}));
-      connect(electricReformulatedEIR.port_b1, PT211.port)
-        annotation (Line(points={{10,6},{20,6},{20,40}}, color={0,127,255}));
-      connect(TDT_PID.y, maxi.u[1]) annotation (Line(points={{121,210},{140,210},
-              {140,134.667},{160,134.667}},
-                                        color={0,0,127}));
-      connect(TT_PID.y, maxi.u[2]) annotation (Line(points={{121,130},{160,130},{160,
-              130}},        color={0,0,127}));
-      connect(maxi.yMin, CV211.y) annotation (Line(points={{181,124},{200,124},
-              {200,80},{70,80},{70,72}}, color={0,0,127}));
-      connect(PT221.p, TDT1.u1) annotation (Line(points={{-59,70},{-50,70},{-50,256},
-              {58,256}}, color={0,0,127}));
-      connect(PT211.p, TDT1.u2)
-        annotation (Line(points={{10,51},{10,244},{58,244}}, color={0,0,127}));
-      connect(TDT1.y, TDT_PID1.u_m)
-        annotation (Line(points={{81,250},{110,250},{110,278}}, color={0,0,127}));
-      connect(TDT_Set1.y, TDT_PID1.u_s)
-        annotation (Line(points={{81,290},{98,290}}, color={0,0,127}));
-      connect(TDT_PID1.y, maxi.u[3]) annotation (Line(points={{121,290},{150,
-              290},{150,125.333},{160,125.333}},
-                                       color={0,0,127}));
-      connect(FT121_cons, FT_PID.u_s) annotation (Line(points={{-120,-110},{-60,
-              -110},{-60,-140},{160,-140},{160,40},{80,40},{80,10},{98,10}},
+        annotation (Line(points={{90,60},{100,60}}, color={0,127,255}));
+      connect(FT121_cons, FT_PID.u_s) annotation (Line(points={{-120,-100},{120,-100},
+              {120,20},{40,20},{40,0},{58,0}},
             color={0,0,127}));
+      connect(DPT.port_b, TT211.port_a)
+        annotation (Line(points={{-1.77636e-15,60},{30,60}}, color={0,127,255}));
+      connect(port_a1, DPT.port_a)
+        annotation (Line(points={{-100,60},{-20,60}}, color={0,127,255}));
+      connect(senMasFlo.port_a, CV121.port_b)
+        annotation (Line(points={{20,-40},{20,-60},{60,-60}}, color={0,127,255}));
+      connect(electricReformulatedEIR.port_a1, port_a1) annotation (Line(points={{-10,
+              6},{-40,6},{-40,60},{-100,60}}, color={0,127,255}));
+      connect(PEM_TT200, pID_Valve_evap.PEM_TT200) annotation (Line(points={{-120,
+              100},{-40,100},{-40,118},{38,118}},
+                                             color={0,0,127}));
+      connect(TT211.T, pID_Valve_evap.TT211) annotation (Line(points={{40,71},{
+              40,88},{0,88},{0,110},{37.8,110}},
+                                          color={0,0,127}));
+      connect(DPT.p_rel, pID_Valve_evap.DPT) annotation (Line(points={{-10,69},
+              {-10,80},{20,80},{20,102},{38,102}},
+                                              color={0,0,127}));
+      connect(pID_Valve_evap.y, CV211.y)
+        annotation (Line(points={{61,111},{80,111},{80,72}}, color={0,0,127}));
+      connect(realExpression.y, electricReformulatedEIR.TSet) annotation (Line(
+            points={{-59,-30},{-40,-30},{-40,-3},{-12,-3}}, color={0,0,127}));
       annotation (Icon(graphics={
             Rectangle(
               extent={{0,-54},{100,-66}},
@@ -2964,8 +3119,9 @@ has a higher priority to fire as alternative.split[2]).
         Modelica.Blocks.Sources.RealExpression realExpression1(y=480/3.6)
           annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
       equation
-        connect(booleanExpression.y, chiller.u) annotation (Line(points={{-79,30},{-52,
-                30},{-52,13},{-22,13}}, color={255,0,255}));
+        connect(booleanExpression.y, chiller.u) annotation (Line(points={{-79,30},
+                {-52,30},{-52,10},{-22,10}},
+                                        color={255,0,255}));
         connect(boundary1.ports[1], chiller.port_a2) annotation (Line(points={{80,-90},
                 {40,-90},{40,4},{0,4}}, color={0,127,255}));
         connect(chiller.port_b2, bou.ports[1]) annotation (Line(points={{-20,4},{-50,4},
@@ -2976,12 +3132,13 @@ has a higher priority to fire as alternative.split[2]).
           annotation (Line(points={{-80,90},{-50,90},{-50,60}}, color={0,127,255}));
         connect(chiller.port_a1, senTem.port_b)
           annotation (Line(points={{-20,16},{-50,16},{-50,40}}, color={0,127,255}));
-        connect(senTem.T, chiller.PEM_TT200) annotation (Line(points={{-39,50},{-30,50},
-                {-30,21},{-22,21}}, color={0,0,127}));
+        connect(senTem.T, chiller.PEM_TT200) annotation (Line(points={{-39,50},
+                {-30,50},{-30,20},{-22,20}},
+                                    color={0,0,127}));
         connect(realExpression.y, chiller.T_cons) annotation (Line(points={{-79,-10},{
                 -52,-10},{-52,7},{-22,7}}, color={0,0,127}));
         connect(realExpression1.y, chiller.FT121_cons) annotation (Line(points={{-79,-50},
-                {-40,-50},{-40,-1},{-22,-1}}, color={0,0,127}));
+                {-40,-50},{-40,0},{-22,0}},   color={0,0,127}));
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end test_GF;
@@ -3045,6 +3202,186 @@ has a higher priority to fire as alternative.split[2]).
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end test_gf_basic;
+
+      model test_gf0
+        import Fluid;
+
+      Real temperatures[6](final unit="K", displayUnit = "degC");
+        Chiller chiller(redeclare package Medium1 =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,                                                                      redeclare
+            package Medium2 = Buildings.Media.Water,
+          per=Buildings.Fluid.Chillers.Data.ElectricReformulatedEIR.ReformEIRChiller_McQuay_WSC_471kW_5_89COP_Vanes())
+          annotation (Placement(transformation(extent={{-20,0},{0,20}})));
+        Fluid.Sources.Boundary_pT bou2(
+          redeclare package Medium = Media.Sea_Water,
+          p=100000,
+          use_T_in=false,
+          nPorts=1)
+          annotation (Placement(transformation(extent={{-140,80},{-120,100}})));
+        Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=190/3.6)
+          annotation (Placement(transformation(extent={{-40,60},{-60,80}})));
+        Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=190/3.6)
+          annotation (Placement(transformation(extent={{40,60},{20,80}})));
+        Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
+          tableOnFile=true,
+          tableName="tab1",
+          fileName=ModelicaServices.ExternalReferences.loadResource("modelica://Buildings/Data/gf.txt"),
+          columns={2,3,4,5,6,7,8,9,10,11})
+          annotation (Placement(transformation(extent={{-100,-100},{-80,-80}})));
+
+        Fluid.Sources.MassFlowSource_T boundary1(
+          redeclare package Medium = Buildings.Media.Water,
+          use_m_flow_in=true,
+          m_flow=180/3.6,
+          use_T_in=true,
+          nPorts=1)
+          annotation (Placement(transformation(extent={{60,-40},{40,-20}})));
+        Fluid.Sources.Boundary_pT bou1(redeclare package Medium =
+              Buildings.Media.Water, nPorts=1)
+          annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
+        Modelica.Blocks.Sources.RealExpression realExpression(y=500)
+          annotation (Placement(transformation(extent={{-100,-30},{-80,-10}})));
+        Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=true)
+          annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
+        Fluid.Sources.MassFlowSource_T boundary2(
+          redeclare package Medium = Buildings.Media.Water,
+          use_m_flow_in=true,
+          m_flow=180/3.6,
+          use_T_in=true,
+          nPorts=1)
+          annotation (Placement(transformation(extent={{-100,60},{-80,80}})));
+      equation
+
+            for j in 1:6 loop
+            temperatures[j]=combiTimeTable.y[j];
+          end for;
+        connect(chiller.port_a1, TT200.port_a) annotation (Line(points={{-20,16},{-30,
+                16},{-30,70},{-40,70}}, color={0,127,255}));
+        connect(chiller.port_b1, TT201.port_b) annotation (Line(points={{0,16},{10,16},
+                {10,70},{20,70}}, color={0,127,255}));
+        connect(TT201.port_a, bou2.ports[1]) annotation (Line(points={{40,70},{60,70},
+                {60,100},{-114,100},{-114,90},{-120,90}}, color={0,127,255}));
+        connect(bou1.ports[1], chiller.port_b2) annotation (Line(points={{-80,-50},{-52,
+                -50},{-52,4},{-20,4}}, color={0,127,255}));
+        connect(chiller.port_a2, boundary1.ports[1]) annotation (Line(points={{0,4},{20,
+                4},{20,-30},{40,-30}}, color={0,127,255}));
+        connect(TT200.T, chiller.PEM_TT200) annotation (Line(points={{-50,81},{-50,92},
+                {-36,92},{-36,20},{-22,20}}, color={0,0,127}));
+        connect(realExpression.y, chiller.FT121_cons) annotation (Line(points={{-79,-20},
+                {-50,-20},{-50,0},{-22,0}}, color={0,0,127}));
+        connect(combiTimeTable.y[8], boundary1.m_flow_in) annotation (Line(points={{-79,
+                -90},{80,-90},{80,-22},{62,-22}}, color={0,0,127}));
+        connect(combiTimeTable.y[2], boundary1.T_in) annotation (Line(points={{-79,-90},
+                {80,-90},{80,-26},{62,-26}}, color={0,0,127}));
+        connect(booleanExpression.y, chiller.u) annotation (Line(points={{-79,10},{-52,
+                10},{-52,10},{-22,10}}, color={255,0,255}));
+        connect(combiTimeTable.y[5], boundary2.T_in) annotation (Line(points={{-79,-90},
+                {-60,-90},{-60,-70},{-114,-70},{-114,74},{-102,74}}, color={0,0,127}));
+        connect(combiTimeTable.y[10], boundary2.m_flow_in) annotation (Line(points={{-79,
+                -90},{-60,-90},{-60,-70},{-114,-70},{-114,78},{-102,78}}, color={0,0,127}));
+        connect(boundary2.ports[1], TT200.port_b)
+          annotation (Line(points={{-80,70},{-60,70}}, color={0,127,255}));
+        annotation (
+          Icon(coordinateSystem(preserveAspectRatio=false)),
+          Diagram(coordinateSystem(preserveAspectRatio=false)),
+          experiment(
+            StopTime=950400,
+            Interval=600,
+            __Dymola_Algorithm="Dassl"));
+      end test_gf0;
+
+      model gf_pump
+        import Fluid;
+      Real temperatures[6](final unit="K", displayUnit = "degC");
+        Chiller chiller(redeclare package Medium1 =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,                                                                      redeclare
+            package Medium2 = Buildings.Media.Water,
+          per=Buildings.Fluid.Chillers.Data.ElectricReformulatedEIR.ReformEIRChiller_Carrier_19XR_1143kW_6_57COP_VSD())
+          annotation (Placement(transformation(extent={{-20,0},{0,20}})));
+        Fluid.Sources.Boundary_pT bou2(
+          redeclare package Medium = Media.Sea_Water,
+          p=100000,
+          use_T_in=true,
+          nPorts=2)
+          annotation (Placement(transformation(extent={{-140,80},{-120,100}})));
+        Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=190/3.6)
+          annotation (Placement(transformation(extent={{-40,60},{-60,80}})));
+        Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=190/3.6)
+          annotation (Placement(transformation(extent={{40,60},{20,80}})));
+        Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
+          tableOnFile=true,
+          tableName="tab1",
+          fileName=ModelicaServices.ExternalReferences.loadResource("modelica://Buildings/Data/gf.txt"),
+          columns={2,3,4,5,6,7,8,9,10,11})
+          annotation (Placement(transformation(extent={{-100,-100},{-80,-80}})));
+
+        Fluid.Sources.MassFlowSource_T boundary1(
+          redeclare package Medium = Buildings.Media.Water,
+          use_m_flow_in=true,
+          m_flow=180/3.6,
+          use_T_in=true,
+          nPorts=1)
+          annotation (Placement(transformation(extent={{60,-40},{40,-20}})));
+        Fluid.Sources.Boundary_pT bou1(redeclare package Medium =
+              Buildings.Media.Water, nPorts=1)
+          annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
+        Modelica.Blocks.Sources.RealExpression realExpression(y=500)
+          annotation (Placement(transformation(extent={{-100,-30},{-80,-10}})));
+        Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=true)
+          annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
+        Fluid.Movers.FlowControlled_dp fan(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=720/3.6,
+          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          addPowerToMedium=false,
+          constantHead(displayUnit="bar") = 187000)
+          annotation (Placement(transformation(extent={{-100,60},{-80,80}})));
+      equation
+
+            for j in 1:6 loop
+            temperatures[j]=combiTimeTable.y[j];
+          end for;
+        connect(chiller.port_a1, TT200.port_a) annotation (Line(points={{-20,16},{-30,
+                16},{-30,70},{-40,70}}, color={0,127,255}));
+        connect(chiller.port_b1, TT201.port_b) annotation (Line(points={{0,16},{10,16},
+                {10,70},{20,70}}, color={0,127,255}));
+        connect(TT201.port_a, bou2.ports[1]) annotation (Line(points={{40,70},{
+                60,70},{60,100},{-114,100},{-114,92},{-120,92}},
+                                                          color={0,127,255}));
+        connect(bou1.ports[1], chiller.port_b2) annotation (Line(points={{-80,-50},{-52,
+                -50},{-52,4},{-20,4}}, color={0,127,255}));
+        connect(chiller.port_a2, boundary1.ports[1]) annotation (Line(points={{0,4},{20,
+                4},{20,-30},{40,-30}}, color={0,127,255}));
+        connect(TT200.T, chiller.PEM_TT200) annotation (Line(points={{-50,81},{-50,92},
+                {-36,92},{-36,20},{-22,20}}, color={0,0,127}));
+        connect(realExpression.y, chiller.FT121_cons) annotation (Line(points={{-79,-20},
+                {-40,-20},{-40,0},{-22,0}}, color={0,0,127}));
+        connect(combiTimeTable.y[8], boundary1.m_flow_in) annotation (Line(points={{-79,
+                -90},{80,-90},{80,-22},{62,-22}}, color={0,0,127}));
+        connect(combiTimeTable.y[2], boundary1.T_in) annotation (Line(points={{-79,-90},
+                {80,-90},{80,-26},{62,-26}}, color={0,0,127}));
+        connect(booleanExpression.y, chiller.u) annotation (Line(points={{-79,10},{-52,
+                10},{-52,10},{-22,10}}, color={255,0,255}));
+        connect(combiTimeTable.y[5], bou2.T_in) annotation (Line(points={{-79,
+                -90},{-60,-90},{-60,-70},{-160,-70},{-160,94},{-142,94}}, color=
+               {0,0,127}));
+        connect(TT200.port_b, fan.port_b)
+          annotation (Line(points={{-60,70},{-80,70}}, color={0,127,255}));
+        connect(bou2.ports[2], fan.port_a) annotation (Line(points={{-120,88},{
+                -112,88},{-112,70},{-100,70}}, color={0,127,255}));
+        annotation (
+          Icon(coordinateSystem(preserveAspectRatio=false)),
+          Diagram(coordinateSystem(preserveAspectRatio=false)),
+          experiment(
+            StopTime=950400,
+            Interval=600,
+            __Dymola_Algorithm="Dassl"));
+      end gf_pump;
     end Tests;
 
     model basic_0
@@ -4377,10 +4714,946 @@ has a higher priority to fire as alternative.split[2]).
               fillColor={28,108,200},
               fillPattern=FillPattern.Solid)}));
     end Chiller_basic;
+
+    package Calibration
+      model gf
+
+      parameter
+          Buildings.Fluid.Chillers.Data.ElectricReformulatedEIR.ReformEIRChiller_York_YT_563kW_10_61COP_Vanes
+          per;
+
+      Real temperatures[6](final unit="K", displayUnit = "degC");
+        GF.Chiller chiller(redeclare package Medium1 =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water, redeclare
+            package
+            Medium2 = Buildings.Media.Water,
+            per=per)
+          annotation (Placement(transformation(extent={{-20,0},{0,20}})));
+        Fluid.Sources.Boundary_pT bou2(
+          redeclare package Medium = Media.Sea_Water,
+          p=100000,
+          use_T_in=false,
+          nPorts=1)
+          annotation (Placement(transformation(extent={{-140,80},{-120,100}})));
+        Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=190/3.6)
+          annotation (Placement(transformation(extent={{-40,60},{-60,80}})));
+        Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=190/3.6)
+          annotation (Placement(transformation(extent={{40,60},{20,80}})));
+        Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
+          tableOnFile=true,
+          tableName="tab1",
+          fileName=ModelicaServices.ExternalReferences.loadResource("modelica://Buildings/Data/gf.txt"),
+          columns={2,3,4,5,6,7,8,9,10,11})
+          annotation (Placement(transformation(extent={{-100,-100},{-80,-80}})));
+
+        Fluid.Sources.MassFlowSource_T boundary1(
+          redeclare package Medium = Buildings.Media.Water,
+          use_m_flow_in=true,
+          m_flow=180/3.6,
+          use_T_in=true,
+          nPorts=1)
+          annotation (Placement(transformation(extent={{60,-40},{40,-20}})));
+        Fluid.Sources.Boundary_pT bou1(redeclare package Medium =
+              Buildings.Media.Water, nPorts=1)
+          annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
+        Modelica.Blocks.Sources.RealExpression realExpression(y=500)
+          annotation (Placement(transformation(extent={{-100,-30},{-80,-10}})));
+        Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=true)
+          annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
+        Fluid.Sources.MassFlowSource_T boundary2(
+          redeclare package Medium = Buildings.Media.Water,
+          use_m_flow_in=true,
+          m_flow=180/3.6,
+          use_T_in=true,
+          nPorts=1)
+          annotation (Placement(transformation(extent={{-100,60},{-80,80}})));
+      equation
+
+            for j in 1:6 loop
+            temperatures[j]=combiTimeTable.y[j];
+          end for;
+        connect(chiller.port_a1, TT200.port_a) annotation (Line(points={{-20,16},{-30,
+                16},{-30,70},{-40,70}}, color={0,127,255}));
+        connect(chiller.port_b1, TT201.port_b) annotation (Line(points={{0,16},{10,16},
+                {10,70},{20,70}}, color={0,127,255}));
+        connect(TT201.port_a, bou2.ports[1]) annotation (Line(points={{40,70},{60,70},
+                {60,100},{-114,100},{-114,90},{-120,90}}, color={0,127,255}));
+        connect(bou1.ports[1], chiller.port_b2) annotation (Line(points={{-80,-50},{-52,
+                -50},{-52,4},{-20,4}}, color={0,127,255}));
+        connect(chiller.port_a2, boundary1.ports[1]) annotation (Line(points={{0,4},{20,
+                4},{20,-30},{40,-30}}, color={0,127,255}));
+        connect(TT200.T, chiller.PEM_TT200) annotation (Line(points={{-50,81},{-50,92},
+                {-36,92},{-36,20},{-22,20}}, color={0,0,127}));
+        connect(realExpression.y, chiller.FT121_cons) annotation (Line(points={{-79,-20},
+                {-50,-20},{-50,0},{-22,0}}, color={0,0,127}));
+        connect(combiTimeTable.y[8], boundary1.m_flow_in) annotation (Line(points={{-79,
+                -90},{80,-90},{80,-22},{62,-22}}, color={0,0,127}));
+        connect(combiTimeTable.y[2], boundary1.T_in) annotation (Line(points={{-79,-90},
+                {80,-90},{80,-26},{62,-26}}, color={0,0,127}));
+        connect(booleanExpression.y, chiller.u) annotation (Line(points={{-79,10},{-52,
+                10},{-52,10},{-22,10}}, color={255,0,255}));
+        connect(combiTimeTable.y[5], boundary2.T_in) annotation (Line(points={{-79,-90},
+                {-60,-90},{-60,-70},{-114,-70},{-114,74},{-102,74}}, color={0,0,127}));
+        connect(combiTimeTable.y[10], boundary2.m_flow_in) annotation (Line(points={{-79,
+                -90},{-60,-90},{-60,-70},{-114,-70},{-114,78},{-102,78}}, color={0,0,127}));
+        connect(boundary2.ports[1], TT200.port_b)
+          annotation (Line(points={{-80,70},{-60,70}}, color={0,127,255}));
+        annotation (
+          Icon(coordinateSystem(preserveAspectRatio=false)),
+          Diagram(coordinateSystem(preserveAspectRatio=false)),
+          experiment(
+            StopTime=950400,
+            Interval=600,
+            __Dymola_Algorithm="Dassl"));
+      end gf;
+
+      model gf_pump_cal
+        import Fluid;
+      Real temperatures[6](final unit="K", displayUnit = "degC");
+        Chiller chiller(redeclare package Medium1 =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,                                                                      redeclare
+            package Medium2 = Buildings.Media.Water,
+          per=Buildings.Fluid.Chillers.Data.ElectricReformulatedEIR.ReformEIRChiller_McQuay_WSC_471kW_5_89COP_Vanes())
+          annotation (Placement(transformation(extent={{-20,0},{0,20}})));
+        Fluid.Sources.Boundary_pT bou2(
+          redeclare package Medium = Media.Sea_Water,
+          p=100000,
+          use_T_in=true,
+          nPorts=2)
+          annotation (Placement(transformation(extent={{-140,80},{-120,100}})));
+        Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=190/3.6)
+          annotation (Placement(transformation(extent={{-40,60},{-60,80}})));
+        Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=190/3.6)
+          annotation (Placement(transformation(extent={{40,60},{20,80}})));
+        Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
+          tableOnFile=true,
+          tableName="tab1",
+          fileName=ModelicaServices.ExternalReferences.loadResource("modelica://Buildings/Data/gf.txt"),
+          columns={2,3,4,5,6,7,8,9,10,11,12})
+          annotation (Placement(transformation(extent={{-100,-100},{-80,-80}})));
+
+        Fluid.Sources.MassFlowSource_T boundary1(
+          redeclare package Medium = Buildings.Media.Water,
+          use_m_flow_in=true,
+          m_flow=180/3.6,
+          use_T_in=true,
+          nPorts=1)
+          annotation (Placement(transformation(extent={{60,-40},{40,-20}})));
+        Fluid.Sources.Boundary_pT bou1(redeclare package Medium =
+              Buildings.Media.Water, nPorts=1)
+          annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
+        Modelica.Blocks.Sources.RealExpression realExpression(y=500)
+          annotation (Placement(transformation(extent={{-100,-30},{-80,-10}})));
+        Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=true)
+          annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
+        Fluid.Movers.FlowControlled_dp fan(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=720/3.6,
+          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          addPowerToMedium=false,
+          constantHead(displayUnit="bar") = 187000)
+          annotation (Placement(transformation(extent={{-100,60},{-80,80}})));
+      equation
+
+            for j in 1:6 loop
+            temperatures[j]=combiTimeTable.y[j];
+          end for;
+        connect(chiller.port_a1, TT200.port_a) annotation (Line(points={{-20,16},{-30,
+                16},{-30,70},{-40,70}}, color={0,127,255}));
+        connect(chiller.port_b1, TT201.port_b) annotation (Line(points={{0,16},{10,16},
+                {10,70},{20,70}}, color={0,127,255}));
+        connect(TT201.port_a, bou2.ports[1]) annotation (Line(points={{40,70},{
+                60,70},{60,100},{-114,100},{-114,92},{-120,92}},
+                                                          color={0,127,255}));
+        connect(bou1.ports[1], chiller.port_b2) annotation (Line(points={{-80,-50},{-52,
+                -50},{-52,4},{-20,4}}, color={0,127,255}));
+        connect(chiller.port_a2, boundary1.ports[1]) annotation (Line(points={{0,4},{20,
+                4},{20,-30},{40,-30}}, color={0,127,255}));
+        connect(TT200.T, chiller.PEM_TT200) annotation (Line(points={{-50,81},{-50,92},
+                {-36,92},{-36,20},{-22,20}}, color={0,0,127}));
+        connect(realExpression.y, chiller.FT121_cons) annotation (Line(points={{-79,-20},
+                {-50,-20},{-50,0},{-22,0}}, color={0,0,127}));
+        connect(combiTimeTable.y[8], boundary1.m_flow_in) annotation (Line(points={{-79,
+                -90},{80,-90},{80,-22},{62,-22}}, color={0,0,127}));
+        connect(combiTimeTable.y[2], boundary1.T_in) annotation (Line(points={{-79,-90},
+                {80,-90},{80,-26},{62,-26}}, color={0,0,127}));
+        connect(booleanExpression.y, chiller.u) annotation (Line(points={{-79,10},{-52,
+                10},{-52,10},{-22,10}}, color={255,0,255}));
+        connect(combiTimeTable.y[5], bou2.T_in) annotation (Line(points={{-79,
+                -90},{-60,-90},{-60,-70},{-160,-70},{-160,94},{-142,94}}, color=
+               {0,0,127}));
+        connect(TT200.port_b, fan.port_b)
+          annotation (Line(points={{-60,70},{-80,70}}, color={0,127,255}));
+        connect(bou2.ports[2], fan.port_a) annotation (Line(points={{-120,88},{
+                -112,88},{-112,70},{-100,70}}, color={0,127,255}));
+        annotation (
+          Icon(coordinateSystem(preserveAspectRatio=false)),
+          Diagram(coordinateSystem(preserveAspectRatio=false)),
+          experiment(
+            StopTime=950400,
+            Interval=600,
+            __Dymola_Algorithm="Dassl"));
+      end gf_pump_cal;
+    end Calibration;
   end GF;
 
   package TFP
     extends Modelica.Icons.VariantsPackage;
+    model TFP_solo
+      extends Fluid.Interfaces.PartialEightPortInterface;
+
+      parameter Modelica.SIunits.MassFlowRate m_flow_hot= 332*1000/3600;
+      parameter Modelica.SIunits.MassFlowRate m_flow_cold= 211*1000/3600;
+      parameter Real T_set_hot = 61;
+      parameter Real T_set_hot_max = 63;
+      parameter Real T_set_hot_min = 41;
+      parameter Real T_set_cold_max = 14;
+      parameter Real T_set_cold = 4;
+
+      Fluid.FixedResistances.Junction jun(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={m_flow_hot,-m_flow_hot,-m_flow_hot},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={10,250})));
+      Fluid.Actuators.Valves.TwoWayLinear XV521(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=m_flow_hot,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10)
+        annotation (Placement(transformation(extent={{-40,180},{-60,200}})));
+      Fluid.Actuators.Valves.TwoWayLinear XV522(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=m_flow_hot,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={70,230})));
+      Fluid.Actuators.Valves.TwoWayLinear CV522(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=m_flow_hot,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10)
+        annotation (Placement(transformation(extent={{-60,140},{-40,160}})));
+      Fluid.Actuators.Valves.TwoWayLinear CV521(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=m_flow_hot,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={10,210})));
+      Fluid.Actuators.Valves.TwoWayLinear CV523(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=m_flow_hot,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={10,50})));
+      Fluid.FixedResistances.Junction jun1(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={m_flow_hot,-m_flow_hot,m_flow_hot},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{-10,10},{10,-10}},
+            rotation=270,
+            origin={-90,190})));
+      Fluid.FixedResistances.Junction jun2(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={m_flow_hot,-m_flow_hot,m_flow_hot},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={10,150})));
+      Fluid.FixedResistances.Junction jun3(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={m_flow_hot,-m_flow_hot,-m_flow_hot},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{-10,10},{10,-10}},
+            rotation=90,
+            origin={70,190})));
+      Fluid.Chillers.ElectricReformulatedEIR TFPA(redeclare package Medium1 =
+            Buildings.Media.Water, redeclare package Medium2 =
+            Buildings.Media.Water,
+        m1_flow_nominal=m_flow_hot,
+        m2_flow_nominal=m_flow_cold/2,
+        dp1_nominal=70000,
+        dp2_nominal=70000,
+        per=Buildings.Fluid.Chillers.Data.ElectricReformulatedEIR.ReformEIRChiller_Trane_RTHB_1051kW_5_05COP_Valve())
+        annotation (Placement(transformation(extent={{-40,-20},{-20,0}})));
+      Fluid.Actuators.Valves.TwoWayLinear XV112A(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=100,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={-50,-90})));
+      Fluid.Actuators.Valves.TwoWayLinear CV121(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=100,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={50,-210})));
+      Fluid.Actuators.Valves.TwoWayLinear CV123(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=100,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(
+            transformation(
+            extent={{-10,10},{10,-10}},
+            rotation=90,
+            origin={50,-110})));
+      Fluid.FixedResistances.Junction jun5(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={100,-100,-100},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={50,-250})));
+      Fluid.Actuators.Valves.TwoWayLinear CV122(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=100,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={-10,-200})));
+      Fluid.FixedResistances.Junction jun7(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={100,-100,100},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{10,-10},{-10,10}},
+            rotation=270,
+            origin={50,-170})));
+      Fluid.Sensors.VolumeFlowRate FT521(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=-90,
+            origin={10,90})));
+      Controls.Continuous.LimPID FT_PID_521(k=1, Ti=1)
+        annotation (Placement(transformation(extent={{200,120},{220,140}})));
+      Controls.Continuous.LimPID FT_PID_123(k=1, Ti=1)
+        annotation (Placement(transformation(extent={{180,-100},{200,-80}})));
+      Modelica.Blocks.Sources.RealExpression CV123_reg(y=if mode == 1 or mode
+             == 3 then 166/3600 else 332/3600)
+        annotation (Placement(transformation(extent={{140,-100},{160,-80}})));
+      Fluid.Sensors.VolumeFlowRate FT121(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=-90,
+            origin={50,-140})));
+      Fluid.Sensors.TemperatureTwoPort TT111(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100)
+        annotation (Placement(transformation(extent={{-60,-170},{-80,-150}})));
+      Fluid.Sensors.TemperatureTwoPort TT511(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100)
+        annotation (Placement(transformation(extent={{80,250},{100,270}})));
+      Fluid.Sensors.TemperatureTwoPort TT521(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{-10,10},{10,-10}},
+            rotation=-90,
+            origin={10,120})));
+      Modelica.Blocks.Interfaces.IntegerInput mode
+        annotation (Placement(transformation(extent={{-220,70},{-180,110}}),
+            iconTransformation(extent={{-20,-20},{20,20}},
+            rotation=90,
+            origin={-80,-120})));
+      Modelica.Blocks.Sources.RealExpression XV521_switch(y=if mode == 1 then 1
+             else 0)
+        annotation (Placement(transformation(extent={{-240,240},{-220,260}})));
+      Modelica.Blocks.Sources.RealExpression XV522_switch(y=if mode >= 2 then 1
+             else 0)
+        annotation (Placement(transformation(extent={{-240,210},{-220,230}})));
+      Modelica.Blocks.Sources.RealExpression XV112A_switch(y=if mode >= 1 then 1
+             else 0)
+        annotation (Placement(transformation(extent={{-240,-40},{-220,-20}})));
+      Modelica.Blocks.Math.RealToBoolean TFPA_on(threshold=0.5)
+        annotation (Placement(transformation(extent={{-180,20},{-160,40}})));
+      Modelica.Blocks.Sources.RealExpression cons_cold(y=T_set_cold)
+        annotation (Placement(transformation(extent={{-240,40},{-220,60}})));
+      Modelica.Blocks.Interfaces.RealInput DEG_TT121
+        annotation (Placement(transformation(extent={{-220,-120},{-180,-80}}),
+            iconTransformation(extent={{-20,-20},{20,20}},
+            rotation=90,
+            origin={80,-120})));
+      Modelica.Blocks.Interfaces.RealInput PEM_TT200
+        annotation (Placement(transformation(extent={{-220,-160},{-180,-120}}),
+            iconTransformation(extent={{-20,-20},{20,20}},
+            rotation=90,
+            origin={0,-120})));
+      Fluid.Sensors.TemperatureTwoPort TT121(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{10,10},{-10,-10}},
+            rotation=270,
+            origin={50,-80})));
+      Controls_a.TFP.PID_Valve_evap pID_Valve_evap annotation (Placement(
+            transformation(extent={{-120,-240},{-100,-220}})));
+      Controls_a.TFP.PID_Valve_cond pID_Valve_cond
+        annotation (Placement(transformation(extent={{-200,160},{-180,180}})));
+      Modelica.Blocks.Sources.RealExpression CV523_reg(y=211/3600)
+        annotation (Placement(transformation(extent={{140,120},{160,140}})));
+      Modelica.Blocks.Interfaces.RealOutput y
+        annotation (Placement(transformation(extent={{100,50},{120,70}})));
+      Modelica.Blocks.Interfaces.RealOutput y1
+        annotation (Placement(transformation(extent={{100,-70},{120,-50}})));
+    equation
+      connect(port_a1, jun.port_1) annotation (Line(points={{-100,80},{-140,80},
+              {-140,280},{10,280},{10,260}},
+                                       color={238,46,47}));
+      connect(jun.port_2, CV521.port_a)
+        annotation (Line(points={{10,240},{10,220}}, color={238,46,47}));
+      connect(CV521.port_b, jun2.port_1)
+        annotation (Line(points={{10,200},{10,160}}, color={238,46,47}));
+      connect(jun2.port_3, CV522.port_b)
+        annotation (Line(points={{1.77636e-15,150},{-40,150}},
+                                                     color={238,46,47}));
+      connect(jun1.port_3, XV521.port_b)
+        annotation (Line(points={{-80,190},{-60,190}},  color={238,46,47}));
+      connect(jun.port_3, jun1.port_1) annotation (Line(points={{0,250},{-90,
+              250},{-90,200}},
+                          color={238,46,47}));
+      connect(CV523.port_b, TFPA.port_a1) annotation (Line(points={{10,40},{10,20},{
+              -60,20},{-60,-4},{-40,-4}}, color={238,46,47}));
+      connect(port_b2, jun1.port_2) annotation (Line(points={{-100,30},{-92,30},
+              {-92,180},{-90,180}},
+                     color={238,46,47}));
+      connect(XV112A.port_a, TFPA.port_b2) annotation (Line(points={{-50,-80},{-50,-16},
+              {-40,-16}}, color={0,127,255}));
+      connect(port_a2, CV522.port_a) annotation (Line(points={{100,30},{-72,30},{-72,
+              150},{-60,150}},      color={238,46,47}));
+      connect(jun7.port_1, CV121.port_b)
+        annotation (Line(points={{50,-180},{50,-200}}, color={0,127,255}));
+      connect(port_a3, CV122.port_a) annotation (Line(points={{-100,-32},{-140,
+              -32},{-140,-200},{-20,-200}}, color={0,127,255}));
+      connect(CV122.port_b, jun7.port_3) annotation (Line(points={{0,-200},{10,
+              -200},{10,-170},{40,-170}},    color={0,127,255}));
+      connect(jun3.port_3, XV521.port_a)
+        annotation (Line(points={{60,190},{-40,190}}, color={238,46,47}));
+      connect(jun3.port_2, XV522.port_a)
+        annotation (Line(points={{70,200},{70,220}}, color={238,46,47}));
+      connect(CV121.port_a, jun5.port_2)
+        annotation (Line(points={{50,-220},{50,-240}}, color={0,127,255}));
+      connect(jun5.port_3, port_b3) annotation (Line(points={{60,-250},{120,
+              -250},{120,-30},{100,-30}}, color={0,127,255}));
+      connect(FT521.port_b, CV523.port_a)
+        annotation (Line(points={{10,80},{10,60}}, color={238,46,47}));
+      connect(FT521.V_flow, FT_PID_521.u_m) annotation (Line(points={{21,90},{50,90},
+              {50,100},{210,100},{210,118}}, color={0,0,127}));
+      connect(FT_PID_521.y, CV523.y) annotation (Line(points={{221,130},{240,130},{240,
+              50},{22,50}}, color={0,0,127}));
+      connect(CV123.port_a, FT121.port_a)
+        annotation (Line(points={{50,-120},{50,-130}}, color={0,127,255}));
+      connect(FT121.port_b, jun7.port_2)
+        annotation (Line(points={{50,-150},{50,-160}}, color={0,127,255}));
+      connect(FT121.V_flow, FT_PID_123.u_m) annotation (Line(points={{61,-140},
+              {190,-140},{190,-102}},
+                                 color={0,0,127}));
+      connect(FT_PID_123.y, CV123.y) annotation (Line(points={{201,-90},{220,
+              -90},{220,-68},{80,-68},{80,-110},{62,-110}},
+                                                color={0,0,127}));
+      connect(TT111.port_b, port_b4) annotation (Line(points={{-80,-160},{-100,
+              -160},{-100,-80}}, color={0,127,255}));
+      connect(XV522.port_b, TT511.port_a) annotation (Line(points={{70,240},{70,
+              260},{80,260}}, color={238,46,47}));
+      connect(TT511.port_b, port_b1) annotation (Line(points={{100,260},{120,
+              260},{120,80},{100,80}}, color={238,46,47}));
+      connect(jun2.port_2, TT521.port_a)
+        annotation (Line(points={{10,140},{10,130}}, color={238,46,47}));
+      connect(TT521.port_b, FT521.port_a)
+        annotation (Line(points={{10,110},{10,100}}, color={238,46,47}));
+      connect(XV521_switch.y, XV521.y) annotation (Line(points={{-219,250},{
+              -160,250},{-160,240},{-50,240},{-50,202}},
+                                               color={0,0,127}));
+      connect(XV522_switch.y, XV522.y) annotation (Line(points={{-219,220},{
+              -160,220},{-160,230},{58,230}},
+                                    color={0,0,127}));
+      connect(XV112A_switch.y, XV112A.y) annotation (Line(points={{-219,-30},{
+              -152,-30},{-152,-50},{-30,-50},{-30,-90},{-38,-90}},
+                                                         color={0,0,127}));
+      connect(XV112A_switch.y, TFPA_on.u) annotation (Line(points={{-219,-30},{
+              -192,-30},{-192,30},{-182,30}},
+                                         color={0,0,127}));
+      connect(TFPA_on.y, TFPA.on) annotation (Line(points={{-159,30},{-140,30},
+              {-140,-7},{-42,-7}},
+                             color={255,0,255}));
+      connect(cons_cold.y, TFPA.TSet) annotation (Line(points={{-219,50},{-120,
+              50},{-120,-13},{-42,-13}},
+                                    color={0,0,127}));
+      connect(CV123_reg.y, FT_PID_123.u_s)
+        annotation (Line(points={{161,-90},{178,-90}}, color={0,0,127}));
+      connect(jun5.port_1, port_a4) annotation (Line(points={{50,-260},{50,-280},
+              {100,-280},{100,-80}}, color={0,127,255}));
+      connect(TT121.port_a, CV123.port_b)
+        annotation (Line(points={{50,-90},{50,-100}}, color={0,127,255}));
+      connect(pID_Valve_evap.CV122, CV122.y) annotation (Line(points={{-99,-225},
+              {-60,-225},{-60,-180},{-10,-180},{-10,-188}}, color={0,0,127}));
+      connect(pID_Valve_evap.CV121, CV121.y) annotation (Line(points={{-99,-235},
+              {20,-235},{20,-210},{38,-210}}, color={0,0,127}));
+      connect(DEG_TT121, pID_Valve_evap.DEG_TT121) annotation (Line(points={{-200,
+              -100},{-170,-100},{-170,-226},{-122,-226}},      color={0,0,127}));
+      connect(PEM_TT200, pID_Valve_evap.PEM_TT200) annotation (Line(points={{-200,
+              -140},{-160,-140},{-160,-222},{-122,-222}},      color={0,0,127}));
+      connect(pID_Valve_evap.TFP_TT121, TT121.T) annotation (Line(points={{-122,
+              -234},{-220,-234},{-220,-262},{34,-262},{34,-80},{39,-80}}, color=
+             {0,0,127}));
+      connect(TT511.T, pID_Valve_evap.TFP_TT511) annotation (Line(points={{90,271},
+              {90,300},{-250,300},{-250,-252},{-208,-252},{-208,-238},{-122,
+              -238}},      color={0,0,127}));
+      connect(pID_Valve_cond.CV522, CV522.y) annotation (Line(points={{-179,175},
+              {-50,175},{-50,162}}, color={0,0,127}));
+      connect(pID_Valve_cond.CV521, CV521.y) annotation (Line(points={{-179,165},
+              {-70,165},{-70,170},{40,170},{40,210},{22,210}}, color={0,0,127}));
+      connect(TT511.T, pID_Valve_cond.TFP_TT511) annotation (Line(points={{90,271},
+              {90,300},{-250,300},{-250,176},{-202,176}},      color={0,0,127}));
+      connect(TT521.T, pID_Valve_cond.TFP_TT521) annotation (Line(points={{-1,
+              120},{-220,120},{-220,162},{-202,162}}, color={0,0,127}));
+      connect(CV523_reg.y, FT_PID_521.u_s)
+        annotation (Line(points={{161,130},{198,130}}, color={0,0,127}));
+      connect(pID_Valve_cond.CV522, y) annotation (Line(points={{-179,175},{80,
+              175},{80,60},{110,60}}, color={0,0,127}));
+      connect(pID_Valve_evap.CV122, y1) annotation (Line(points={{-99,-225},{-8,
+              -225},{-8,-226},{90,-226},{90,-60},{110,-60}}, color={0,0,127}));
+      connect(TT121.port_b, TFPA.port_a2) annotation (Line(points={{50,-70},{50,
+              -16},{-20,-16}}, color={0,127,255}));
+      connect(XV112A.port_b, TT111.port_a) annotation (Line(points={{-50,-100},
+              {-50,-160},{-60,-160}}, color={0,127,255}));
+      connect(TFPA.port_b1, jun3.port_1) annotation (Line(points={{-20,-4},{70,
+              -4},{70,180}}, color={238,46,47}));
+      annotation (Diagram(coordinateSystem(extent={{-100,-100},{100,100}})), Icon(
+            coordinateSystem(extent={{-100,-100},{100,100}}), graphics={Rectangle(
+              extent={{-60,80},{60,20}},
+              lineColor={28,108,200},
+              fillColor={238,46,47},
+              fillPattern=FillPattern.Solid),                           Rectangle(
+              extent={{-60,-20},{60,-80}},
+              lineColor={28,108,200},
+              fillColor={28,108,200},
+              fillPattern=FillPattern.Solid)}));
+    end TFP_solo;
+
+    model TFP_duo
+      extends Fluid.Interfaces.PartialEightPortInterface;
+
+      parameter Modelica.SIunits.MassFlowRate m_flow_hot= 332*1000/3600;
+      parameter Modelica.SIunits.MassFlowRate m_flow_cold= 211*1000/3600;
+      parameter Real T_set_hot = 61;
+      parameter Real T_set_hot_max = 63;
+      parameter Real T_set_hot_min = 41;
+      parameter Real T_set_cold_max = 14;
+      parameter Real T_set_cold = 4;
+
+      Fluid.FixedResistances.Junction jun(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={m_flow_hot,-m_flow_hot,-m_flow_hot},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={10,250})));
+      Fluid.Actuators.Valves.TwoWayLinear XV521(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=m_flow_hot,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10)
+        annotation (Placement(transformation(extent={{-40,180},{-60,200}})));
+      Fluid.Actuators.Valves.TwoWayLinear XV522(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=m_flow_hot,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={70,230})));
+      Fluid.Actuators.Valves.TwoWayLinear CV522(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=m_flow_hot,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10)
+        annotation (Placement(transformation(extent={{-60,140},{-40,160}})));
+      Fluid.Actuators.Valves.TwoWayLinear CV521(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=m_flow_hot,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={10,210})));
+      Fluid.Actuators.Valves.TwoWayLinear CV523(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=m_flow_hot,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={10,50})));
+      Fluid.FixedResistances.Junction jun1(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={m_flow_hot,-m_flow_hot,m_flow_hot},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{-10,10},{10,-10}},
+            rotation=270,
+            origin={-90,190})));
+      Fluid.FixedResistances.Junction jun2(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={m_flow_hot,-m_flow_hot,m_flow_hot},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={10,150})));
+      Fluid.FixedResistances.Junction jun3(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={m_flow_hot,-m_flow_hot,-m_flow_hot},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{-10,10},{10,-10}},
+            rotation=90,
+            origin={70,190})));
+      Fluid.Chillers.ElectricReformulatedEIR TFPA(redeclare package Medium1 =
+            Buildings.Media.Water, redeclare package Medium2 =
+            Buildings.Media.Water,
+        m1_flow_nominal=m_flow_hot,
+        m2_flow_nominal=m_flow_cold/2,
+        dp1_nominal=70000,
+        dp2_nominal=70000,
+        per=Buildings.Fluid.Chillers.Data.ElectricReformulatedEIR.ReformEIRChiller_Trane_RTHB_1051kW_5_05COP_Valve())
+        annotation (Placement(transformation(extent={{-40,-20},{-20,0}})));
+      Fluid.Chillers.ElectricReformulatedEIR TFPB(redeclare package Medium1 =
+            Buildings.Media.Water, redeclare package Medium2 =
+            Buildings.Media.Water,
+        m1_flow_nominal=m_flow_hot,
+        m2_flow_nominal=m_flow_cold/2,
+        dp1_nominal=70000,
+        dp2_nominal=70000,
+        per=Buildings.Fluid.Chillers.Data.ElectricReformulatedEIR.ReformEIRChiller_Trane_RTHB_1051kW_5_05COP_Valve())
+        annotation (Placement(transformation(extent={{20,-20},{40,0}})));
+      Fluid.FixedResistances.Junction jun4(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={100,-100,-100},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{-10,10},{10,-10}},
+            rotation=90,
+            origin={50,-50})));
+      Fluid.Actuators.Valves.TwoWayLinear XV112A(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=100,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={-50,-90})));
+      Fluid.Actuators.Valves.TwoWayLinear CV121(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=100,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={50,-210})));
+      Fluid.Actuators.Valves.TwoWayLinear CV123(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=100,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(
+            transformation(
+            extent={{-10,10},{10,-10}},
+            rotation=90,
+            origin={50,-110})));
+      Fluid.FixedResistances.Junction jun5(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={100,-100,-100},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={50,-250})));
+      Fluid.FixedResistances.Junction jun6(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={100,-100,100},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{-10,10},{10,-10}},
+            rotation=270,
+            origin={-50,-130})));
+      Fluid.Actuators.Valves.TwoWayLinear CV122(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=100,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={-10,-200})));
+      Fluid.Actuators.Valves.TwoWayLinear XV112B(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=100,
+        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+        dpValve_nominal=10) annotation (Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={10,-90})));
+      Fluid.FixedResistances.Junction jun7(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal={100,-100,100},
+        dp_nominal={0,0,0})
+        annotation (Placement(transformation(extent={{10,-10},{-10,10}},
+            rotation=270,
+            origin={50,-170})));
+      Fluid.Sensors.VolumeFlowRate FT521(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=-90,
+            origin={10,90})));
+      Controls.Continuous.LimPID FT_PID_521(k=1, Ti=1)
+        annotation (Placement(transformation(extent={{200,120},{220,140}})));
+      Controls.Continuous.LimPID FT_PID_123(k=1, Ti=1)
+        annotation (Placement(transformation(extent={{180,-100},{200,-80}})));
+      Fluid.Sensors.VolumeFlowRate FT121(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=-90,
+            origin={50,-140})));
+      Fluid.Sensors.TemperatureTwoPort TT111(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100)
+        annotation (Placement(transformation(extent={{-60,-170},{-80,-150}})));
+      Fluid.Sensors.TemperatureTwoPort TT511(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100)
+        annotation (Placement(transformation(extent={{80,250},{100,270}})));
+      Fluid.Sensors.TemperatureTwoPort TT521(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{-10,10},{10,-10}},
+            rotation=-90,
+            origin={10,120})));
+      Modelica.Blocks.Interfaces.IntegerInput mode
+        annotation (Placement(transformation(extent={{-220,70},{-180,110}}),
+            iconTransformation(extent={{-20,-20},{20,20}},
+            rotation=90,
+            origin={-80,-120})));
+      Modelica.Blocks.Sources.RealExpression XV521_switch(y=if mode == 1 then 1
+             else 0)
+        annotation (Placement(transformation(extent={{-240,240},{-220,260}})));
+      Modelica.Blocks.Sources.RealExpression XV522_switch(y=if mode >= 2 then 1
+             else 0)
+        annotation (Placement(transformation(extent={{-240,210},{-220,230}})));
+      Modelica.Blocks.Sources.RealExpression XV112A_switch(y=if mode >= 1 then 1
+             else 0)
+        annotation (Placement(transformation(extent={{-240,-40},{-220,-20}})));
+      Modelica.Blocks.Sources.RealExpression XV112B_switch(y=if mode == 1 or mode ==
+            3 then 1 else 0)
+        annotation (Placement(transformation(extent={{-240,-80},{-220,-60}})));
+      Modelica.Blocks.Math.RealToBoolean TFPA_on(threshold=0.5)
+        annotation (Placement(transformation(extent={{-180,20},{-160,40}})));
+      Modelica.Blocks.Math.RealToBoolean TFPB_on
+        annotation (Placement(transformation(extent={{-180,-20},{-160,0}})));
+      Modelica.Blocks.Sources.RealExpression cons_cold(y=T_set_cold)
+        annotation (Placement(transformation(extent={{-240,40},{-220,60}})));
+      Modelica.Blocks.Sources.RealExpression CV123_reg(y=if mode == 1 or mode
+             == 3 then 166/3600 else 332/3600)
+        annotation (Placement(transformation(extent={{140,-100},{160,-80}})));
+      Modelica.Blocks.Interfaces.RealInput DEG_TT121
+        annotation (Placement(transformation(extent={{-220,-120},{-180,-80}}),
+            iconTransformation(extent={{-20,-20},{20,20}},
+            rotation=90,
+            origin={80,-120})));
+      Modelica.Blocks.Interfaces.RealInput PEM_TT200
+        annotation (Placement(transformation(extent={{-220,-160},{-180,-120}}),
+            iconTransformation(extent={{-20,-20},{20,20}},
+            rotation=90,
+            origin={0,-120})));
+      Fluid.Sensors.TemperatureTwoPort TT121(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{10,10},{-10,-10}},
+            rotation=270,
+            origin={50,-80})));
+      Controls_a.TFP.PID_Valve_evap pID_Valve_evap annotation (Placement(
+            transformation(extent={{-120,-240},{-100,-220}})));
+      Controls_a.TFP.PID_Valve_cond pID_Valve_cond
+        annotation (Placement(transformation(extent={{-200,160},{-180,180}})));
+      Modelica.Blocks.Sources.RealExpression CV523_reg(y=211/3600)
+        annotation (Placement(transformation(extent={{140,120},{160,140}})));
+      Modelica.Blocks.Interfaces.RealOutput y
+        annotation (Placement(transformation(extent={{100,50},{120,70}})));
+      Modelica.Blocks.Interfaces.RealOutput y1
+        annotation (Placement(transformation(extent={{100,-70},{120,-50}})));
+    equation
+      connect(port_a1, jun.port_1) annotation (Line(points={{-100,80},{-140,80},
+              {-140,280},{10,280},{10,260}},
+                                       color={238,46,47}));
+      connect(jun.port_2, CV521.port_a)
+        annotation (Line(points={{10,240},{10,220}}, color={238,46,47}));
+      connect(CV521.port_b, jun2.port_1)
+        annotation (Line(points={{10,200},{10,160}}, color={238,46,47}));
+      connect(jun2.port_3, CV522.port_b)
+        annotation (Line(points={{1.77636e-15,150},{-40,150}},
+                                                     color={238,46,47}));
+      connect(jun1.port_3, XV521.port_b)
+        annotation (Line(points={{-80,190},{-60,190}},  color={238,46,47}));
+      connect(jun.port_3, jun1.port_1) annotation (Line(points={{0,250},{-90,
+              250},{-90,200}},
+                          color={238,46,47}));
+      connect(CV523.port_b, TFPA.port_a1) annotation (Line(points={{10,40},{10,20},{
+              -60,20},{-60,-4},{-40,-4}}, color={238,46,47}));
+      connect(TFPA.port_b1, TFPB.port_a1)
+        annotation (Line(points={{-20,-4},{20,-4}}, color={238,46,47}));
+      connect(port_b2, jun1.port_2) annotation (Line(points={{-100,30},{-92,30},
+              {-92,180},{-90,180}},
+                     color={238,46,47}));
+      connect(jun4.port_2, TFPB.port_a2)
+        annotation (Line(points={{50,-40},{50,-16},{40,-16}}, color={0,127,255}));
+      connect(jun4.port_3, TFPA.port_a2) annotation (Line(points={{40,-50},{-10,-50},
+              {-10,-16},{-20,-16}}, color={0,127,255}));
+      connect(XV112A.port_a, TFPA.port_b2) annotation (Line(points={{-50,-80},{-50,-16},
+              {-40,-16}}, color={0,127,255}));
+      connect(XV112B.port_a, TFPB.port_b2)
+        annotation (Line(points={{10,-80},{10,-16},{20,-16}}, color={0,127,255}));
+      connect(XV112A.port_b, jun6.port_1)
+        annotation (Line(points={{-50,-100},{-50,-120}}, color={0,127,255}));
+      connect(jun6.port_3, XV112B.port_b) annotation (Line(points={{-40,-130},{
+              10,-130},{10,-100}}, color={0,127,255}));
+      connect(port_a2, CV522.port_a) annotation (Line(points={{100,30},{-72,30},{-72,
+              150},{-60,150}},      color={238,46,47}));
+      connect(jun7.port_1, CV121.port_b)
+        annotation (Line(points={{50,-180},{50,-200}}, color={0,127,255}));
+      connect(port_a3, CV122.port_a) annotation (Line(points={{-100,-32},{-140,
+              -32},{-140,-200},{-20,-200}}, color={0,127,255}));
+      connect(CV122.port_b, jun7.port_3) annotation (Line(points={{0,-200},{10,
+              -200},{10,-170},{40,-170}},    color={0,127,255}));
+      connect(TFPB.port_b1, jun3.port_1)
+        annotation (Line(points={{40,-4},{70,-4},{70,180}}, color={238,46,47}));
+      connect(jun3.port_3, XV521.port_a)
+        annotation (Line(points={{60,190},{-40,190}}, color={238,46,47}));
+      connect(jun3.port_2, XV522.port_a)
+        annotation (Line(points={{70,200},{70,220}}, color={238,46,47}));
+      connect(CV121.port_a, jun5.port_2)
+        annotation (Line(points={{50,-220},{50,-240}}, color={0,127,255}));
+      connect(jun5.port_3, port_b3) annotation (Line(points={{60,-250},{120,
+              -250},{120,-30},{100,-30}}, color={0,127,255}));
+      connect(FT521.port_b, CV523.port_a)
+        annotation (Line(points={{10,80},{10,60}}, color={238,46,47}));
+      connect(FT521.V_flow, FT_PID_521.u_m) annotation (Line(points={{21,90},{50,90},
+              {50,100},{210,100},{210,118}}, color={0,0,127}));
+      connect(FT_PID_521.y, CV523.y) annotation (Line(points={{221,130},{240,130},{240,
+              50},{22,50}}, color={0,0,127}));
+      connect(CV123.port_a, FT121.port_a)
+        annotation (Line(points={{50,-120},{50,-130}}, color={0,127,255}));
+      connect(FT121.port_b, jun7.port_2)
+        annotation (Line(points={{50,-150},{50,-160}}, color={0,127,255}));
+      connect(FT121.V_flow, FT_PID_123.u_m) annotation (Line(points={{61,-140},
+              {190,-140},{190,-102}},
+                                 color={0,0,127}));
+      connect(FT_PID_123.y, CV123.y) annotation (Line(points={{201,-90},{220,
+              -90},{220,-68},{80,-68},{80,-110},{62,-110}},
+                                                color={0,0,127}));
+      connect(jun6.port_2, TT111.port_a) annotation (Line(points={{-50,-140},{
+              -50,-160},{-60,-160}}, color={0,127,255}));
+      connect(TT111.port_b, port_b4) annotation (Line(points={{-80,-160},{-100,
+              -160},{-100,-80}}, color={0,127,255}));
+      connect(XV522.port_b, TT511.port_a) annotation (Line(points={{70,240},{70,
+              260},{80,260}}, color={238,46,47}));
+      connect(TT511.port_b, port_b1) annotation (Line(points={{100,260},{120,
+              260},{120,80},{100,80}}, color={238,46,47}));
+      connect(jun2.port_2, TT521.port_a)
+        annotation (Line(points={{10,140},{10,130}}, color={238,46,47}));
+      connect(TT521.port_b, FT521.port_a)
+        annotation (Line(points={{10,110},{10,100}}, color={238,46,47}));
+      connect(XV521_switch.y, XV521.y) annotation (Line(points={{-219,250},{
+              -160,250},{-160,240},{-50,240},{-50,202}},
+                                               color={0,0,127}));
+      connect(XV522_switch.y, XV522.y) annotation (Line(points={{-219,220},{
+              -160,220},{-160,230},{58,230}},
+                                    color={0,0,127}));
+      connect(XV112A_switch.y, XV112A.y) annotation (Line(points={{-219,-30},{
+              -152,-30},{-152,-50},{-30,-50},{-30,-90},{-38,-90}},
+                                                         color={0,0,127}));
+      connect(XV112B_switch.y, XV112B.y) annotation (Line(points={{-219,-70},{
+              30,-70},{30,-90},{22,-90}},
+                                  color={0,0,127}));
+      connect(XV112A_switch.y, TFPA_on.u) annotation (Line(points={{-219,-30},{
+              -192,-30},{-192,30},{-182,30}},
+                                         color={0,0,127}));
+      connect(XV112B_switch.y, TFPB_on.u) annotation (Line(points={{-219,-70},{
+              -200,-70},{-200,-10},{-182,-10}},
+                                           color={0,0,127}));
+      connect(TFPB_on.y, TFPB.on) annotation (Line(points={{-159,-10},{-64,-10},
+              {-64,-24},{4,-24},{4,-7},{18,-7}},
+                                            color={255,0,255}));
+      connect(TFPA_on.y, TFPA.on) annotation (Line(points={{-159,30},{-140,30},
+              {-140,-7},{-42,-7}},
+                             color={255,0,255}));
+      connect(cons_cold.y, TFPA.TSet) annotation (Line(points={{-219,50},{-120,
+              50},{-120,-13},{-42,-13}},
+                                    color={0,0,127}));
+      connect(cons_cold.y, TFPB.TSet) annotation (Line(points={{-219,50},{-120,
+              50},{-120,8},{8,8},{8,-13},{18,-13}},
+                                               color={0,0,127}));
+      connect(CV123_reg.y, FT_PID_123.u_s)
+        annotation (Line(points={{161,-90},{178,-90}}, color={0,0,127}));
+      connect(jun5.port_1, port_a4) annotation (Line(points={{50,-260},{50,-280},
+              {100,-280},{100,-80}}, color={0,127,255}));
+      connect(jun4.port_1, TT121.port_b)
+        annotation (Line(points={{50,-60},{50,-70}}, color={0,127,255}));
+      connect(TT121.port_a, CV123.port_b)
+        annotation (Line(points={{50,-90},{50,-100}}, color={0,127,255}));
+      connect(pID_Valve_evap.CV122, CV122.y) annotation (Line(points={{-99,-225},
+              {-60,-225},{-60,-180},{-10,-180},{-10,-188}}, color={0,0,127}));
+      connect(pID_Valve_evap.CV121, CV121.y) annotation (Line(points={{-99,-235},
+              {20,-235},{20,-210},{38,-210}}, color={0,0,127}));
+      connect(DEG_TT121, pID_Valve_evap.DEG_TT121) annotation (Line(points={{-200,
+              -100},{-170,-100},{-170,-226},{-122,-226}},      color={0,0,127}));
+      connect(PEM_TT200, pID_Valve_evap.PEM_TT200) annotation (Line(points={{-200,
+              -140},{-160,-140},{-160,-222},{-122,-222}},      color={0,0,127}));
+      connect(pID_Valve_evap.TFP_TT121, TT121.T) annotation (Line(points={{-122,
+              -234},{-220,-234},{-220,-262},{34,-262},{34,-80},{39,-80}}, color=
+             {0,0,127}));
+      connect(TT511.T, pID_Valve_evap.TFP_TT511) annotation (Line(points={{90,271},
+              {90,300},{-250,300},{-250,-252},{-208,-252},{-208,-238},{-122,
+              -238}},      color={0,0,127}));
+      connect(pID_Valve_cond.CV522, CV522.y) annotation (Line(points={{-179,175},
+              {-50,175},{-50,162}}, color={0,0,127}));
+      connect(pID_Valve_cond.CV521, CV521.y) annotation (Line(points={{-179,165},
+              {-70,165},{-70,170},{40,170},{40,210},{22,210}}, color={0,0,127}));
+      connect(TT511.T, pID_Valve_cond.TFP_TT511) annotation (Line(points={{90,271},
+              {90,300},{-250,300},{-250,176},{-202,176}},      color={0,0,127}));
+      connect(TT521.T, pID_Valve_cond.TFP_TT521) annotation (Line(points={{-1,
+              120},{-220,120},{-220,162},{-202,162}}, color={0,0,127}));
+      connect(CV523_reg.y, FT_PID_521.u_s)
+        annotation (Line(points={{161,130},{198,130}}, color={0,0,127}));
+      connect(pID_Valve_cond.CV522, y) annotation (Line(points={{-179,175},{80,
+              175},{80,60},{110,60}}, color={0,0,127}));
+      connect(pID_Valve_evap.CV122, y1) annotation (Line(points={{-99,-225},{-8,
+              -225},{-8,-226},{90,-226},{90,-60},{110,-60}}, color={0,0,127}));
+      annotation (Diagram(coordinateSystem(extent={{-100,-100},{100,100}})), Icon(
+            coordinateSystem(extent={{-100,-100},{100,100}}), graphics={Rectangle(
+              extent={{-60,80},{60,20}},
+              lineColor={28,108,200},
+              fillColor={238,46,47},
+              fillPattern=FillPattern.Solid),                           Rectangle(
+              extent={{-60,-20},{60,-80}},
+              lineColor={28,108,200},
+              fillColor={28,108,200},
+              fillPattern=FillPattern.Solid)}));
+    end TFP_duo;
+
     package Tests
       extends Modelica.Icons.ExamplesPackage;
 
@@ -5535,19 +6808,17 @@ has a higher priority to fire as alternative.split[2]).
               extent={{-10,10},{10,-10}},
               rotation=0,
               origin={160,-70})));
-        Fluid.Movers.FlowControlled_m_flow fan(
-          redeclare package Medium = Buildings.Media.Water,
-          m_flow_nominal=720/3.6,
-          redeclare Fluid.Movers.Data.KSB_edm per,
-          inputType=Buildings.Fluid.Types.InputType.Constant,
-          addPowerToMedium=false,
-          nominalValuesDefineDefaultPressureCurve=true,
-          dp_nominal=87000,
-          constantMassFlowRate=720/3.6)
-          annotation (Placement(transformation(extent={{270,40},{250,60}})));
         Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
               Buildings.Media.Water, m_flow_nominal=190/3.6)
           annotation (Placement(transformation(extent={{230,40},{210,60}})));
+        Fluid.Movers.FlowControlled_dp fan(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=720/3.6,
+          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          addPowerToMedium=false,
+          constantHead(displayUnit="bar") = 187000)
+          annotation (Placement(transformation(extent={{280,40},{260,60}})));
       equation
             for j in 1:12 loop
             temperatures[j]=combiTimeTable.y[j];
@@ -5670,15 +6941,15 @@ has a higher priority to fire as alternative.split[2]).
         connect(heat_exchanger.port_b1, jun3.port_3) annotation (Line(points={{
                 36,60},{36,40},{150,40},{150,-20},{160,-20},{160,-60}}, color={
                 0,127,255}));
-        connect(fan.port_a, bou2.ports[2]) annotation (Line(points={{270,50},{
-                280,50},{280,-12},{300,-12}}, color={0,127,255}));
-        connect(fan.port_b, TT200.port_a)
-          annotation (Line(points={{250,50},{230,50}}, color={0,127,255}));
         connect(jun2.port_1, TT200.port_b) annotation (Line(points={{190,40},{
                 190,50},{210,50}}, color={0,127,255}));
         connect(combiTimeTable.y[11], bou2.T_in) annotation (Line(points={{-219,
                 110},{-200,110},{-200,-160},{338,-160},{338,-6},{322,-6}},
               color={0,0,127}));
+        connect(TT200.port_a, fan.port_b)
+          annotation (Line(points={{230,50},{260,50}}, color={0,127,255}));
+        connect(fan.port_a, bou2.ports[2]) annotation (Line(points={{280,50},{
+                288,50},{288,-12},{300,-12}}, color={0,127,255}));
         annotation (
           Icon(coordinateSystem(preserveAspectRatio=false)),
           Diagram(coordinateSystem(preserveAspectRatio=false)),
@@ -5689,411 +6960,6 @@ has a higher priority to fire as alternative.split[2]).
       end TFP_simple_pump;
     end Tests;
 
-
-    model TFP_duo
-      extends Fluid.Interfaces.PartialEightPortInterface;
-
-      parameter Modelica.SIunits.MassFlowRate m_flow_hot= 332*1000/3600;
-      parameter Modelica.SIunits.MassFlowRate m_flow_cold= 211*1000/3600;
-      parameter Real T_set_hot = 61;
-      parameter Real T_set_hot_max = 63;
-      parameter Real T_set_hot_min = 41;
-      parameter Real T_set_cold_max = 14;
-      parameter Real T_set_cold = 4;
-
-      Fluid.FixedResistances.Junction jun(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal={m_flow_hot,-m_flow_hot,-m_flow_hot},
-        dp_nominal={0,0,0})
-        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={10,250})));
-      Fluid.Actuators.Valves.TwoWayLinear XV521(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=m_flow_hot,
-        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
-        dpValve_nominal=10)
-        annotation (Placement(transformation(extent={{-40,180},{-60,200}})));
-      Fluid.Actuators.Valves.TwoWayLinear XV522(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=m_flow_hot,
-        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
-        dpValve_nominal=10) annotation (Placement(
-            transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={70,230})));
-      Fluid.Actuators.Valves.TwoWayLinear CV522(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=m_flow_hot,
-        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
-        dpValve_nominal=10)
-        annotation (Placement(transformation(extent={{-60,140},{-40,160}})));
-      Fluid.Actuators.Valves.TwoWayLinear CV521(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=m_flow_hot,
-        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
-        dpValve_nominal=10) annotation (Placement(
-            transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={10,210})));
-      Fluid.Actuators.Valves.TwoWayLinear CV523(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=m_flow_hot,
-        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
-        dpValve_nominal=10) annotation (Placement(
-            transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={10,50})));
-      Fluid.FixedResistances.Junction jun1(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal={m_flow_hot,-m_flow_hot,m_flow_hot},
-        dp_nominal={0,0,0})
-        annotation (Placement(transformation(extent={{-10,10},{10,-10}},
-            rotation=270,
-            origin={-90,190})));
-      Fluid.FixedResistances.Junction jun2(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal={m_flow_hot,-m_flow_hot,m_flow_hot},
-        dp_nominal={0,0,0})
-        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={10,150})));
-      Fluid.FixedResistances.Junction jun3(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal={m_flow_hot,-m_flow_hot,-m_flow_hot},
-        dp_nominal={0,0,0})
-        annotation (Placement(transformation(extent={{-10,10},{10,-10}},
-            rotation=90,
-            origin={70,190})));
-      Fluid.Chillers.ElectricReformulatedEIR TFPA(redeclare package Medium1 =
-            Buildings.Media.Water, redeclare package Medium2 =
-            Buildings.Media.Water,
-        m1_flow_nominal=m_flow_hot,
-        m2_flow_nominal=m_flow_cold/2,
-        dp1_nominal=70000,
-        dp2_nominal=70000,
-        per=Buildings.Fluid.Chillers.Data.ElectricReformulatedEIR.ReformEIRChiller_Trane_RTHB_1051kW_5_05COP_Valve())
-        annotation (Placement(transformation(extent={{-40,-20},{-20,0}})));
-      Fluid.Chillers.ElectricReformulatedEIR TFPB(redeclare package Medium1 =
-            Buildings.Media.Water, redeclare package Medium2 =
-            Buildings.Media.Water,
-        m1_flow_nominal=m_flow_hot,
-        m2_flow_nominal=m_flow_cold/2,
-        dp1_nominal=70000,
-        dp2_nominal=70000,
-        per=Buildings.Fluid.Chillers.Data.ElectricReformulatedEIR.ReformEIRChiller_Trane_RTHB_1051kW_5_05COP_Valve())
-        annotation (Placement(transformation(extent={{20,-20},{40,0}})));
-      Fluid.FixedResistances.Junction jun4(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal={100,-100,-100},
-        dp_nominal={0,0,0})
-        annotation (Placement(transformation(extent={{-10,10},{10,-10}},
-            rotation=90,
-            origin={50,-50})));
-      Fluid.Actuators.Valves.TwoWayLinear XV112A(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=100,
-        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
-        dpValve_nominal=10) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={-50,-90})));
-      Fluid.Actuators.Valves.TwoWayLinear CV121(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=100,
-        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
-        dpValve_nominal=10) annotation (Placement(
-            transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={50,-210})));
-      Fluid.Actuators.Valves.TwoWayLinear CV123(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=100,
-        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
-        dpValve_nominal=10) annotation (Placement(
-            transformation(
-            extent={{-10,10},{10,-10}},
-            rotation=90,
-            origin={50,-110})));
-      Fluid.FixedResistances.Junction jun5(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal={100,-100,-100},
-        dp_nominal={0,0,0})
-        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={50,-250})));
-      Fluid.FixedResistances.Junction jun6(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal={100,-100,100},
-        dp_nominal={0,0,0})
-        annotation (Placement(transformation(extent={{-10,10},{10,-10}},
-            rotation=270,
-            origin={-50,-130})));
-      Fluid.Actuators.Valves.TwoWayLinear CV122(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=100,
-        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
-        dpValve_nominal=10) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=0,
-            origin={-10,-200})));
-      Fluid.Actuators.Valves.TwoWayLinear XV112B(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=100,
-        CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
-        dpValve_nominal=10) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={10,-90})));
-      Fluid.FixedResistances.Junction jun7(
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal={100,-100,100},
-        dp_nominal={0,0,0})
-        annotation (Placement(transformation(extent={{10,-10},{-10,10}},
-            rotation=270,
-            origin={50,-170})));
-      Fluid.Sensors.VolumeFlowRate FT521(redeclare package Medium =
-            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
-            transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=-90,
-            origin={10,90})));
-      Controls.Continuous.LimPID FT_PID_521(k=1, Ti=1)
-        annotation (Placement(transformation(extent={{200,120},{220,140}})));
-      Controls.Continuous.LimPID FT_PID_123(k=1, Ti=1)
-        annotation (Placement(transformation(extent={{180,-100},{200,-80}})));
-      Fluid.Sensors.VolumeFlowRate FT121(redeclare package Medium =
-            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
-            transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=-90,
-            origin={50,-140})));
-      Fluid.Sensors.TemperatureTwoPort TT111(redeclare package Medium =
-            Buildings.Media.Water, m_flow_nominal=100)
-        annotation (Placement(transformation(extent={{-60,-170},{-80,-150}})));
-      Fluid.Sensors.TemperatureTwoPort TT511(redeclare package Medium =
-            Buildings.Media.Water, m_flow_nominal=100)
-        annotation (Placement(transformation(extent={{80,250},{100,270}})));
-      Fluid.Sensors.TemperatureTwoPort TT521(redeclare package Medium =
-            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
-            transformation(
-            extent={{-10,10},{10,-10}},
-            rotation=-90,
-            origin={10,120})));
-      Modelica.Blocks.Interfaces.IntegerInput mode
-        annotation (Placement(transformation(extent={{-220,70},{-180,110}}),
-            iconTransformation(extent={{-20,-20},{20,20}},
-            rotation=90,
-            origin={-80,-120})));
-      Modelica.Blocks.Sources.RealExpression XV521_switch(y=if mode == 1 then 1
-             else 0)
-        annotation (Placement(transformation(extent={{-240,240},{-220,260}})));
-      Modelica.Blocks.Sources.RealExpression XV522_switch(y=if mode >= 2 then 1
-             else 0)
-        annotation (Placement(transformation(extent={{-240,210},{-220,230}})));
-      Modelica.Blocks.Sources.RealExpression XV112A_switch(y=if mode >= 1 then 1
-             else 0)
-        annotation (Placement(transformation(extent={{-240,-40},{-220,-20}})));
-      Modelica.Blocks.Sources.RealExpression XV112B_switch(y=if mode == 1 or mode ==
-            3 then 1 else 0)
-        annotation (Placement(transformation(extent={{-240,-80},{-220,-60}})));
-      Modelica.Blocks.Math.RealToBoolean TFPA_on(threshold=0.5)
-        annotation (Placement(transformation(extent={{-180,20},{-160,40}})));
-      Modelica.Blocks.Math.RealToBoolean TFPB_on
-        annotation (Placement(transformation(extent={{-180,-20},{-160,0}})));
-      Modelica.Blocks.Sources.RealExpression cons_cold(y=T_set_cold)
-        annotation (Placement(transformation(extent={{-240,40},{-220,60}})));
-      Modelica.Blocks.Sources.RealExpression CV123_reg(y=if mode == 1 or mode
-             == 3 then 166/3600 else 332/3600)
-        annotation (Placement(transformation(extent={{140,-100},{160,-80}})));
-      Modelica.Blocks.Interfaces.RealInput DEG_TT121
-        annotation (Placement(transformation(extent={{-220,-120},{-180,-80}}),
-            iconTransformation(extent={{-20,-20},{20,20}},
-            rotation=90,
-            origin={80,-120})));
-      Modelica.Blocks.Interfaces.RealInput PEM_TT200
-        annotation (Placement(transformation(extent={{-220,-160},{-180,-120}}),
-            iconTransformation(extent={{-20,-20},{20,20}},
-            rotation=90,
-            origin={0,-120})));
-      Fluid.Sensors.TemperatureTwoPort TT121(redeclare package Medium =
-            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
-            transformation(
-            extent={{10,10},{-10,-10}},
-            rotation=270,
-            origin={50,-80})));
-      Controls_a.TFP.PID_Valve_evap pID_Valve_evap annotation (Placement(
-            transformation(extent={{-120,-240},{-100,-220}})));
-      Controls_a.TFP.PID_Valve_cond pID_Valve_cond
-        annotation (Placement(transformation(extent={{-200,160},{-180,180}})));
-      Modelica.Blocks.Sources.RealExpression CV523_reg(y=211/3600)
-        annotation (Placement(transformation(extent={{140,120},{160,140}})));
-      Modelica.Blocks.Interfaces.RealOutput y
-        annotation (Placement(transformation(extent={{100,50},{120,70}})));
-      Modelica.Blocks.Interfaces.RealOutput y1
-        annotation (Placement(transformation(extent={{100,-70},{120,-50}})));
-    equation
-      connect(port_a1, jun.port_1) annotation (Line(points={{-100,80},{-140,80},
-              {-140,280},{10,280},{10,260}},
-                                       color={238,46,47}));
-      connect(jun.port_2, CV521.port_a)
-        annotation (Line(points={{10,240},{10,220}}, color={238,46,47}));
-      connect(CV521.port_b, jun2.port_1)
-        annotation (Line(points={{10,200},{10,160}}, color={238,46,47}));
-      connect(jun2.port_3, CV522.port_b)
-        annotation (Line(points={{1.77636e-15,150},{-40,150}},
-                                                     color={238,46,47}));
-      connect(jun1.port_3, XV521.port_b)
-        annotation (Line(points={{-80,190},{-60,190}},  color={238,46,47}));
-      connect(jun.port_3, jun1.port_1) annotation (Line(points={{0,250},{-90,
-              250},{-90,200}},
-                          color={238,46,47}));
-      connect(CV523.port_b, TFPA.port_a1) annotation (Line(points={{10,40},{10,20},{
-              -60,20},{-60,-4},{-40,-4}}, color={238,46,47}));
-      connect(TFPA.port_b1, TFPB.port_a1)
-        annotation (Line(points={{-20,-4},{20,-4}}, color={238,46,47}));
-      connect(port_b2, jun1.port_2) annotation (Line(points={{-100,30},{-92,30},
-              {-92,180},{-90,180}},
-                     color={238,46,47}));
-      connect(jun4.port_2, TFPB.port_a2)
-        annotation (Line(points={{50,-40},{50,-16},{40,-16}}, color={0,127,255}));
-      connect(jun4.port_3, TFPA.port_a2) annotation (Line(points={{40,-50},{-10,-50},
-              {-10,-16},{-20,-16}}, color={0,127,255}));
-      connect(XV112A.port_a, TFPA.port_b2) annotation (Line(points={{-50,-80},{-50,-16},
-              {-40,-16}}, color={0,127,255}));
-      connect(XV112B.port_a, TFPB.port_b2)
-        annotation (Line(points={{10,-80},{10,-16},{20,-16}}, color={0,127,255}));
-      connect(XV112A.port_b, jun6.port_1)
-        annotation (Line(points={{-50,-100},{-50,-120}}, color={0,127,255}));
-      connect(jun6.port_3, XV112B.port_b) annotation (Line(points={{-40,-130},{
-              10,-130},{10,-100}}, color={0,127,255}));
-      connect(port_a2, CV522.port_a) annotation (Line(points={{100,30},{-72,30},{-72,
-              150},{-60,150}},      color={238,46,47}));
-      connect(jun7.port_1, CV121.port_b)
-        annotation (Line(points={{50,-180},{50,-200}}, color={0,127,255}));
-      connect(port_a3, CV122.port_a) annotation (Line(points={{-100,-32},{-140,
-              -32},{-140,-200},{-20,-200}}, color={0,127,255}));
-      connect(CV122.port_b, jun7.port_3) annotation (Line(points={{0,-200},{10,
-              -200},{10,-170},{40,-170}},    color={0,127,255}));
-      connect(TFPB.port_b1, jun3.port_1)
-        annotation (Line(points={{40,-4},{70,-4},{70,180}}, color={238,46,47}));
-      connect(jun3.port_3, XV521.port_a)
-        annotation (Line(points={{60,190},{-40,190}}, color={238,46,47}));
-      connect(jun3.port_2, XV522.port_a)
-        annotation (Line(points={{70,200},{70,220}}, color={238,46,47}));
-      connect(CV121.port_a, jun5.port_2)
-        annotation (Line(points={{50,-220},{50,-240}}, color={0,127,255}));
-      connect(jun5.port_3, port_b3) annotation (Line(points={{60,-250},{120,
-              -250},{120,-30},{100,-30}}, color={0,127,255}));
-      connect(FT521.port_b, CV523.port_a)
-        annotation (Line(points={{10,80},{10,60}}, color={238,46,47}));
-      connect(FT521.V_flow, FT_PID_521.u_m) annotation (Line(points={{21,90},{50,90},
-              {50,100},{210,100},{210,118}}, color={0,0,127}));
-      connect(FT_PID_521.y, CV523.y) annotation (Line(points={{221,130},{240,130},{240,
-              50},{22,50}}, color={0,0,127}));
-      connect(CV123.port_a, FT121.port_a)
-        annotation (Line(points={{50,-120},{50,-130}}, color={0,127,255}));
-      connect(FT121.port_b, jun7.port_2)
-        annotation (Line(points={{50,-150},{50,-160}}, color={0,127,255}));
-      connect(FT121.V_flow, FT_PID_123.u_m) annotation (Line(points={{61,-140},
-              {190,-140},{190,-102}},
-                                 color={0,0,127}));
-      connect(FT_PID_123.y, CV123.y) annotation (Line(points={{201,-90},{220,
-              -90},{220,-68},{80,-68},{80,-110},{62,-110}},
-                                                color={0,0,127}));
-      connect(jun6.port_2, TT111.port_a) annotation (Line(points={{-50,-140},{
-              -50,-160},{-60,-160}}, color={0,127,255}));
-      connect(TT111.port_b, port_b4) annotation (Line(points={{-80,-160},{-100,
-              -160},{-100,-80}}, color={0,127,255}));
-      connect(XV522.port_b, TT511.port_a) annotation (Line(points={{70,240},{70,
-              260},{80,260}}, color={238,46,47}));
-      connect(TT511.port_b, port_b1) annotation (Line(points={{100,260},{120,
-              260},{120,80},{100,80}}, color={238,46,47}));
-      connect(jun2.port_2, TT521.port_a)
-        annotation (Line(points={{10,140},{10,130}}, color={238,46,47}));
-      connect(TT521.port_b, FT521.port_a)
-        annotation (Line(points={{10,110},{10,100}}, color={238,46,47}));
-      connect(XV521_switch.y, XV521.y) annotation (Line(points={{-219,250},{
-              -160,250},{-160,240},{-50,240},{-50,202}},
-                                               color={0,0,127}));
-      connect(XV522_switch.y, XV522.y) annotation (Line(points={{-219,220},{
-              -160,220},{-160,230},{58,230}},
-                                    color={0,0,127}));
-      connect(XV112A_switch.y, XV112A.y) annotation (Line(points={{-219,-30},{
-              -152,-30},{-152,-50},{-30,-50},{-30,-90},{-38,-90}},
-                                                         color={0,0,127}));
-      connect(XV112B_switch.y, XV112B.y) annotation (Line(points={{-219,-70},{
-              30,-70},{30,-90},{22,-90}},
-                                  color={0,0,127}));
-      connect(XV112A_switch.y, TFPA_on.u) annotation (Line(points={{-219,-30},{
-              -192,-30},{-192,30},{-182,30}},
-                                         color={0,0,127}));
-      connect(XV112B_switch.y, TFPB_on.u) annotation (Line(points={{-219,-70},{
-              -200,-70},{-200,-10},{-182,-10}},
-                                           color={0,0,127}));
-      connect(TFPB_on.y, TFPB.on) annotation (Line(points={{-159,-10},{-64,-10},
-              {-64,-24},{4,-24},{4,-7},{18,-7}},
-                                            color={255,0,255}));
-      connect(TFPA_on.y, TFPA.on) annotation (Line(points={{-159,30},{-140,30},
-              {-140,-7},{-42,-7}},
-                             color={255,0,255}));
-      connect(cons_cold.y, TFPA.TSet) annotation (Line(points={{-219,50},{-120,
-              50},{-120,-13},{-42,-13}},
-                                    color={0,0,127}));
-      connect(cons_cold.y, TFPB.TSet) annotation (Line(points={{-219,50},{-120,
-              50},{-120,8},{8,8},{8,-13},{18,-13}},
-                                               color={0,0,127}));
-      connect(CV123_reg.y, FT_PID_123.u_s)
-        annotation (Line(points={{161,-90},{178,-90}}, color={0,0,127}));
-      connect(jun5.port_1, port_a4) annotation (Line(points={{50,-260},{50,-280},
-              {100,-280},{100,-80}}, color={0,127,255}));
-      connect(jun4.port_1, TT121.port_b)
-        annotation (Line(points={{50,-60},{50,-70}}, color={0,127,255}));
-      connect(TT121.port_a, CV123.port_b)
-        annotation (Line(points={{50,-90},{50,-100}}, color={0,127,255}));
-      connect(pID_Valve_evap.CV122, CV122.y) annotation (Line(points={{-99,-225},
-              {-60,-225},{-60,-180},{-10,-180},{-10,-188}}, color={0,0,127}));
-      connect(pID_Valve_evap.CV121, CV121.y) annotation (Line(points={{-99,-235},
-              {20,-235},{20,-210},{38,-210}}, color={0,0,127}));
-      connect(DEG_TT121, pID_Valve_evap.DEG_TT121) annotation (Line(points={{-200,
-              -100},{-170,-100},{-170,-226},{-122,-226}},      color={0,0,127}));
-      connect(PEM_TT200, pID_Valve_evap.PEM_TT200) annotation (Line(points={{-200,
-              -140},{-160,-140},{-160,-222},{-122,-222}},      color={0,0,127}));
-      connect(pID_Valve_evap.TFP_TT121, TT121.T) annotation (Line(points={{-122,
-              -234},{-220,-234},{-220,-262},{34,-262},{34,-80},{39,-80}}, color=
-             {0,0,127}));
-      connect(TT511.T, pID_Valve_evap.TFP_TT511) annotation (Line(points={{90,271},
-              {90,300},{-250,300},{-250,-252},{-208,-252},{-208,-238},{-122,
-              -238}},      color={0,0,127}));
-      connect(pID_Valve_cond.CV522, CV522.y) annotation (Line(points={{-179,175},
-              {-50,175},{-50,162}}, color={0,0,127}));
-      connect(pID_Valve_cond.CV521, CV521.y) annotation (Line(points={{-179,165},
-              {-70,165},{-70,170},{40,170},{40,210},{22,210}}, color={0,0,127}));
-      connect(TT511.T, pID_Valve_cond.TFP_TT511) annotation (Line(points={{90,271},
-              {90,300},{-250,300},{-250,176},{-202,176}},      color={0,0,127}));
-      connect(TT521.T, pID_Valve_cond.TFP_TT521) annotation (Line(points={{-1,
-              120},{-220,120},{-220,162},{-202,162}}, color={0,0,127}));
-      connect(CV523_reg.y, FT_PID_521.u_s)
-        annotation (Line(points={{161,130},{198,130}}, color={0,0,127}));
-      connect(pID_Valve_cond.CV522, y) annotation (Line(points={{-179,175},{80,
-              175},{80,60},{110,60}}, color={0,0,127}));
-      connect(pID_Valve_evap.CV122, y1) annotation (Line(points={{-99,-225},{-8,
-              -225},{-8,-226},{90,-226},{90,-60},{110,-60}}, color={0,0,127}));
-      annotation (Diagram(coordinateSystem(extent={{-100,-100},{100,100}})), Icon(
-            coordinateSystem(extent={{-100,-100},{100,100}}), graphics={Rectangle(
-              extent={{-60,80},{60,20}},
-              lineColor={28,108,200},
-              fillColor={238,46,47},
-              fillPattern=FillPattern.Solid),                           Rectangle(
-              extent={{-60,-20},{60,-80}},
-              lineColor={28,108,200},
-              fillColor={28,108,200},
-              fillPattern=FillPattern.Solid)}));
-    end TFP_duo;
 
     model syst_reg_chaud
       Fluid.Sources.MassFlowSource_T boundary(redeclare package Medium =
@@ -6940,10 +7806,10 @@ has a higher priority to fire as alternative.split[2]).
             origin={30,60})));
         Modelica.Blocks.Interfaces.RealInput PEM_TT200
           annotation (Placement(transformation(extent={{-140,-60},{-100,-20}})));
-      Fluid.Movers.FlowControlled_m_flow fan(redeclare package Medium =
-            Buildings.Media.Water,
+      Fluid.Movers.FlowControlled_m_flow fan(
+        redeclare package Medium = Buildings.Media.Water,
         m_flow_nominal=650*994/3600,
-        redeclare Fluid.Movers.Data.KSB_RJC per,
+        redeclare Fluid.Movers.Data.Pumps.KSB.KSB_RJC per,
         inputType=Buildings.Fluid.Types.InputType.Continuous)
         annotation (Placement(transformation(extent={{-20,-70},{-40,-50}})));
         Fluid.FixedResistances.Junction jun(
@@ -7132,7 +7998,7 @@ has a higher priority to fire as alternative.split[2]).
         Fluid.Movers.FlowControlled_m_flow fan(
           redeclare package Medium = Buildings.Media.Water,
           m_flow_nominal=200,
-          redeclare Fluid.Movers.Data.KSB_edm per,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
           inputType=Buildings.Fluid.Types.InputType.Continuous,
           nominalValuesDefineDefaultPressureCurve=true,
           dp_nominal=600000)
@@ -9019,6 +9885,76 @@ has a higher priority to fire as alternative.split[2]).
               fillPattern=FillPattern.HorizontalCylinder,
               fillColor={255,255,255})}));
     end EDM_chiller;
+
+    model PEM_simple
+    extends Buildings.Fluid.Interfaces.PartialTwoPort;
+
+    parameter Real DP=18700;
+      Fluid.Sensors.MassFlowRate FQT200(redeclare package Medium =
+            Media.Sea_Water)
+        annotation (Placement(transformation(extent={{40,-10},{20,10}})));
+      Fluid.Movers.FlowControlled_dp fan(
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=720/3.6,
+        redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+        inputType=Buildings.Fluid.Types.InputType.Constant,
+        addPowerToMedium=false,
+        constantHead(displayUnit="bar") = DP)
+        annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
+      Fluid.Sources.Boundary_pT sea_water(
+        redeclare package Medium = Media.Sea_Water,
+        p=100000,
+        use_T_in=true,
+        nPorts=2) annotation (Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={-40,-30})));
+      Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=190/3.6)
+        annotation (Placement(transformation(extent={{80,-10},{60,10}})));
+      Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=190/3.6)
+        annotation (Placement(transformation(extent={{-80,-10},{-60,10}})));
+      Modelica.Blocks.Interfaces.RealInput PEM_TT200
+        annotation (Placement(transformation(extent={{-140,-80},{-100,-40}})));
+    equation
+      connect(port_a, TT201.port_a)
+        annotation (Line(points={{-100,0},{-80,0}}, color={0,127,255}));
+      connect(TT201.port_b, sea_water.ports[1]) annotation (Line(points={{-60,0},
+              {-42,0},{-42,-20}}, color={0,127,255}));
+      connect(sea_water.ports[2], fan.port_a) annotation (Line(points={{-38,-20},
+              {-38,0},{-20,0}}, color={0,127,255}));
+      connect(FQT200.port_a, TT200.port_b)
+        annotation (Line(points={{40,0},{60,0}}, color={0,127,255}));
+      connect(port_b, TT200.port_a)
+        annotation (Line(points={{100,0},{80,0}}, color={0,127,255}));
+      connect(PEM_TT200, sea_water.T_in) annotation (Line(points={{-120,-60},{-44,
+              -60},{-44,-42}}, color={0,0,127}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
+            Rectangle(
+              extent={{-100,20},{100,-12}},
+              lineColor={0,0,0},
+              fillColor={0,127,255},
+              fillPattern=FillPattern.HorizontalCylinder),
+            Ellipse(
+              extent={{-58,62},{58,-54}},
+              lineColor={0,0,0},
+              fillPattern=FillPattern.Sphere,
+              fillColor={0,100,199}),
+            Polygon(
+              points={{0,54},{0,-46},{54,4},{0,54}},
+              lineColor={0,0,0},
+              pattern=LinePattern.None,
+              fillPattern=FillPattern.HorizontalCylinder,
+              fillColor={255,255,255}),
+            Ellipse(
+              extent={{4,20},{36,-12}},
+              lineColor={0,0,0},
+              fillPattern=FillPattern.Sphere,
+              visible=energyDynamics <> Modelica.Fluid.Types.Dynamics.SteadyState,
+              fillColor={0,100,199})}),                              Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end PEM_simple;
   end PEM;
 
   package Miscellaneous
@@ -9509,7 +10445,7 @@ First implementation.
         Fluid.Movers.SpeedControlled_y fan(
           redeclare package Medium =
               Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-          redeclare Fluid.Movers.Data.KSB_edm per,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
           inputType=Buildings.Fluid.Types.InputType.Continuous,
           addPowerToMedium=false)
           annotation (Placement(transformation(extent={{-20,100},{0,120}})));
@@ -9523,31 +10459,31 @@ First implementation.
           annotation (Placement(transformation(extent={{-140,0},{-120,20}})));
         Fluid.Movers.SpeedControlled_y fan1(
           redeclare package Medium = Media.Sea_Water,
-          redeclare Fluid.Movers.Data.KSB_edm per,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
           inputType=Buildings.Fluid.Types.InputType.Continuous,
           addPowerToMedium=false)
           annotation (Placement(transformation(extent={{-20,60},{0,80}})));
         Fluid.Movers.SpeedControlled_y fan2(
           redeclare package Medium = Media.Sea_Water,
-          redeclare Fluid.Movers.Data.KSB_edm per,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
           inputType=Buildings.Fluid.Types.InputType.Continuous,
           addPowerToMedium=false)
           annotation (Placement(transformation(extent={{-20,20},{0,40}})));
         Fluid.Movers.SpeedControlled_y fan3(
           redeclare package Medium = Media.Sea_Water,
-          redeclare Fluid.Movers.Data.KSB_edm per,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
           inputType=Buildings.Fluid.Types.InputType.Continuous,
           addPowerToMedium=false)
           annotation (Placement(transformation(extent={{-20,-20},{0,0}})));
         Fluid.Movers.SpeedControlled_y fan4(
           redeclare package Medium = Media.Sea_Water,
-          redeclare Fluid.Movers.Data.KSB_edm per,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
           inputType=Buildings.Fluid.Types.InputType.Continuous,
           addPowerToMedium=false)
           annotation (Placement(transformation(extent={{-20,-60},{0,-40}})));
         Fluid.Movers.SpeedControlled_y fan5(
           redeclare package Medium = Media.Sea_Water,
-          redeclare Fluid.Movers.Data.KSB_edm per,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
           inputType=Buildings.Fluid.Types.InputType.Continuous,
           addPowerToMedium=false)
           annotation (Placement(transformation(extent={{-20,-100},{0,-80}})));
@@ -9674,7 +10610,7 @@ First implementation.
         Fluid.Movers.SpeedControlled_y fan(
           redeclare package Medium =
               Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-          redeclare Fluid.Movers.Data.KSB_edm per,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
           inputType=Buildings.Fluid.Types.InputType.Continuous,
           addPowerToMedium=false)
           annotation (Placement(transformation(extent={{-20,-40},{0,-20}})));
