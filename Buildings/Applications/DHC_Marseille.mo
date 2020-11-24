@@ -6817,7 +6817,7 @@ has a higher priority to fire as alternative.split[2]).
           redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
           inputType=Buildings.Fluid.Types.InputType.Constant,
           addPowerToMedium=false,
-          constantHead(displayUnit="bar") = 187000)
+          constantHead(displayUnit="bar") = 150000)
           annotation (Placement(transformation(extent={{280,40},{260,60}})));
       equation
             for j in 1:12 loop
@@ -8030,89 +8030,6 @@ has a higher priority to fire as alternative.split[2]).
               coordinateSystem(preserveAspectRatio=false)));
         end test_mover;
 
-        model test_temp4
-          Fluid.Sources.MassFlowSource_T boundary1(
-          redeclare package Medium = Buildings.Media.Water,
-          m_flow=200,
-          T=293.15,
-          nPorts=1)
-            annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
-          Fluid.Sources.Boundary_pT bou1(
-          redeclare package Medium = Buildings.Media.Water,
-          p=100000,
-          nPorts=1)
-            annotation (Placement(transformation(extent={{100,0},{80,20}})));
-          Fluid.Sources.MassFlowSource_T boundary2(
-          redeclare package Medium = Buildings.Media.Water,
-          m_flow=200,
-          T=281.15,
-          nPorts=1)
-            annotation (Placement(transformation(extent={{100,-60},{80,-40}})));
-          Fluid.Sources.Boundary_pT bou2(
-          redeclare package Medium = Buildings.Media.Water,
-          p=100000,
-          nPorts=1)
-            annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
-        Fluid.HeatExchangers.ConstantEffectiveness hex(
-          redeclare package Medium1 = Buildings.Media.Water,
-          redeclare package Medium2 = Buildings.Media.Water,
-          m1_flow_nominal=200,
-          m2_flow_nominal=200,
-          dp1_nominal=1000,
-          dp2_nominal=1000)
-          annotation (Placement(transformation(extent={{-20,-20},{0,0}})));
-        Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
-              Buildings.Media.Water, m_flow_nominal=200)
-          annotation (Placement(transformation(extent={{-72,0},{-52,20}})));
-        Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
-              Buildings.Media.Water, m_flow_nominal=200)
-          annotation (Placement(transformation(extent={{44,0},{64,20}})));
-          Modelica.Blocks.Math.Add TDT(k1=1, k2=-1)
-            annotation (Placement(transformation(extent={{-20,60},{0,80}})));
-        Fluid.Sensors.RelativeTemperature senRelTem(redeclare package Medium =
-              Buildings.Media.Water)
-          annotation (Placement(transformation(extent={{-18,14},{2,34}})));
-        Fluid.Sensors.Temperature senTem2(redeclare package Medium =
-              Buildings.Media.Water)
-          annotation (Placement(transformation(extent={{-46,-4},{-26,16}})));
-        Fluid.Sensors.Temperature senTem3(redeclare package Medium =
-              Buildings.Media.Water)
-          annotation (Placement(transformation(extent={{14,-4},{34,16}})));
-          Modelica.Blocks.Math.Add TDT1(k1=1, k2=-1)
-            annotation (Placement(transformation(extent={{60,60},{80,80}})));
-        equation
-        connect(bou2.ports[1], hex.port_b2) annotation (Line(points={{-80,-50},
-                {-50,-50},{-50,-16},{-20,-16}}, color={0,127,255}));
-        connect(hex.port_a2, boundary2.ports[1]) annotation (Line(points={{0,
-                -16},{40,-16},{40,-50},{80,-50}}, color={0,127,255}));
-        connect(boundary1.ports[1], senTem.port_a)
-          annotation (Line(points={{-80,10},{-72,10}}, color={0,127,255}));
-        connect(senTem.port_b, hex.port_a1) annotation (Line(points={{-52,10},{
-                -50,10},{-50,-4},{-20,-4}}, color={0,127,255}));
-        connect(hex.port_b1, senTem1.port_a) annotation (Line(points={{0,-4},{
-                40,-4},{40,10},{44,10}}, color={0,127,255}));
-        connect(senTem1.port_b, bou1.ports[1])
-          annotation (Line(points={{64,10},{80,10}}, color={0,127,255}));
-        connect(senTem.T, TDT.u1) annotation (Line(points={{-62,21},{-62,76},{
-                -22,76}}, color={0,0,127}));
-        connect(senTem1.T, TDT.u2) annotation (Line(points={{54,21},{54,40},{
-                -36,40},{-36,64},{-22,64}}, color={0,0,127}));
-        connect(senRelTem.port_a, hex.port_a1) annotation (Line(points={{-18,24},
-                {-20,24},{-20,-4},{-20,-4}}, color={0,127,255}));
-        connect(senRelTem.port_b, hex.port_b1)
-          annotation (Line(points={{2,24},{2,-4},{0,-4}}, color={0,127,255}));
-        connect(senTem.port_b, senTem2.port) annotation (Line(points={{-52,10},
-                {-50,10},{-50,-4},{-36,-4}}, color={0,127,255}));
-        connect(hex.port_b1, senTem3.port)
-          annotation (Line(points={{0,-4},{24,-4}}, color={0,127,255}));
-        connect(senTem2.T, TDT1.u1) annotation (Line(points={{-29,6},{14.5,6},{
-                14.5,76},{58,76}}, color={0,0,127}));
-        connect(senTem3.T, TDT1.u2) annotation (Line(points={{31,6},{44,6},{44,
-                64},{58,64}}, color={0,0,127}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-        end test_temp4;
-
         model test_exchanger
           Fluid.Sources.MassFlowSource_T boundary(
             redeclare package Medium =
@@ -8320,6 +8237,73 @@ has a higher priority to fire as alternative.split[2]).
             Interval=600,
             __Dymola_Algorithm="Dassl"));
         end test_exchanger_pump;
+
+        model test_exchanger_dp
+          Fluid.Sources.MassFlowSource_T boundary(
+            redeclare package Medium = Media.Sea_Water,
+            use_m_flow_in=false,
+            m_flow=1025*747/3600,
+            use_T_in=false,
+          T=288.15,
+            nPorts=1)
+            annotation (Placement(transformation(extent={{-100,40},{-80,60}})));
+          Fluid.Sources.Boundary_pT bou1(
+            redeclare package Medium = Media.Sea_Water,
+          p=100000,
+            use_T_in=false,
+            nPorts=1)
+            annotation (Placement(transformation(extent={{100,40},{80,60}})));
+          Fluid.HeatExchangers.PlateHeatExchangerEffectivenessNTU RJC(
+            redeclare package Medium1 = Media.Sea_Water,
+            redeclare package Medium2 = Buildings.Media.Water,
+            m1_flow_nominal=1020*864.9/3600,
+            m2_flow_nominal=994*853.2/3600,
+            dp1_nominal=65600,
+            dp2_nominal=69500,
+            configuration=Buildings.Fluid.Types.HeatExchangerConfiguration.CounterFlow,
+            use_Q_flow_nominal=true,
+            Q_flow_nominal=4925000,
+          T_a1_nominal=298.15,
+          T_a2_nominal=305.15)
+            annotation (Placement(transformation(extent={{-10,-10},{10,10}})));
+
+          Fluid.Sources.MassFlowSource_T boundary1(
+          redeclare package Medium = Buildings.Media.Water,
+          use_m_flow_in=true,
+          m_flow=800*747/3600,
+            use_T_in=false,
+          T=328.15,
+            nPorts=1)
+            annotation (Placement(transformation(extent={{100,-60},{80,-40}})));
+          Fluid.Sources.Boundary_pT bou2(
+            redeclare package Medium = Buildings.Media.Water,
+          p=100000,
+            use_T_in=false,
+            nPorts=1)
+            annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
+        Modelica.Blocks.Sources.Ramp ramp(
+          height=994*853.2/3600,
+          duration=70000,
+          startTime=10000)
+          annotation (Placement(transformation(extent={{60,-100},{80,-80}})));
+        equation
+          connect(boundary.ports[1], RJC.port_a1) annotation (Line(points={{-80,50},{-50,
+                  50},{-50,6},{-10,6}}, color={0,127,255}));
+          connect(RJC.port_b1, bou1.ports[1]) annotation (Line(points={{10,6},{40,6},{40,
+                  50},{80,50}}, color={0,127,255}));
+          connect(bou2.ports[1], RJC.port_b2) annotation (Line(points={{-80,-50},{-50,-50},
+                  {-50,-6},{-10,-6}}, color={0,127,255}));
+          connect(boundary1.ports[1], RJC.port_a2) annotation (Line(points={{80,-50},{40,
+                  -50},{40,-6},{10,-6}}, color={0,127,255}));
+        connect(ramp.y, boundary1.m_flow_in) annotation (Line(points={{81,-90},
+                {120,-90},{120,-42},{102,-42}}, color={0,0,127}));
+          annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+                coordinateSystem(preserveAspectRatio=false)),
+          experiment(
+            StopTime=86400,
+            Interval=600,
+            __Dymola_Algorithm="Dassl"));
+        end test_exchanger_dp;
       end Tests;
 
     end RJC;
@@ -10822,6 +10806,475 @@ First implementation.
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end test_pump;
+
+      model test_pump1
+        Fluid.Sources.Boundary_pT bou(redeclare package Medium =
+              Buildings.Media.Water,
+          p=100000,
+          nPorts=2)
+          annotation (Placement(transformation(extent={{100,0},{80,20}})));
+        Fluid.Actuators.Valves.TwoWayLinear val1(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=200,
+          dpValve_nominal=2000,
+          use_inputFilter=false)
+          annotation (Placement(transformation(extent={{-10,0},{10,20}})));
+        Modelica.Blocks.Sources.Ramp ramp(
+          height=1,
+          duration=3000,
+          startTime=500)
+          annotation (Placement(transformation(extent={{-100,60},{-80,80}})));
+        Fluid.Movers.FlowControlled_dp fan1(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=100,
+          redeclare Fluid.Movers.Data.Pumps.Wilo.TopS40slash7 per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          use_inputFilter=true,
+          dp_nominal=1000,
+          constantHead=4000)
+          annotation (Placement(transformation(extent={{-60,0},{-40,20}})));
+      equation
+        connect(val1.port_b, bou.ports[1]) annotation (Line(points={{10,10},{46,
+                10},{46,12},{80,12}}, color={0,127,255}));
+        connect(ramp.y, val1.y)
+          annotation (Line(points={{-79,70},{0,70},{0,22}}, color={0,0,127}));
+        connect(fan1.port_b, val1.port_a)
+          annotation (Line(points={{-40,10},{-10,10}}, color={0,127,255}));
+        connect(fan1.port_a, bou.ports[2]) annotation (Line(points={{-60,10},{
+                -80,10},{-80,-20},{60,-20},{60,8},{80,8}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)),
+          experiment(
+            StopTime=4000,
+            __Dymola_NumberOfIntervals=4000,
+            __Dymola_Algorithm="Dassl"));
+      end test_pump1;
+
+      model test_kv
+        Fluid.Sources.Boundary_pT           sou(
+          redeclare package Medium = Buildings.Media.Water,
+          use_p_in=false,
+          p(displayUnit="Pa") = 200000,
+          T=293.15,
+          nPorts=3) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{-80,0},{-60,20}})));
+        Fluid.Actuators.Valves.TwoWayLinear val1(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=200,
+          show_T=false,
+          from_dp=false,
+          linearized=false,
+          CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+          Kv=1700,
+          dpValve_nominal=100000,
+          use_inputFilter=false,
+          y_start=0)
+          annotation (Placement(transformation(extent={{-20,2},{0,22}})));
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium = Buildings.Media.Water,
+          use_p_in=false,
+          p(displayUnit="Pa") = 100000,
+          T=293.15,
+          nPorts=3) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{80,0},{60,20}})));
+        Modelica.Blocks.Sources.Ramp ramp(duration=3000, startTime=500)
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Fluid.Actuators.Valves.TwoWayLinear val2(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=200,
+          show_T=false,
+          from_dp=false,
+          linearized=true,
+          CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+          Kv=1700,
+          dpValve_nominal=100000,
+          use_inputFilter=false,
+          y_start=0)
+          annotation (Placement(transformation(extent={{-20,-40},{0,-20}})));
+        Modelica.Fluid.Valves.ValveLinear valveLinear(
+          redeclare package Medium =
+              Modelica.Media.Water.ConstantPropertyLiquidWater,
+          dp_nominal(displayUnit="bar") = 100000,
+          m_flow_nominal=200)
+          annotation (Placement(transformation(extent={{-20,-80},{0,-60}})));
+      equation
+        connect(sou.ports[1], val1.port_a) annotation (Line(points={{-60,
+                12.6667},{-40,12.6667},{-40,12},{-20,12}}, color={0,127,255}));
+        connect(val1.port_b, sou1.ports[1]) annotation (Line(points={{0,12},{30,
+                12},{30,12.6667},{60,12.6667}}, color={0,127,255}));
+        connect(ramp.y, val1.y) annotation (Line(points={{-39,50},{-10,50},{-10,
+                24}}, color={0,0,127}));
+        connect(ramp.y, val2.y) annotation (Line(points={{-39,50},{-30,50},{-30,
+                -18},{-10,-18}}, color={0,0,127}));
+        connect(sou.ports[2], val2.port_a) annotation (Line(points={{-60,10},{
+                -42,10},{-42,-30},{-20,-30}}, color={0,127,255}));
+        connect(val2.port_b, sou1.ports[2]) annotation (Line(points={{0,-30},{
+                30,-30},{30,10},{60,10}}, color={0,127,255}));
+        connect(sou.ports[3], valveLinear.port_a) annotation (Line(points={{-60,
+                7.33333},{-42,7.33333},{-42,-70},{-20,-70}}, color={0,127,255}));
+        connect(valveLinear.port_b, sou1.ports[3]) annotation (Line(points={{0,
+                -70},{30,-70},{30,7.33333},{60,7.33333}}, color={0,127,255}));
+        connect(ramp.y, valveLinear.opening) annotation (Line(points={{-39,50},
+                {-30,50},{-30,-54},{-10,-54},{-10,-62}}, color={0,0,127}));
+        annotation (
+          Icon(coordinateSystem(preserveAspectRatio=false)),
+          Diagram(coordinateSystem(preserveAspectRatio=false)),
+          experiment(StopTime=4000, __Dymola_Algorithm="Dassl"));
+      end test_kv;
+
+      model test_kv1
+        Fluid.Sources.Boundary_pT           sou(
+          redeclare package Medium = Buildings.Media.Water,
+          use_p_in=false,
+          p(displayUnit="Pa") = 1200000,
+          T=293.15,
+          nPorts=1) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{-100,0},{-80,20}})));
+        Fluid.Actuators.Valves.TwoWayLinear val1(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=200,
+          show_T=false,
+          from_dp=false,
+          CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+          Kv=1700,
+          dpValve_nominal=100000,
+          use_inputFilter=false,
+          y_start=0)
+          annotation (Placement(transformation(extent={{-20,0},{0,20}})));
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium = Buildings.Media.Water,
+          use_p_in=false,
+          p(displayUnit="Pa") = 100000,
+          T=293.15,
+          nPorts=1) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{80,0},{60,20}})));
+        Modelica.Blocks.Sources.Ramp ramp(duration=3000, startTime=500)
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Fluid.Movers.FlowControlled_m_flow fan(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=213*991/3600,
+          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          constantMassFlowRate=213*991/3600)
+          annotation (Placement(transformation(extent={{-60,0},{-40,20}})));
+      equation
+        connect(val1.port_b, sou1.ports[1])
+          annotation (Line(points={{0,10},{60,10}}, color={0,127,255}));
+        connect(ramp.y, val1.y) annotation (Line(points={{-39,50},{-10,50},{-10,
+                22}}, color={0,0,127}));
+        connect(sou.ports[1], fan.port_a)
+          annotation (Line(points={{-80,10},{-60,10}}, color={0,127,255}));
+        connect(fan.port_b, val1.port_a)
+          annotation (Line(points={{-40,10},{-20,10}}, color={0,127,255}));
+        annotation (
+          Icon(coordinateSystem(preserveAspectRatio=false)),
+          Diagram(coordinateSystem(preserveAspectRatio=false)),
+          experiment(StopTime=4000, __Dymola_Algorithm="Dassl"));
+      end test_kv1;
+
+      model TwoWayValveTable
+        "Two way valve with nonlinear opening characteristics based on a table"
+        extends Modelica.Icons.Example;
+        package Medium = Buildings.Media.Water "Medium";
+
+          Modelica.Blocks.Sources.Ramp y(
+          height=1,
+          duration=1,
+          offset=0) "Control signal"
+          annotation (Placement(transformation(extent={{-40,50},{-20,70}})));
+        Buildings.Fluid.Sources.Boundary_pT sou(
+          redeclare package Medium = Medium,
+          use_p_in=false,
+          p(displayUnit="bar") = 200000,
+          T=293.15,
+          nPorts=1) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{-90,10},{-70,30}})));
+        Buildings.Fluid.Sources.Boundary_pT sin(
+          redeclare package Medium = Medium,
+          p(displayUnit="Pa") = 200000 - 1570,
+          T=293.15,
+          nPorts=1) "Boundary condition for flow sink"
+          annotation (Placement(
+              transformation(extent={{72,10},{52,30}})));
+        Fluid.Actuators.Valves.TwoWayTable valTab(
+          redeclare package Medium = Medium,
+          use_inputFilter=false,
+          from_dp=true,
+          flowCharacteristics=Fluid.Actuators.Valves.Data.TFP_calc(),
+          CvData=Buildings.Fluid.Types.CvTypes.Kv,
+          Kv=2674.6,
+          m_flow_nominal=213*991/3600)
+          "Valve model with opening characteristics based on a table"
+          annotation (Placement(transformation(extent={{-20,10},{0,30}})));
+
+        parameter Fluid.Actuators.Valves.Data.Generic datVal(y={0,0.1667,0.3333,
+              0.5,0.6667,1}, phi={0,0.19,0.35,0.45,0.5,0.65}/0.65)
+          "Valve characteristics"
+          annotation (Placement(transformation(extent={{60,60},{80,80}})));
+        Modelica.Blocks.Math.UnitConversions.To_bar to_bar
+          annotation (Placement(transformation(extent={{0,-46},{20,-26}})));
+        Fluid.Sensors.RelativePressure senRelPre(redeclare package Medium =
+              Medium) "Pressure differential sensor"
+          annotation (Placement(transformation(extent={{-20,-20},{0,0}})));
+        Fluid.Sensors.VolumeFlowRate senVolFlo(redeclare package Medium =
+              Medium, m_flow_nominal=0.04) "Volume flow rate sensor"
+          annotation (Placement(transformation(extent={{-60,10},{-40,30}})));
+        Modelica.Blocks.Math.Sqrt sqrt1
+          annotation (Placement(transformation(extent={{28,-46},{48,-26}})));
+        Modelica.Blocks.Math.Gain to_m3_h(k=3600) "Conversion to m3/h"
+          annotation (Placement(transformation(extent={{-10,-74},{10,-54}})));
+        Modelica.Blocks.Math.Division kv "Kv-value"
+          annotation (Placement(transformation(extent={{60,-80},{80,-60}})));
+      equation
+        connect(y.y,valTab. y) annotation (Line(
+            points={{-19,60},{-19,60},{-10,60},{-10,32}},
+            color={0,0,127}));
+        connect(sou.ports[1], senVolFlo.port_a) annotation (Line(
+            points={{-70,20},{-60,20}},
+            color={0,127,255}));
+        connect(senVolFlo.port_b, valTab.port_a) annotation (Line(
+            points={{-40,20},{-20,20}},
+            color={0,127,255}));
+        connect(valTab.port_a, senRelPre.port_a) annotation (Line(
+            points={{-20,20},{-20,-10}},
+            color={0,127,255}));
+        connect(valTab.port_b, senRelPre.port_b) annotation (Line(
+            points={{4.44089e-16,20},{4.44089e-16,-10}},
+            color={0,127,255}));
+        connect(valTab.port_b, sin.ports[1]) annotation (Line(
+            points={{4.44089e-16,20},{52,20}},
+            color={0,127,255}));
+        connect(to_bar.u, senRelPre.p_rel) annotation (Line(
+            points={{-2,-36},{-10,-36},{-10,-19}},
+            color={0,0,127}));
+        connect(sqrt1.u, to_bar.y) annotation (Line(
+            points={{26,-36},{21,-36}},
+            color={0,0,127}));
+        connect(senVolFlo.V_flow, to_m3_h.u) annotation (Line(
+            points={{-50,31},{-50,36},{-30,36},{-30,-64},{-12,-64}},
+            color={0,0,127}));
+        connect(to_m3_h.y,kv. u1) annotation (Line(
+            points={{11,-64},{58,-64}},
+            color={0,0,127}));
+        connect(sqrt1.y,kv. u2) annotation (Line(
+            points={{49,-36},{54,-36},{54,-76},{58,-76}},
+            color={0,0,127}));
+          annotation (experiment(Tolerance=1e-6, StopTime=1.0),
+      __Dymola_Commands(file="modelica://Buildings/Resources/Scripts/Dymola/Fluid/Actuators/Valves/Examples/TwoWayValveTable.mos"
+              "Simulate and plot"),
+          Documentation(info="<html>
+<p>
+Test model for a two way valve in which a table is used to specify the
+opening characteristics.
+The valve has the following opening characteristics, which is taken from a test case
+of the IEA EBC Annex 60 project.
+</p>
+<table summary=\"summary\" border=\"1\" cellspacing=\"0\" cellpadding=\"2\" style=\"border-collapse:collapse;\">
+<tr><td><i>y</i></td>
+  <td>0</td>  <td>0.1667</td>  <td>0.3333</td>  <td>0.5</td>  <td>0.6667</td>  <td>1</td>
+</tr>
+<tr><td><i>K<sub>v</sub></i></td>
+  <td>0</td>  <td>0.19</td>  <td>0.35</td>  <td>0.45</td>  <td>0.5</td>  <td>0.65</td>       </tr>
+</table>
+<p>
+The <i>K<sub>v</sub></i> value is the volume flow rate in m<sup>3</sup>/h at a pressure difference
+of 1 bar.
+Hence, the <i>K<sub>v</sub></i> value of the fully open valve is <i>K<sub>v</sub>=0.65</i>.
+</p>
+<p>
+Plotting the variables <code>kv.y</code> versus <code>y.y</code> shows that the valve
+reproduces the <i>K<sub>v</sub></i> values shown in the above table.
+</p>
+<p align=\"center\">
+<img alt=\"image\" src=\"modelica://Buildings/Resources/Images/Fluid/Actuators/Valves/Examples/TwoWayValveTable_kv.png\"/>
+</p>
+<p>
+The parameter <code>filterOpening</code> is set to <code>false</code>,
+as this model is used to plot the flow at different opening signals
+without taking into account the travel time of the actuator.
+</p>
+</html>",       revisions="<html>
+<ul>
+<li>
+August 12, 2014 by Michael Wetter:<br/>
+Added <code>parameter</code> keyword to <code>datVal</code>,
+as this is needed to asssign <code>datVal</code> to a parameter
+in the instance <code>valTab</code>.
+This also avoids an error in OpenModelica.
+</li>
+<li>
+April 2, 2014 by Michael Wetter:<br/>
+First implementation.
+</li>
+</ul>
+</html>"));
+      end TwoWayValveTable;
+
+      model test_linearized
+        Fluid.Sources.Boundary_pT           sou(
+          redeclare package Medium = Buildings.Media.Water,
+          use_p_in=false,
+          p(displayUnit="Pa") = 200000,
+          T=293.15,
+          nPorts=1) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{-80,0},{-60,20}})));
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium = Buildings.Media.Water,
+          use_p_in=false,
+          p(displayUnit="Pa") = 100000,
+          T=293.15,
+          nPorts=1) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{80,0},{60,20}})));
+        Modelica.Blocks.Sources.Ramp ramp(duration=3000, startTime=500)
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Fluid.Actuators.Valves.TwoWayLinear val2(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=200,
+          show_T=false,
+          from_dp=false,
+          linearized=true,
+          CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+          Kv=1700,
+          dpValve_nominal=100000,
+          use_inputFilter=false,
+          y_start=0)
+          annotation (Placement(transformation(extent={{-20,-40},{0,-20}})));
+      equation
+        connect(ramp.y, val2.y) annotation (Line(points={{-39,50},{-30,50},{-30,
+                -18},{-10,-18}}, color={0,0,127}));
+        connect(sou.ports[1], val2.port_a) annotation (Line(points={{-60,10},{
+                -42,10},{-42,-30},{-20,-30}}, color={0,127,255}));
+        connect(val2.port_b, sou1.ports[1]) annotation (Line(points={{0,-30},{
+                30,-30},{30,10},{60,10}}, color={0,127,255}));
+        annotation (
+          Icon(coordinateSystem(preserveAspectRatio=false)),
+          Diagram(coordinateSystem(preserveAspectRatio=false)),
+          experiment(StopTime=4000, __Dymola_Algorithm="Dassl"));
+      end test_linearized;
+
+      model vanne_parrallele
+        Fluid.Sources.Boundary_pT           sou(
+          redeclare package Medium = Buildings.Media.Water,
+          use_p_in=false,
+          p(displayUnit="Pa") = 200000,
+          T=293.15,
+          nPorts=1) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{-100,20},{-80,40}})));
+        Fluid.Actuators.Valves.TwoWayLinear val1(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=200,
+          show_T=false,
+          from_dp=false,
+          linearized=false,
+          CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+          Kv=1700,
+          dpValve_nominal=100000,
+          use_inputFilter=false,
+          y_start=0)
+          annotation (Placement(transformation(extent={{-20,40},{0,60}})));
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium = Buildings.Media.Water,
+          use_p_in=false,
+          p(displayUnit="Pa") = 100000,
+          T=293.15,
+          nPorts=1) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{100,20},{80,40}})));
+        Modelica.Blocks.Sources.Ramp ramp(duration=1000, startTime=1000)
+          annotation (Placement(transformation(extent={{-80,80},{-60,100}})));
+        Fluid.FixedResistances.Junction jun(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal={200,-200,-200},
+          dp_nominal={0,0,0}) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-50,30})));
+        Fluid.Actuators.Valves.TwoWayLinear val2(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=200,
+          show_T=false,
+          from_dp=false,
+          linearized=false,
+          CvData=Buildings.Fluid.Types.CvTypes.OpPoint,
+          Kv=1700,
+          dpValve_nominal=50000,
+          use_inputFilter=false,
+          y_start=0)
+          annotation (Placement(transformation(extent={{-20,-20},{0,0}})));
+        Fluid.FixedResistances.Junction jun1(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal={200,200,-200},
+          dp_nominal={0,0,0}) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={30,30})));
+        Modelica.Blocks.Sources.Ramp ramp1(duration=500, startTime=200)
+          annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
+      equation
+        connect(ramp.y, val1.y) annotation (Line(points={{-59,90},{-10,90},{-10,
+                62}}, color={0,0,127}));
+        connect(sou.ports[1], jun.port_3)
+          annotation (Line(points={{-80,30},{-60,30}}, color={0,127,255}));
+        connect(jun.port_1, val1.port_a) annotation (Line(points={{-50,40},{-50,
+                50},{-20,50}}, color={0,127,255}));
+        connect(val1.port_b, jun1.port_2) annotation (Line(points={{0,50},{30,
+                50},{30,40}}, color={0,127,255}));
+        connect(jun.port_2, val2.port_a) annotation (Line(points={{-50,20},{-50,
+                -10},{-20,-10}}, color={0,127,255}));
+        connect(val2.port_b, jun1.port_1) annotation (Line(points={{0,-10},{30,
+                -10},{30,20}}, color={0,127,255}));
+        connect(jun1.port_3, sou1.ports[1])
+          annotation (Line(points={{40,30},{80,30}}, color={0,127,255}));
+        connect(ramp1.y, val2.y) annotation (Line(points={{-59,-30},{-32,-30},{
+                -32,12},{-10,12},{-10,2}}, color={0,0,127}));
+        annotation (
+          Icon(coordinateSystem(preserveAspectRatio=false)),
+          Diagram(coordinateSystem(preserveAspectRatio=false)),
+          experiment(StopTime=4000, __Dymola_Algorithm="Dassl"));
+      end vanne_parrallele;
+
+      model test_vanne
+        Fluid.Sources.Boundary_pT           sou(
+          redeclare package Medium = Buildings.Media.Water,
+          use_p_in=false,
+          p(displayUnit="Pa") = 200000,
+          T=293.15,
+          nPorts=1) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{-80,20},{-60,40}})));
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium = Buildings.Media.Water,
+          use_p_in=false,
+          p(displayUnit="Pa") = 100000,
+          T=293.15,
+          nPorts=1) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{80,20},{60,40}})));
+        Modelica.Blocks.Sources.Ramp ramp(duration=3000, startTime=500)
+          annotation (Placement(transformation(extent={{-60,60},{-40,80}})));
+        Fluid.Actuators.Valves.TwoWayPressureIndependent val(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=200,
+          dpValve_nominal=10000)
+          annotation (Placement(transformation(extent={{-20,20},{0,40}})));
+      equation
+        connect(ramp.y, val.y) annotation (Line(points={{-39,70},{-10,70},{-10,
+                42}}, color={0,0,127}));
+        connect(sou.ports[1], val.port_a)
+          annotation (Line(points={{-60,30},{-20,30}}, color={0,127,255}));
+        connect(val.port_b, sou1.ports[1])
+          annotation (Line(points={{0,30},{60,30}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end test_vanne;
     end Valves;
   end Miscellaneous;
 
