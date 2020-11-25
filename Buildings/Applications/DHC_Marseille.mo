@@ -2584,6 +2584,13 @@ has a higher priority to fire as alternative.split[2]).
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end test0;
+
+      model test_1
+        PEM.pem pem(lolilol(displayUnit="bar") = 500000)
+          annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end test_1;
     end Tests;
   end Plant;
 
@@ -5479,9 +5486,11 @@ has a higher priority to fire as alternative.split[2]).
       Modelica.Blocks.Sources.RealExpression CV523_reg(y=211/3600)
         annotation (Placement(transformation(extent={{140,120},{160,140}})));
       Modelica.Blocks.Interfaces.RealOutput y
-        annotation (Placement(transformation(extent={{100,50},{120,70}})));
+        annotation (Placement(transformation(extent={{120,50},{140,70}}),
+            iconTransformation(extent={{120,50},{140,70}})));
       Modelica.Blocks.Interfaces.RealOutput y1
-        annotation (Placement(transformation(extent={{100,-70},{120,-50}})));
+        annotation (Placement(transformation(extent={{120,-70},{140,-50}}),
+            iconTransformation(extent={{120,-70},{140,-50}})));
     equation
       connect(port_a1, jun.port_1) annotation (Line(points={{-100,80},{-140,80},
               {-140,280},{10,280},{10,260}},
@@ -5596,9 +5605,9 @@ has a higher priority to fire as alternative.split[2]).
       connect(CV523_reg.y, FT_PID_521.u_s)
         annotation (Line(points={{161,130},{198,130}}, color={0,0,127}));
       connect(pID_Valve_cond.CV522, y) annotation (Line(points={{-179,175},{80,
-              175},{80,60},{110,60}}, color={0,0,127}));
+              175},{80,60},{130,60}}, color={0,0,127}));
       connect(pID_Valve_evap.CV122, y1) annotation (Line(points={{-99,-225},{-8,
-              -225},{-8,-226},{90,-226},{90,-60},{110,-60}}, color={0,0,127}));
+              -225},{-8,-226},{90,-226},{90,-60},{130,-60}}, color={0,0,127}));
       connect(TT121.port_b, TFPA.port_a2) annotation (Line(points={{50,-70},{50,
               -16},{-20,-16}}, color={0,127,255}));
       connect(XV112A.port_b, TT111.port_a) annotation (Line(points={{-50,-100},
@@ -9664,6 +9673,11 @@ has a higher priority to fire as alternative.split[2]).
   package PEM
   model pem
   extends Buildings.Fluid.Interfaces.PartialTwoPortInterface;
+
+  parameter Modelica.SIunits.Pressure p_pumps(displayUnit="bar",min=100000) = 187000
+      "Pressure setpoint for pumps";
+
+
     Fluid.Sources.Boundary_pT sea_water(
         redeclare package Medium =
           Buildings.Applications.DHC_Marseille.Media.Sea_Water,
@@ -9707,13 +9721,13 @@ has a higher priority to fire as alternative.split[2]).
     Modelica.Blocks.Math.Gain gain1(k=-1)
       annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
     Fluid.Sensors.MassFlowRate FQT200(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water)
+          Buildings.Applications.DHC_Marseille.Media.Sea_Water)
       annotation (Placement(transformation(extent={{30,-70},{50,-50}})));
     Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
           Buildings.Applications.DHC_Marseille.Media.Sea_Water, m_flow_nominal=190/3.6)
       annotation (Placement(transformation(extent={{70,-70},{90,-50}})));
-      Modelica.Blocks.Sources.RealExpression realExpression(y=187000)
-        annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+    Modelica.Blocks.Sources.RealExpression realExpression(y=p_pumps)
+      annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
   equation
   for k in 1:5 loop
     connect(val1[k].port_b,filters.port_a)
@@ -9722,17 +9736,17 @@ has a higher priority to fire as alternative.split[2]).
   end for;
     connect(gain1.y, conPID.u_m)
       annotation (Line(points={{-59,30},{-10,30},{-10,38}},    color={0,0,127}));
-    connect(senRelPre.p_rel, gain1.u) annotation (Line(points={{0,-15},{0,-28},
-              {80,-28},{80,80},{-90,80},{-90,30},{-82,30}},
+    connect(senRelPre.p_rel, gain1.u) annotation (Line(points={{0,-15},{0,-28},{80,
+            -28},{80,80},{-90,80},{-90,30},{-82,30}},
                                              color={0,0,127}));
     connect(control_pumps.pump_y, fan1.y)
-      annotation (Line(points={{41,41},{50,41},{50,24},{-52,24},{-52,-12},{-60,
-              -12},{-60,-48}},                              color={0,0,127}));
+      annotation (Line(points={{41,41},{50,41},{50,24},{-52,24},{-52,-12},{-60,-12},
+            {-60,-48}},                                     color={0,0,127}));
     connect(control_pumps.valve_open, val1.y)
       annotation (Line(points={{41,59},{60,59},{60,20},{-30,20},{-30,-48}},
                                                             color={0,0,127}));
     connect(fan1.y_actual, control_pumps.pump_opening) annotation (Line(points={{-49,-53},
-              {-46,-53},{-46,12},{70,12},{70,70},{10,70},{10,58},{18,58}},
+            {-46,-53},{-46,12},{70,12},{70,70},{10,70},{10,58},{18,58}},
                                                                       color={0,0,127}));
     connect(fan1.port_b, val1.port_a)
       annotation (Line(points={{-50,-60},{-40,-60}},
@@ -9744,8 +9758,8 @@ has a higher priority to fire as alternative.split[2]).
     connect(sea_water.ports[2:6], fan1.port_a) annotation (Line(points={{-80,
               -32.2857},{-76,-32.2857},{-76,-60},{-70,-60}},
                                              color={0,127,255}));
-    connect(conPID.y, control_pumps.pid) annotation (Line(points={{1,50},{10,50},
-              {10,42},{18,42}}, color={0,0,127}));
+    connect(conPID.y, control_pumps.pid) annotation (Line(points={{1,50},{10,50},{
+            10,42},{18,42}},    color={0,0,127}));
     connect(port_a, sea_water.ports[7]) annotation (Line(points={{-100,0},{-74,
               0},{-74,-33.4286},{-80,-33.4286}},
                                             color={0,127,255}));
@@ -9754,12 +9768,12 @@ has a higher priority to fire as alternative.split[2]).
       annotation (Line(points={{50,-60},{70,-60}}, color={0,127,255}));
     connect(TT200.port_b, port_b)
       annotation (Line(points={{90,-60},{100,-60},{100,0}}, color={0,127,255}));
-      connect(senRelPre.port_b, FQT200.port_a) annotation (Line(points={{10,-6},
-              {20,-6},{20,-60},{30,-60}}, color={0,127,255}));
-      connect(filters.port_b, FQT200.port_a)
-        annotation (Line(points={{16,-60},{30,-60}}, color={0,127,255}));
-      connect(realExpression.y, conPID.u_s)
-        annotation (Line(points={{-39,50},{-22,50}}, color={0,0,127}));
+    connect(senRelPre.port_b, FQT200.port_a) annotation (Line(points={{10,-6},{20,
+            -6},{20,-60},{30,-60}}, color={0,127,255}));
+    connect(filters.port_b, FQT200.port_a)
+      annotation (Line(points={{16,-60},{30,-60}}, color={0,127,255}));
+    connect(realExpression.y, conPID.u_s)
+      annotation (Line(points={{-39,50},{-22,50}}, color={0,0,127}));
       annotation (Icon(graphics={
           Rectangle(
             extent={{-100,16},{100,-16}},
