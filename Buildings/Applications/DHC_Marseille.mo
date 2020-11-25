@@ -7781,15 +7781,15 @@ has a higher priority to fire as alternative.split[2]).
           redeclare package Medium1 =
               Buildings.Applications.DHC_Marseille.Media.Sea_Water,
           redeclare package Medium2 = Buildings.Media.Water,
-        m1_flow_nominal=1020*864.9/3600,
-        m2_flow_nominal=994*853.2/3600,
+        m1_flow_nominal=864.9*1020/3600,
+        m2_flow_nominal=853.2*994/3600,
           dp1_nominal=65600,
           dp2_nominal=69500,                                          configuration=
              Buildings.Fluid.Types.HeatExchangerConfiguration.CounterFlow,
           use_Q_flow_nominal=true,
         Q_flow_nominal=4925000,
-          T_a1_nominal=298.15,
-          T_a2_nominal=305.15)
+        T_a1_nominal=298.15,
+        T_a2_nominal=305.15)
           annotation (Placement(transformation(extent={{-20,44},{0,64}})));
         Fluid.Actuators.Valves.TwoWayLinear CV211(redeclare package Medium =
               Buildings.Applications.DHC_Marseille.Media.Sea_Water,
@@ -8321,8 +8321,8 @@ has a higher priority to fire as alternative.split[2]).
         redeclare package Medium1 =
             Buildings.Applications.DHC_Marseille.Media.Sea_Water,
         redeclare package Medium2 = Buildings.Media.Water,
-        m1_flow_nominal=1025*747.6/3600,
-        m2_flow_nominal=1001*726.2/3600,
+        m1_flow_nominal=747.6*1025/3600,
+        m2_flow_nominal=726.2*1001/3600,
         dp1_nominal=69900,
         dp2_nominal=61900,                                        configuration=
            Buildings.Fluid.Types.HeatExchangerConfiguration.CounterFlow,
@@ -8866,6 +8866,74 @@ has a higher priority to fire as alternative.split[2]).
             Interval=600,
             __Dymola_Algorithm="Dassl"));
     end test_temp;
+
+    model test_exchanger_dp
+      Fluid.Sources.MassFlowSource_T boundary(
+        redeclare package Medium = Media.Sea_Water,
+          use_m_flow_in=true,
+        m_flow=1025*747/3600,
+        use_T_in=false,
+          T=288.15,
+          nPorts=1)
+        annotation (Placement(transformation(extent={{-100,40},{-80,60}})));
+      Fluid.Sources.Boundary_pT bou1(
+        redeclare package Medium = Media.Sea_Water,
+      p=100000,
+        use_T_in=false,
+          nPorts=1)
+        annotation (Placement(transformation(extent={{100,40},{80,60}})));
+
+      Fluid.Sources.MassFlowSource_T boundary1(
+      redeclare package Medium = Buildings.Media.Water,
+          use_m_flow_in=false,
+      m_flow=800*747/3600,
+        use_T_in=false,
+          T=293.15,
+          nPorts=1)
+        annotation (Placement(transformation(extent={{100,-60},{80,-40}})));
+      Fluid.Sources.Boundary_pT bou2(
+        redeclare package Medium = Buildings.Media.Water,
+      p=100000,
+        use_T_in=false,
+          nPorts=1)
+        annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
+    Modelica.Blocks.Sources.Ramp ramp(
+          height=1120*1025/3600,
+      duration=70000,
+      startTime=10000)
+      annotation (Placement(transformation(extent={{-140,60},{-120,80}})));
+      Fluid.HeatExchangers.PlateHeatExchangerEffectivenessNTU RJF(
+          redeclare package Medium1 = Media.Sea_Water,
+          redeclare package Medium2 = Buildings.Media.Water,
+          m1_flow_nominal=747.6*1025/3600,
+          m2_flow_nominal=726.2*1001/3600,
+          dp1_nominal=69900,
+          dp2_nominal=61900,
+          configuration=Buildings.Fluid.Types.HeatExchangerConfiguration.CounterFlow,
+
+          use_Q_flow_nominal=true,
+          Q_flow_nominal=4250000,
+          T_a1_nominal=283.65,
+          T_a2_nominal=277.15)
+        annotation (Placement(transformation(extent={{-20,0},{0,20}})));
+    equation
+        connect(bou2.ports[1], RJF.port_b2) annotation (Line(points={{-80,-50},
+                {-50,-50},{-50,4},{-20,4}}, color={0,127,255}));
+        connect(RJF.port_a2, boundary1.ports[1]) annotation (Line(points={{0,4},
+                {42,4},{42,-48},{80,-48},{80,-50}}, color={0,127,255}));
+        connect(RJF.port_b1, bou1.ports[1]) annotation (Line(points={{0,16},{40,
+                16},{40,50},{80,50}}, color={0,127,255}));
+        connect(RJF.port_a1, boundary.ports[1]) annotation (Line(points={{-20,
+                16},{-50,16},{-50,50},{-80,50}}, color={0,127,255}));
+        connect(ramp.y, boundary.m_flow_in) annotation (Line(points={{-119,70},
+                {-110,70},{-110,58},{-102,58}}, color={0,0,127}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)),
+      experiment(
+        StopTime=86400,
+        Interval=600,
+        __Dymola_Algorithm="Dassl"));
+    end test_exchanger_dp;
   end Tests;
 
   end RJF;
@@ -9228,176 +9296,65 @@ has a higher priority to fire as alternative.split[2]).
   package PEM
     extends Modelica.Icons.VariantsPackage;
 
-    model pem
-      extends Fluid.Interfaces.EightPort_modif;
-      Fluid.Movers.FlowControlled_dp fan(
-        redeclare package Medium = Media.Water,
-        redeclare Fluid.Movers.Data.Generic per,
-        inputType=Buildings.Fluid.Types.InputType.Constant,
-        constantHead=87000)
-        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
-            rotation=0,
-            origin={90,-70})));
-      Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
-            Media.Sea_Water, m_flow_nominal=m_flow_pem)
-                        annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=0,
-            origin={74,-14})));
-      Fluid.FixedResistances.Junction jun(
+  model pem
+      import Fluid;
+      import Media;
+  extends Buildings.Fluid.Interfaces.PartialTwoPort;
+    Fluid.Actuators.Valves.TwoWayLinear val(
         redeclare package Medium = Media.Sea_Water,
-        m_flow_nominal=m_flow_pem*{1,-1,-1},
-        dp_nominal={0,0,0})                                       annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={18,38})));
-      Fluid.Sensors.MassFlowRate FQT200(redeclare package Medium =
-            Media.Sea_Water)
-        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
-            rotation=0,
-            origin={106,0})));
-      Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium =
-            Media.Sea_Water, m_flow_nominal=m_flow_pem) annotation (Placement(
-            transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=0,
-            origin={-28,-46})));
-    equation
-      connect(port_b1, port_a2)
-        annotation (Line(points={{20,100},{-40,100}}, color={0,127,255}));
-      connect(port_b2, port_a3) annotation (Line(points={{-80,100},{-88,100},{
-              -88,60},{-100,60}}, color={0,127,255}));
-      connect(port_b3, port_a4)
-        annotation (Line(points={{-100,20},{-100,-40}}, color={0,127,255}));
+        m_flow_nominal=720*1025/3600,
+        dpValve_nominal=1000,
+        y_start=0)
+      annotation (Placement(transformation(extent={{0,60},{20,80}})));
+    Fluid.Movers.SpeedControlled_y fan(redeclare package Medium =
+            Media.Sea_Water, redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per)
+             annotation (Placement(transformation(extent={{-40,60},{-20,80}})));
+    Fluid.Sources.Boundary_pT sea_water(
+        redeclare package Medium = Media.Sea_Water,
+        use_p_in=false,
+        p(displayUnit="bar") = 100000,
+        T=293.15,
+        nPorts=1)
+                "Boundary condition for flow source" annotation (Placement(
+          transformation(
+          extent={{-10,-10},{10,10}},
+          rotation=0,
+          origin={-90,-50})));
+  equation
+      connect(fan.port_b, val.port_a)
+        annotation (Line(points={{-20,70},{0,70}}, color={0,127,255}));
+      connect(port_a, sea_water.ports[1]) annotation (Line(points={{-100,0},{
+              -70,0},{-70,-50},{-80,-50}}, color={0,127,255}));
       annotation (Icon(graphics={
-            Rectangle(
-              extent={{-100,14},{100,-18}},
-              lineColor={0,0,0},
-              fillColor={0,127,255},
-              fillPattern=FillPattern.HorizontalCylinder),
-            Ellipse(
-              extent={{-58,56},{58,-60}},
-              lineColor={0,0,0},
-              fillPattern=FillPattern.Sphere,
-              fillColor={0,100,199}),
-            Polygon(
-              points={{0,50},{0,-50},{-54,0},{0,50}},
-              lineColor={0,0,0},
-              pattern=LinePattern.None,
-              fillPattern=FillPattern.HorizontalCylinder,
-              fillColor={255,255,255})}));
-    end pem;
-
-    model pem_1groupe
-      extends Fluid.Interfaces.PartialTwoPort_modif;
-      Modelica.Fluid.Sources.FixedBoundary boundary(redeclare package Medium =
-            Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
-        annotation (Placement(transformation(
-            extent={{10,-10},{-10,10}},
-            rotation=-90,
-            origin={-90,-10})));
-      Fluid.Sources.Boundary_pT bou1(
-        redeclare package Medium = Media.Water,
-        p=100000,
-        use_T_in=true,
-        T=288.15,
-        nPorts=1) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={-20,-70})));
-      Fluid.Movers.FlowControlled_dp fan(
-        redeclare package Medium = Media.Water,
-        m_flow_nominal=1000,
-        redeclare Fluid.Movers.Data.Generic per,
-        inputType=Buildings.Fluid.Types.InputType.Constant,
-        constantHead=87000)
-        annotation (Placement(transformation(extent={{-10,-30},{10,-10}})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
-            Modelica.Media.Water.ConstantPropertyLiquidWater)
-        annotation (Placement(transformation(extent={{30,-30},{50,-10}})));
-      Modelica.Blocks.Interfaces.RealOutput y
-        annotation (Placement(transformation(extent={{100,0},{120,20}})));
-      Modelica.Fluid.Sensors.Pressure PT200(redeclare package Medium =
-            Modelica.Media.Water.ConstantPropertyLiquidWater)
-        annotation (Placement(transformation(extent={{112,80},{132,100}})));
-      Modelica.Fluid.Sensors.MassFlowRate FQT200(redeclare package Medium =
-            Modelica.Media.Water.ConstantPropertyLiquidWater) annotation (
-          Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={70,-10})));
-      Modelica.Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium =
-            Modelica.Media.Water.ConstantPropertyLiquidWater)
-        annotation (Placement(transformation(extent={{-60,30},{-80,50}})));
-      Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
-        tableOnFile=true,
-        tableName="tab1",
-        fileName=ModelicaServices.ExternalReferences.loadResource(
-            "modelica://Buildings/Data/pem.txt"),
-        columns={2,3,4},
-        extrapolation=Modelica.Blocks.Types.Extrapolation.Periodic)
-        annotation (Placement(transformation(extent={{-100,-100},{-80,-80}})));
-      Modelica.Thermal.HeatTransfer.Celsius.ToKelvin toKelvin
-        annotation (Placement(transformation(extent={{-60,-100},{-40,-80}})));
-      Modelica.Fluid.Valves.ValveLinear valveLinear(
-        redeclare package Medium = Modelica.Media.Water.IdealSteam,
-        dp_nominal=10000,
-        m_flow_nominal=1000)
-        annotation (Placement(transformation(extent={{10,40},{-10,60}})));
-      Modelica.Blocks.Sources.RealExpression realExpression(y=0.001)
-        annotation (Placement(transformation(extent={{-40,60},{-20,80}})));
-    equation
-      connect(bou1.ports[1], fan.port_a) annotation (Line(points={{-20,-60},{
-              -20,-20},{-10,-20}}, color={0,127,255}));
-      connect(fan.port_b, TT200.port_a)
-        annotation (Line(points={{10,-20},{30,-20}}, color={0,127,255}));
-      connect(FQT200.port_b, port_a)
-        annotation (Line(points={{70,0},{70,90},{50,90}},
-                                                  color={0,127,255}));
-      connect(TT200.port_b, FQT200.port_a) annotation (Line(points={{50,-20},{
-              70,-20}},                   color={0,127,255}));
-      connect(TT200.T, y)
-        annotation (Line(points={{40,-9},{40,10},{110,10}}, color={0,0,127}));
-      connect(boundary.ports[1], TT201.port_b) annotation (Line(points={{-90,
-              -3.55271e-15},{-90,40},{-80,40}}, color={0,127,255}));
-      connect(TT201.port_a, port_b) annotation (Line(points={{-60,40},{-50,40},
-              {-50,90}}, color={0,127,255}));
-      connect(combiTimeTable.y[1], toKelvin.Celsius)
-        annotation (Line(points={{-79,-90},{-62,-90}}, color={0,0,127}));
-      connect(toKelvin.Kelvin, bou1.T_in) annotation (Line(points={{-39,-90},{
-              -24,-90},{-24,-82}}, color={0,0,127}));
-      connect(PT200.port, port_a) annotation (Line(points={{122,80},{70,80},{70,
-              90},{50,90}}, color={0,127,255}));
-      connect(valveLinear.port_a, port_a) annotation (Line(points={{10,50},{70,
-              50},{70,90},{50,90}}, color={0,127,255}));
-      connect(valveLinear.port_b, port_b) annotation (Line(points={{-10,50},{
-              -50,50},{-50,90}}, color={0,127,255}));
-      connect(realExpression.y, valveLinear.opening)
-        annotation (Line(points={{-19,70},{0,70},{0,58}}, color={0,0,127}));
-      annotation (Icon(graphics={
-            Rectangle(
-              extent={{-100,16},{100,-16}},
-              lineColor={0,0,0},
-              fillColor={0,127,255},
-              fillPattern=FillPattern.HorizontalCylinder),
-            Ellipse(
-              extent={{-58,58},{58,-58}},
-              lineColor={0,0,0},
-              fillPattern=FillPattern.Sphere,
-              fillColor={0,100,199}),
-            Polygon(
-              points={{0,52},{0,-48},{-54,2},{0,52}},
-              lineColor={0,0,0},
-              pattern=LinePattern.None,
-              fillPattern=FillPattern.HorizontalCylinder,
-              fillColor={255,255,255})}));
-    end pem_1groupe;
+          Rectangle(
+            extent={{-100,16},{100,-16}},
+            lineColor={0,0,0},
+            fillColor={0,127,255},
+            fillPattern=FillPattern.HorizontalCylinder),
+          Ellipse(
+            extent={{-58,58},{58,-58}},
+            lineColor={0,0,0},
+            fillPattern=FillPattern.Sphere,
+            fillColor={0,100,199}),
+          Polygon(
+            points={{0,50},{0,-50},{54,0},{0,50}},
+            lineColor={0,0,0},
+            pattern=LinePattern.None,
+            fillPattern=FillPattern.HorizontalCylinder,
+            fillColor={255,255,255}),
+          Ellipse(
+            extent={{4,16},{36,-16}},
+            lineColor={0,0,0},
+            fillPattern=FillPattern.Sphere,
+            visible=energyDynamics <> Modelica.Fluid.Types.Dynamics.SteadyState,
+            fillColor={0,100,199})}));
+  end pem;
 
     package Tests
       extends Modelica.Icons.ExamplesPackage;
       model test_0
-        Modelica.Fluid.Sources.FixedBoundary boundary(redeclare package Medium =
-              Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
+        Modelica.Fluid.Sources.FixedBoundary boundary(redeclare package Medium
+            = Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
           annotation (Placement(transformation(
               extent={{10,-10},{-10,10}},
               rotation=-90,
@@ -9478,190 +9435,6 @@ has a higher priority to fire as alternative.split[2]).
               coordinateSystem(preserveAspectRatio=false)));
       end test_0;
     end Tests;
-
-    model pem_gf_aa
-      extends Fluid.Interfaces.PartialTwoPort_modif;
-      Modelica.Fluid.Sources.FixedBoundary boundary(redeclare package Medium =
-            Modelica.Media.Water.ConstantPropertyLiquidWater, nPorts=1)
-        annotation (Placement(transformation(
-            extent={{10,-10},{-10,10}},
-            rotation=-90,
-            origin={-90,-10})));
-      Fluid.Sources.Boundary_pT bou1(
-        redeclare package Medium = Media.Water,
-        p=100000,
-        T=288.15,
-        nPorts=1) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={-50,-70})));
-      Fluid.Movers.FlowControlled_dp fan(
-        redeclare package Medium = Media.Water,
-        m_flow_nominal=1000,
-        redeclare Fluid.Movers.Data.Generic per,
-        inputType=Buildings.Fluid.Types.InputType.Constant,
-        constantHead=87000)
-        annotation (Placement(transformation(extent={{-40,-30},{-20,-10}})));
-    equation
-      connect(boundary.ports[1], port_b) annotation (Line(points={{-90,
-              -3.55271e-15},{-90,40},{-50,40},{-50,90}}, color={0,127,255}));
-      connect(bou1.ports[1], fan.port_a) annotation (Line(points={{-50,-60},{
-              -50,-20},{-40,-20}}, color={0,127,255}));
-      connect(fan.port_b, port_a) annotation (Line(points={{-20,-20},{16,-20},{
-              16,90},{50,90}}, color={0,127,255}));
-      annotation (Icon(graphics={
-            Rectangle(
-              extent={{-100,16},{100,-16}},
-              lineColor={0,0,0},
-              fillColor={0,127,255},
-              fillPattern=FillPattern.HorizontalCylinder),
-            Ellipse(
-              extent={{-58,58},{58,-58}},
-              lineColor={0,0,0},
-              fillPattern=FillPattern.Sphere,
-              fillColor={0,100,199}),
-            Polygon(
-              points={{0,52},{0,-48},{-54,2},{0,52}},
-              lineColor={0,0,0},
-              pattern=LinePattern.None,
-              fillPattern=FillPattern.HorizontalCylinder,
-              fillColor={255,255,255})}));
-    end pem_gf_aa;
-
-    model EDM
-      extends Interfaces.SixtPort_modif;
-
-      parameter Modelica.SIunits.MassFlowRate m_flow_pem= 1800 * 1027 / 3600
-        "Nominal mass flow rate at condenser water in the chillers";
-
-
-      Fluid.Sources.Boundary_pT sortie(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water, nPorts=1) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={-70,-90})));
-      Fluid.FixedResistances.Junction jun(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-        m_flow_nominal=m_flow_pem*{1,-1,-1},
-        dp_nominal={0,0,0})                                       annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={70,-50})));
-      Fluid.FixedResistances.Junction jun1(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-        m_flow_nominal=m_flow_pem * {1,-1,-1},
-        dp_nominal={0,0,0})         annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={70,50})));
-      Fluid.FixedResistances.Junction jun2(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-        m_flow_nominal=m_flow_pem * {1,-1,-1},
-        dp_nominal={0,0,0})         annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=180,
-            origin={50,70})));
-      Fluid.FixedResistances.Junction jun3(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-        m_flow_nominal=m_flow_pem * {1,-1,-1},
-        dp_nominal={0,0,0})         annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=180,
-            origin={-50,70})));
-      Fluid.FixedResistances.Junction jun4(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-        m_flow_nominal=m_flow_pem * {1,-1,-1},
-        dp_nominal={0,0,0})         annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=-90,
-            origin={-70,50})));
-      Fluid.FixedResistances.Junction jun5(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-        m_flow_nominal=m_flow_pem * {1,-1,-1},
-        dp_nominal={0,0,0})         annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=-90,
-            origin={-70,-50})));
-      Fluid.Movers.FlowControlled_dp fan(
-        redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-        m_flow_nominal=m_flow_pem,
-        redeclare Fluid.Movers.Data.Generic per,
-        inputType=Buildings.Fluid.Types.InputType.Constant,
-        dp_nominal=1000,
-        constantHead=87000)
-        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={30,-10})));
-      Fluid.Sources.Boundary_pT entree(
-        redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-        p=100000,
-        T=291.15,
-        nPorts=1) annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=0,
-            origin={-10,30})));
-      Fluid.Sensors.MassFlowRate senMasFlo(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water)
-        annotation (Placement(transformation(extent={{40,-90},{60,-70}})));
-      Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water, m_flow_nominal=
-            m_flow_pem)                                           annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={30,-50})));
-    equation
-      connect(jun.port_3, port_a1) annotation (Line(points={{80,-50},{90,-50},{
-              90,-50},{100,-50}}, color={0,127,255}));
-      connect(jun.port_2, jun1.port_1)
-        annotation (Line(points={{70,-40},{70,40}}, color={0,127,255}));
-      connect(jun1.port_3, port_b1)
-        annotation (Line(points={{80,50},{100,50}}, color={0,127,255}));
-      connect(jun1.port_2, jun2.port_1)
-        annotation (Line(points={{70,60},{70,70},{60,70}}, color={0,127,255}));
-      connect(port_a2, jun2.port_3) annotation (Line(points={{50,100},{50,100},
-              {50,80}}, color={0,127,255}));
-      connect(jun2.port_2, jun3.port_1)
-        annotation (Line(points={{40,70},{-40,70}}, color={0,127,255}));
-      connect(jun3.port_3, port_b2)
-        annotation (Line(points={{-50,80},{-50,100}}, color={0,127,255}));
-      connect(jun3.port_2, jun4.port_1) annotation (Line(points={{-60,70},{-70,
-              70},{-70,60}}, color={0,127,255}));
-      connect(jun4.port_3, port_a3)
-        annotation (Line(points={{-80,50},{-100,50}}, color={0,127,255}));
-      connect(port_b3, jun5.port_3)
-        annotation (Line(points={{-100,-50},{-80,-50}}, color={0,127,255}));
-      connect(jun5.port_1, jun4.port_2)
-        annotation (Line(points={{-70,-40},{-70,40}}, color={0,127,255}));
-      connect(entree.ports[1], fan.port_a)
-        annotation (Line(points={{0,30},{30,30},{30,0}}, color={0,127,255}));
-      connect(fan.port_b, senTem.port_a)
-        annotation (Line(points={{30,-20},{30,-40}}, color={0,127,255}));
-      connect(senTem.port_b, senMasFlo.port_a)
-        annotation (Line(points={{30,-60},{30,-80},{40,-80}}, color={0,127,255}));
-      connect(senMasFlo.port_b, jun.port_1)
-        annotation (Line(points={{60,-80},{70,-80},{70,-60}}, color={0,127,255}));
-      connect(jun5.port_2, sortie.ports[1])
-        annotation (Line(points={{-70,-60},{-70,-80}}, color={0,127,255}));
-      annotation (Icon(graphics={
-            Rectangle(
-              extent={{-100,16},{100,-16}},
-              lineColor={0,0,0},
-              fillColor={0,127,255},
-              fillPattern=FillPattern.HorizontalCylinder),
-            Ellipse(
-              extent={{-58,58},{58,-58}},
-              lineColor={0,0,0},
-              fillPattern=FillPattern.Sphere,
-              fillColor={0,100,199}),
-            Polygon(
-              points={{0,52},{0,-48},{-54,2},{0,52}},
-              lineColor={0,0,0},
-              pattern=LinePattern.None,
-              fillPattern=FillPattern.HorizontalCylinder,
-              fillColor={255,255,255})}));
-    end EDM;
 
     model EDM_1
       extends Interfaces.SixtPort_modif;
@@ -9787,88 +9560,6 @@ has a higher priority to fire as alternative.split[2]).
               fillPattern=FillPattern.HorizontalCylinder,
               fillColor={255,255,255})}));
     end EDM_1;
-
-    model EDM_chiller
-      extends Fluid.Interfaces.PartialTwoPort;
-
-      parameter Modelica.SIunits.MassFlowRate m_flow_pem= 1800 * 1027 / 3600
-        "Nominal mass flow rate in the EDM loop";
-
-
-      Fluid.Sources.Boundary_pT sortie(redeclare package Medium =
-            Media.Sea_Water,
-          nPorts=1)                                                         annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=270,
-            origin={50,90})));
-      Fluid.FixedResistances.Junction jun(
-        redeclare package Medium = Media.Sea_Water,
-        m_flow_nominal=m_flow_pem*{1,-1,-1},
-        dp_nominal={0,0,0})                                       annotation (Placement(transformation(
-            extent={{10,-10},{-10,10}},
-            rotation=0,
-            origin={-70,0})));
-      Fluid.FixedResistances.Junction jun1(
-        redeclare package Medium = Media.Sea_Water,
-        m_flow_nominal=m_flow_pem*{1,-1,-1},
-        dp_nominal={0,0,0})         annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={50,0})));
-      Fluid.Sensors.MassFlowRate FQT200(redeclare package Medium =
-            Media.Sea_Water)
-        annotation (Placement(transformation(extent={{-20,-10},{-40,10}})));
-      Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
-            Media.Sea_Water, m_flow_nominal=m_flow_pem) annotation (Placement(
-            transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=0,
-            origin={-30,50})));
-      Fluid.Sources.MassFlowSource_T boundary(
-        redeclare package Medium = Media.Sea_Water,
-        m_flow=m_flow_pem,
-        nPorts=1) annotation (Placement(transformation(extent={{-100,40},{-80,60}})));
-      Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium =
-            Media.Sea_Water, m_flow_nominal=m_flow_pem) annotation (Placement(
-            transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=90,
-            origin={50,40})));
-    equation
-      connect(boundary.ports[1], TT200.port_a)
-        annotation (Line(points={{-80,50},{-40,50}}, color={0,127,255}));
-      connect(jun.port_1, FQT200.port_b) annotation (Line(points={{-60,0},{-50,0},{-50,
-              0},{-40,0}}, color={0,127,255}));
-      connect(jun.port_2, port_a)
-        annotation (Line(points={{-80,0},{-100,0}}, color={0,127,255}));
-      connect(TT200.port_b, FQT200.port_a) annotation (Line(points={{-20,50},{-10,50},
-              {-10,0},{-20,0}}, color={0,127,255}));
-      connect(jun.port_3, jun1.port_1) annotation (Line(points={{-70,-10},{-70,-32},
-              {50,-32},{50,-10}}, color={0,127,255}));
-      connect(jun1.port_2, TT201.port_a)
-        annotation (Line(points={{50,10},{50,10},{50,30}}, color={0,127,255}));
-      connect(TT201.port_b, sortie.ports[1])
-        annotation (Line(points={{50,50},{50,80}}, color={0,127,255}));
-      connect(jun1.port_3, port_b) annotation (Line(points={{60,-4.44089e-16},{80,-4.44089e-16},
-              {80,0},{100,0}}, color={0,127,255}));
-      annotation (Icon(graphics={
-            Rectangle(
-              extent={{-100,16},{100,-16}},
-              lineColor={0,0,0},
-              fillColor={0,127,255},
-              fillPattern=FillPattern.HorizontalCylinder),
-            Ellipse(
-              extent={{-58,58},{58,-58}},
-              lineColor={0,0,0},
-              fillPattern=FillPattern.Sphere,
-              fillColor={0,100,199}),
-            Polygon(
-              points={{0,52},{0,-48},{-54,2},{0,52}},
-              lineColor={0,0,0},
-              pattern=LinePattern.None,
-              fillPattern=FillPattern.HorizontalCylinder,
-              fillColor={255,255,255})}));
-    end EDM_chiller;
 
     model PEM_simple
     extends Buildings.Fluid.Interfaces.PartialTwoPort;
@@ -10513,6 +10204,518 @@ First implementation.
             __Dymola_NumberOfIntervals=4000,
             __Dymola_Algorithm="Dassl"));
       end test_pump;
+
+      model test_pump_y
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          use_p_in=false,
+          p(displayUnit="bar") = 100000,
+          T=298.15,
+          nPorts=2) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{10,-10},{-10,10}},
+              rotation=270,
+              origin={-90,-10})));
+        Fluid.FixedResistances.PressureDrop res(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dp_nominal=65900)
+          annotation (Placement(transformation(extent={{-20,40},{0,60}})));
+        Fluid.Actuators.Valves.TwoWayTable val(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dpValve_nominal=2000,
+          use_inputFilter=false,
+          flowCharacteristics=Fluid.Actuators.Valves.Data.TFP_data())
+          annotation (Placement(transformation(extent={{40,40},{60,60}})));
+        Fluid.Sensors.VolumeFlowRate senVolFlo(redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water, m_flow_nominal=865*1020/3600)
+          annotation (Placement(transformation(extent={{20,0},{0,20}})));
+        Modelica.Blocks.Sources.Constant const(k=0.22)
+          annotation (Placement(transformation(extent={{0,80},{20,100}})));
+        Modelica.Blocks.Interfaces.RealOutput y
+          annotation (Placement(transformation(extent={{100,20},{120,40}})));
+        Modelica.Blocks.Sources.Ramp ramp(
+          height=800/3.6,
+          duration=200,
+          startTime=100)
+          annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
+        Fluid.Movers.FlowControlled_m_flow fan(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=720/3.6,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          use_inputFilter=false)
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+      equation
+        connect(res.port_b, val.port_a)
+          annotation (Line(points={{0,50},{40,50}}, color={0,127,255}));
+        connect(val.port_b, senVolFlo.port_a) annotation (Line(points={{60,50},{70,50},
+                {70,10},{20,10}}, color={0,127,255}));
+        connect(senVolFlo.port_b, sou1.ports[1]) annotation (Line(points={{0,10},{
+                -88,10},{-88,-3.55271e-15}},
+                                         color={0,127,255}));
+        connect(const.y, val.y)
+          annotation (Line(points={{21,90},{50,90},{50,62}}, color={0,0,127}));
+        y=senVolFlo.V_flow*3600;
+        connect(ramp.y, fan.m_flow_in) annotation (Line(points={{-79,90},{-50,
+                90},{-50,62}}, color={0,0,127}));
+        connect(sou1.ports[2], fan.port_a) annotation (Line(points={{-92,
+                -3.55271e-15},{-76,-3.55271e-15},{-76,50},{-60,50}}, color={0,
+                127,255}));
+        connect(fan.port_b, res.port_a) annotation (Line(points={{-40,50},{-30,
+                50},{-30,50},{-20,50}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end test_pump_y;
+
+      model valve_RJF_bis
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          use_p_in=false,
+          p(displayUnit="bar") = 100000,
+          T=298.15,
+          nPorts=4) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{10,-10},{-10,10}},
+              rotation=270,
+              origin={-90,-10})));
+        Fluid.Movers.FlowControlled_dp fan(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          use_inputFilter=false,
+          constantHead(displayUnit="bar") = 187000)
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Fluid.FixedResistances.PressureDrop res(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dp_nominal=65900)
+          annotation (Placement(transformation(extent={{-20,40},{0,60}})));
+        Fluid.Actuators.Valves.TwoWayTable val(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dpValve_nominal=2000,
+          use_inputFilter=false,
+          flowCharacteristics=Fluid.Actuators.Valves.Data.TFP_data())
+          annotation (Placement(transformation(extent={{40,40},{60,60}})));
+        Fluid.Sensors.VolumeFlowRate senVolFlo(redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water, m_flow_nominal=865*1020/3600)
+          annotation (Placement(transformation(extent={{20,0},{0,20}})));
+        Modelica.Blocks.Sources.Constant const(k=0.22)
+          annotation (Placement(transformation(extent={{0,80},{20,100}})));
+        Modelica.Blocks.Interfaces.RealOutput y
+          annotation (Placement(transformation(extent={{100,20},{120,40}})));
+        Fluid.Movers.SpeedControlled_y fan1(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          use_inputFilter=false)
+          annotation (Placement(transformation(extent={{-60,-80},{-40,-60}})));
+        Fluid.FixedResistances.PressureDrop res1(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dp_nominal=65900)
+          annotation (Placement(transformation(extent={{20,-80},{40,-60}})));
+        Fluid.Actuators.Valves.TwoWayTable val1(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dpValve_nominal=2000,
+          use_inputFilter=false,
+          flowCharacteristics=Fluid.Actuators.Valves.Data.TFP_data())
+          annotation (Placement(transformation(extent={{80,-80},{100,-60}})));
+        Fluid.Sensors.VolumeFlowRate senVolFlo1(redeclare package Medium =
+              Media.Sea_Water, m_flow_nominal=865*1020/3600)
+          annotation (Placement(transformation(extent={{0,-120},{-20,-100}})));
+        Modelica.Blocks.Sources.Constant const1(k=0.22)
+          annotation (Placement(transformation(extent={{40,-40},{60,-20}})));
+        Fluid.Sensors.RelativePressure senRelPre
+          annotation (Placement(transformation(extent={{-60,-40},{-40,-20}})));
+        Modelica.Blocks.Sources.Constant const2(k=187000)
+          annotation (Placement(transformation(extent={{-220,-60},{-200,-40}})));
+        Controls.Continuous.LimPID           conPID(
+          Td=1,
+          k=0.5,
+          Ti=15,
+          reverseActing=true)
+                 annotation (Placement(transformation(extent={{-160,-60},{-140,
+                  -40}})));
+        Modelica.Blocks.Math.Gain gain1(k=-1)
+          annotation (Placement(transformation(extent={{-120,-100},{-140,-80}})));
+      equation
+        connect(sou1.ports[1], fan.port_a) annotation (Line(points={{-87,
+                -3.55271e-15},{-87,50},{-60,50}}, color={0,127,255}));
+        connect(fan.port_b, res.port_a)
+          annotation (Line(points={{-40,50},{-20,50}}, color={0,127,255}));
+        connect(res.port_b, val.port_a)
+          annotation (Line(points={{0,50},{40,50}}, color={0,127,255}));
+        connect(val.port_b, senVolFlo.port_a) annotation (Line(points={{60,50},{70,50},
+                {70,10},{20,10}}, color={0,127,255}));
+        connect(const.y, val.y)
+          annotation (Line(points={{21,90},{50,90},{50,62}}, color={0,0,127}));
+        y=senVolFlo.V_flow*3600;
+        connect(res1.port_b, val1.port_a)
+          annotation (Line(points={{40,-70},{80,-70}}, color={0,127,255}));
+        connect(val1.port_b, senVolFlo1.port_a) annotation (Line(points={{100,-70},{110,
+                -70},{110,-110},{0,-110}}, color={0,127,255}));
+        connect(const1.y, val1.y)
+          annotation (Line(points={{61,-30},{90,-30},{90,-58}}, color={0,0,127}));
+        connect(fan1.port_b, res1.port_a)
+          annotation (Line(points={{-40,-70},{20,-70}}, color={0,127,255}));
+        connect(senRelPre.port_a, fan1.port_a) annotation (Line(points={{-60,-30},{-68,
+                -30},{-68,-70},{-60,-70}}, color={0,127,255}));
+        connect(senRelPre.port_b, fan1.port_b) annotation (Line(points={{-40,-30},{-28,
+                -30},{-28,-70},{-40,-70}}, color={0,127,255}));
+        connect(senVolFlo.port_b, sou1.ports[2]) annotation (Line(points={{0,10},
+                {-44,10},{-44,0},{-89,0}}, color={0,127,255}));
+        connect(senVolFlo1.port_b, sou1.ports[3]) annotation (Line(points={{-20,
+                -110},{-112,-110},{-112,10},{-91,10},{-91,0}}, color={0,127,255}));
+        connect(fan1.port_a, sou1.ports[4]) annotation (Line(points={{-60,-70},
+                {-102,-70},{-102,0},{-93,0}}, color={0,127,255}));
+        connect(const2.y, conPID.u_s) annotation (Line(points={{-199,-50},{-182,
+                -50},{-182,-50},{-162,-50}}, color={0,0,127}));
+        connect(conPID.y, fan1.y) annotation (Line(points={{-139,-50},{-50,-50},
+                {-50,-58}}, color={0,0,127}));
+        connect(senRelPre.p_rel, gain1.u) annotation (Line(points={{-50,-39},{
+                -50,-44},{-88,-44},{-88,-90},{-118,-90}}, color={0,0,127}));
+        connect(gain1.y, conPID.u_m) annotation (Line(points={{-141,-90},{-150,
+                -90},{-150,-62}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end valve_RJF_bis;
+
+      model multiple_pumps
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium = Media.Sea_Water,
+          use_p_in=false,
+          p(displayUnit="bar") = 100000,
+          T=298.15,
+          nPorts=3) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{10,-10},{-10,10}},
+              rotation=270,
+              origin={-72,70})));
+        Fluid.Movers.SpeedControlled_y fan1(
+          redeclare package Medium = Media.Sea_Water,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          use_inputFilter=false)
+          annotation (Placement(transformation(extent={{-30,0},{-10,20}})));
+        Fluid.FixedResistances.PressureDrop res1(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dp_nominal=65900)
+          annotation (Placement(transformation(extent={{38,0},{58,20}})));
+        Fluid.Actuators.Valves.TwoWayTable val1(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dpValve_nominal=2000,
+          use_inputFilter=false,
+          flowCharacteristics=Fluid.Actuators.Valves.Data.TFP_data())
+          annotation (Placement(transformation(extent={{98,0},{118,20}})));
+        Fluid.Sensors.VolumeFlowRate senVolFlo1(redeclare package Medium =
+              Media.Sea_Water, m_flow_nominal=865*1020/3600)
+          annotation (Placement(transformation(extent={{40,-100},{20,-80}})));
+        Modelica.Blocks.Sources.Constant const1(k=1)
+          annotation (Placement(transformation(extent={{58,40},{78,60}})));
+        Fluid.Sensors.RelativePressure senRelPre
+          annotation (Placement(transformation(extent={{-32,40},{-12,60}})));
+        Modelica.Blocks.Sources.Constant const2(k=300000)
+          annotation (Placement(transformation(extent={{-202,20},{-182,40}})));
+        Controls.Continuous.LimPID           conPID(
+          Td=1,
+          k=0.5,
+          Ti=15,
+          reverseActing=true)
+                 annotation (Placement(transformation(extent={{-142,20},{-122,
+                  40}})));
+        Modelica.Blocks.Math.Gain gain1(k=-1)
+          annotation (Placement(transformation(extent={{-100,-20},{-120,0}})));
+        Fluid.Movers.SpeedControlled_y fan2(
+          redeclare package Medium = Media.Sea_Water,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          use_inputFilter=false)
+          annotation (Placement(transformation(extent={{-30,-60},{-10,-40}})));
+        Modelica.Blocks.Sources.Constant const3(k=300000)
+          annotation (Placement(transformation(extent={{-200,-60},{-180,-40}})));
+      equation
+        connect(res1.port_b,val1. port_a)
+          annotation (Line(points={{58,10},{98,10}},   color={0,127,255}));
+        connect(val1.port_b,senVolFlo1. port_a) annotation (Line(points={{118,10},
+                {128,10},{128,-90},{40,-90}},
+                                           color={0,127,255}));
+        connect(const1.y,val1. y)
+          annotation (Line(points={{79,50},{108,50},{108,22}},  color={0,0,127}));
+        connect(senRelPre.port_a,fan1. port_a) annotation (Line(points={{-32,50},
+                {-40,50},{-40,10},{-30,10}},
+                                           color={0,127,255}));
+        connect(senRelPre.port_b,fan1. port_b) annotation (Line(points={{-12,50},
+                {0,50},{0,10},{-10,10}},   color={0,127,255}));
+        connect(senVolFlo1.port_b, sou1.ports[3]) annotation (Line(points={{20,
+                -90},{-92,-90},{-92,90},{-74.6667,90},{-74.6667,80}}, color={0,
+                127,255}));
+        connect(const2.y, conPID.u_s)
+          annotation (Line(points={{-181,30},{-144,30}}, color={0,0,127}));
+        connect(conPID.y, fan1.y) annotation (Line(points={{-121,30},{-20,30},{
+                -20,22}}, color={0,0,127}));
+        connect(senRelPre.p_rel, gain1.u) annotation (Line(points={{-22,41},{
+                -22,36},{-60,36},{-60,-10},{-98,-10}}, color={0,0,127}));
+        connect(gain1.y, conPID.u_m) annotation (Line(points={{-121,-10},{-132,
+                -10},{-132,18}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end multiple_pumps;
+
+      model multiple_pumps_test
+        Fluid.FixedResistances.PressureDrop res1(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=747.6*1025/3600,
+          dp_nominal=65900)
+          annotation (Placement(transformation(extent={{60,40},{80,60}})));
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium = Media.Sea_Water,
+          use_p_in=false,
+          p(displayUnit="bar") = 100000,
+          T=298.15,
+          nPorts=4) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={-110,30})));
+        Controls.Continuous.LimPID           conPID(
+          Td=1,
+          k=0.5,
+          Ti=15,
+          reverseActing=true)
+                 annotation (Placement(transformation(extent={{-100,100},{-80,
+                  120}})));
+        Fluid.Movers.SpeedControlled_y fan(redeclare package Medium =
+              Buildings.Media.Water, redeclare
+            Fluid.Movers.Data.Pumps.KSB.KSB_edm per)
+          annotation (Placement(transformation(extent={{-40,60},{-20,80}})));
+        Fluid.Movers.SpeedControlled_y fan1(redeclare package Medium =
+              Buildings.Media.Water, redeclare
+            Fluid.Movers.Data.Pumps.KSB.KSB_edm per)
+          annotation (Placement(transformation(extent={{-40,20},{-20,40}})));
+        Fluid.Sensors.RelativePressure senRelPre
+          annotation (Placement(transformation(extent={{-20,140},{0,160}})));
+        Modelica.Blocks.Sources.Constant const2(k=187000)
+          annotation (Placement(transformation(extent={{-140,100},{-120,120}})));
+        Modelica.Blocks.Math.Gain gain1(k=-1)
+          annotation (Placement(transformation(extent={{-140,60},{-120,80}})));
+        Modelica.Blocks.Sources.Constant const1(k=0)
+          annotation (Placement(transformation(extent={{-200,42},{-180,62}})));
+        Fluid.Actuators.Valves.TwoWayLinear val(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=700/3.6,
+          dpValve_nominal=1000,
+          y_start=0)
+          annotation (Placement(transformation(extent={{0,20},{20,40}})));
+        Modelica.Blocks.Sources.Constant const3(k=0)
+          annotation (Placement(transformation(extent={{-60,-10},{-40,10}})));
+        Fluid.Actuators.Valves.TwoWayQuickOpening val1
+          annotation (Placement(transformation(extent={{-240,-8},{-220,12}})));
+      equation
+        connect(res1.port_b, sou1.ports[1]) annotation (Line(points={{80,50},{
+                100,50},{100,-20},{-90,-20},{-90,33},{-100,33}}, color={0,127,
+                255}));
+        connect(conPID.y, fan.y) annotation (Line(points={{-79,110},{-30,110},{
+                -30,82}}, color={0,0,127}));
+        connect(const2.y, conPID.u_s)
+          annotation (Line(points={{-119,110},{-102,110}}, color={0,0,127}));
+        connect(senRelPre.p_rel, gain1.u) annotation (Line(points={{-10,141},{
+                -10,130},{-160,130},{-160,70},{-142,70}}, color={0,0,127}));
+        connect(gain1.y, conPID.u_m) annotation (Line(points={{-119,70},{-90,70},
+                {-90,98}}, color={0,0,127}));
+        connect(const1.y, fan1.y) annotation (Line(points={{-179,52},{-30,52},{
+                -30,42}}, color={0,0,127}));
+        connect(senRelPre.port_a, sou1.ports[2]) annotation (Line(points={{-20,
+                150},{-74,150},{-74,30},{-90,30},{-100,30},{-100,31}}, color={0,
+                127,255}));
+        connect(sou1.ports[3], fan1.port_a) annotation (Line(points={{-100,29},
+                {-72,29},{-72,30},{-40,30}}, color={0,127,255}));
+        connect(sou1.ports[4], fan.port_a) annotation (Line(points={{-100,27},{
+                -70,27},{-70,70},{-40,70}}, color={0,127,255}));
+        connect(fan.port_b, res1.port_a) annotation (Line(points={{-20,70},{40,
+                70},{40,50},{60,50}}, color={0,127,255}));
+        connect(senRelPre.port_b, res1.port_a) annotation (Line(points={{0,150},
+                {40,150},{40,50},{60,50}}, color={0,127,255}));
+        connect(fan1.port_b, val.port_a)
+          annotation (Line(points={{-20,30},{0,30}}, color={0,127,255}));
+        connect(val.port_b, res1.port_a) annotation (Line(points={{20,30},{40,
+                30},{40,50},{60,50}}, color={0,127,255}));
+        connect(const3.y, val.y) annotation (Line(points={{-39,0},{-8,0},{-8,52},
+                {10,52},{10,42}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end multiple_pumps_test;
+
+      model pump_dp
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium = Media.Sea_Water,
+          use_p_in=false,
+          p(displayUnit="bar") = 100000,
+          T=298.15,
+          nPorts=2) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{10,-10},{-10,10}},
+              rotation=270,
+              origin={-70,-10})));
+        Fluid.FixedResistances.PressureDrop res(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=747.6*1025/3600,
+          dp_nominal=65900)
+          annotation (Placement(transformation(extent={{0,60},{20,40}})));
+        Fluid.Movers.FlowControlled_dp fan(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=747.6*1025/3600,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          constantHead(displayUnit="bar") = 187000)
+          annotation (Placement(transformation(extent={{-40,40},{-20,60}})));
+      equation
+        connect(res.port_b, sou1.ports[1]) annotation (Line(points={{20,50},{
+                100,50},{100,12},{-68,12},{-68,-3.55271e-15}}, color={0,127,255}));
+        connect(sou1.ports[2], fan.port_a) annotation (Line(points={{-72,
+                -3.55271e-15},{-72,50},{-40,50}}, color={0,127,255}));
+        connect(fan.port_b, res.port_a)
+          annotation (Line(points={{-20,50},{0,50}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end pump_dp;
+
+      model pem
+        import Media;
+        import Fluid;
+        import Media;
+        import Media;
+        Fluid.Actuators.Valves.TwoWayLinear val(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=720*1025/3600,
+          dpValve_nominal=1000,
+          y_start=0)
+          annotation (Placement(transformation(extent={{0,60},{20,80}})));
+        Fluid.Movers.SpeedControlled_y fan(redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water, redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm
+            per) annotation (Placement(transformation(extent={{-40,60},{-20,80}})));
+        Fluid.Sources.Boundary_pT sea_water(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          use_p_in=false,
+          p(displayUnit="bar") = 100000,
+          T=298.15,
+          nPorts=7) "Boundary condition for flow source" annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={-90,-30})));
+        Fluid.Movers.SpeedControlled_y fan1(redeclare package Medium =
+              Media.Sea_Water, redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm
+            per) annotation (Placement(transformation(extent={{-40,20},{-20,40}})));
+        Fluid.Movers.SpeedControlled_y fan2(redeclare package Medium =
+              Media.Sea_Water, redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm
+            per) annotation (Placement(transformation(extent={{-40,-20},{-20,0}})));
+        Buildings.Fluid.Movers.SpeedControlled_y
+                                       fan3(redeclare package Medium =
+              Media.Sea_Water, redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm
+            per) annotation (Placement(transformation(extent={{-40,-60},{-20,
+                  -40}})));
+        Buildings.Fluid.Movers.SpeedControlled_y
+                                       fan4(redeclare package Medium =
+              Media.Sea_Water, redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm
+            per) annotation (Placement(transformation(extent={{-40,-100},{-20,
+                  -80}})));
+        Fluid.Actuators.Valves.TwoWayLinear val1(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=720*1025/3600,
+          dpValve_nominal=1000,
+          y_start=0)
+          annotation (Placement(transformation(extent={{0,20},{20,40}})));
+        Fluid.Actuators.Valves.TwoWayLinear val2(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=720*1025/3600,
+          dpValve_nominal=1000,
+          y_start=0)
+          annotation (Placement(transformation(extent={{0,-20},{20,0}})));
+        Fluid.Actuators.Valves.TwoWayLinear val3(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=720*1025/3600,
+          dpValve_nominal=1000,
+          y_start=0)
+          annotation (Placement(transformation(extent={{0,-60},{20,-40}})));
+        Fluid.Actuators.Valves.TwoWayLinear val4(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=720*1025/3600,
+          dpValve_nominal=1000,
+          y_start=0)
+          annotation (Placement(transformation(extent={{0,-100},{20,-80}})));
+        Buildings.Fluid.FixedResistances.PressureDrop
+                                            res(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=747.6*1025/3600,
+          dp_nominal=65900)
+          annotation (Placement(transformation(extent={{80,20},{100,0}})));
+        Buildings.Fluid.Sensors.RelativePressure
+                                       senRelPre
+          annotation (Placement(transformation(extent={{-20,140},{0,160}})));
+      equation
+        connect(sea_water.ports[1], fan.port_a) annotation (Line(points={{-80,
+                -26.5714},{-60,-26.5714},{-60,70},{-40,70}}, color={0,127,255}));
+        connect(sea_water.ports[2], fan1.port_a) annotation (Line(points={{-80,
+                -27.7143},{-60,-27.7143},{-60,30},{-40,30}}, color={0,127,255}));
+        connect(sea_water.ports[3], fan2.port_a) annotation (Line(points={{-80,
+                -28.8571},{-60,-28.8571},{-60,-10},{-40,-10}}, color={0,127,255}));
+        connect(sea_water.ports[4], fan3.port_a) annotation (Line(points={{-80,
+                -30},{-60,-30},{-60,-50},{-40,-50}}, color={0,127,255}));
+        connect(sea_water.ports[5], fan4.port_a) annotation (Line(points={{-80,
+                -31.1429},{-60,-31.1429},{-60,-90},{-40,-90}}, color={0,127,255}));
+        connect(fan.port_b, val.port_a)
+          annotation (Line(points={{-20,70},{0,70}}, color={0,127,255}));
+        connect(fan1.port_b, val1.port_a)
+          annotation (Line(points={{-20,30},{0,30}}, color={0,127,255}));
+        connect(fan2.port_b, val2.port_a)
+          annotation (Line(points={{-20,-10},{0,-10}}, color={0,127,255}));
+        connect(fan3.port_b, val3.port_a)
+          annotation (Line(points={{-20,-50},{0,-50}}, color={0,127,255}));
+        connect(fan4.port_b, val4.port_a)
+          annotation (Line(points={{-20,-90},{0,-90}}, color={0,127,255}));
+        connect(val.port_b, res.port_a) annotation (Line(points={{20,70},{50,70},
+                {50,10},{80,10}}, color={0,127,255}));
+        connect(val1.port_b, res.port_a) annotation (Line(points={{20,30},{50,
+                30},{50,10},{80,10}}, color={0,127,255}));
+        connect(val2.port_b, res.port_a) annotation (Line(points={{20,-10},{50,
+                -10},{50,10},{80,10}}, color={0,127,255}));
+        connect(val3.port_b, res.port_a) annotation (Line(points={{20,-50},{50,
+                -50},{50,10},{80,10}}, color={0,127,255}));
+        connect(val4.port_b, res.port_a) annotation (Line(points={{20,-90},{50,
+                -90},{50,10},{80,10}}, color={0,127,255}));
+        connect(res.port_b, sea_water.ports[6]) annotation (Line(points={{100,
+                10},{120,10},{120,-120},{-70,-120},{-70,-32.2857},{-80,-32.2857}},
+              color={0,127,255}));
+        connect(sea_water.ports[7], senRelPre.port_a) annotation (Line(points={
+                {-80,-33.4286},{-60,-33.4286},{-60,150},{-20,150}}, color={0,
+                127,255}));
+        connect(senRelPre.port_b, res.port_a) annotation (Line(points={{0,150},
+                {50,150},{50,10},{80,10}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end pem;
+
+      package pem2
+        extends Fluid.Interfaces.PartialTwoPortInterface;
+
+      end pem2;
     end Pumps;
 
     package Valves
@@ -11048,6 +11251,391 @@ First implementation.
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end test_vanne;
+
+      model syst_edm
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium = Buildings.Media.Water,
+          use_p_in=false,
+          p(displayUnit="bar") = 100000,
+          T=293.15,
+          nPorts=2) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{10,-10},{-10,10}},
+              rotation=270,
+              origin={-90,-10})));
+        Fluid.Actuators.Valves.TwoWayPressureIndependent val(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=865*1020/3600,
+          dpValve_nominal(displayUnit="kPa") = 10000,
+          dpFixed_nominal=65.9)
+          annotation (Placement(transformation(extent={{20,40},{40,60}})));
+        Fluid.Movers.FlowControlled_dp fan(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=720*991/3600,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          constantHead(displayUnit="bar") = 187000)
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Modelica.Blocks.Sources.Constant const(k=1)
+          annotation (Placement(transformation(extent={{-20,80},{0,100}})));
+      equation
+        connect(sou1.ports[1], fan.port_a) annotation (Line(points={{-88,
+                -3.55271e-15},{-88,50},{-60,50}}, color={0,127,255}));
+        connect(val.port_b, sou1.ports[2]) annotation (Line(points={{40,50},{80,
+                50},{80,12},{-92,12},{-92,-3.55271e-15}}, color={0,127,255}));
+        connect(const.y, val.y)
+          annotation (Line(points={{1,90},{30,90},{30,62}}, color={0,0,127}));
+        connect(fan.port_b, val.port_a)
+          annotation (Line(points={{-40,50},{20,50}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end syst_edm;
+
+      model test_vanne_1
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium = Buildings.Media.Water,
+          use_p_in=false,
+          p(displayUnit="Pa") = 100000,
+          T=293.15,
+          nPorts=1) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{80,20},{60,40}})));
+        Modelica.Blocks.Sources.Ramp ramp(duration=3000, startTime=500)
+          annotation (Placement(transformation(extent={{-60,60},{-40,80}})));
+        Fluid.Actuators.Valves.TwoWayPressureIndependent val(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=200,
+          dpValve_nominal=10000)
+          annotation (Placement(transformation(extent={{-20,20},{0,40}})));
+        Fluid.Sources.MassFlowSource_T boundary(
+          redeclare package Medium = Buildings.Media.Water,
+          use_m_flow_in=true,
+          nPorts=1)
+          annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
+        Modelica.Blocks.Sources.Ramp ramp1(
+          height=200,
+          duration=1000,
+          startTime=3500)
+          annotation (Placement(transformation(extent={{-140,60},{-120,80}})));
+      equation
+        connect(ramp.y, val.y) annotation (Line(points={{-39,70},{-10,70},{-10,
+                42}}, color={0,0,127}));
+        connect(val.port_b, sou1.ports[1])
+          annotation (Line(points={{0,30},{60,30}}, color={0,127,255}));
+        connect(boundary.ports[1], val.port_a)
+          annotation (Line(points={{-80,30},{-20,30}}, color={0,127,255}));
+        connect(ramp1.y, boundary.m_flow_in) annotation (Line(points={{-119,70},
+                {-110,70},{-110,38},{-102,38}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end test_vanne_1;
+
+      model syst_edm_0
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium = Buildings.Media.Water,
+          use_p_in=false,
+          p(displayUnit="bar") = 100000,
+          T=293.15,
+          nPorts=2) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{10,-10},{-10,10}},
+              rotation=270,
+              origin={-90,-10})));
+        Fluid.Actuators.Valves.TwoWayPressureIndependent val(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=865*1020/3600,
+          dpValve_nominal(displayUnit="kPa") = 10000)
+          annotation (Placement(transformation(extent={{20,40},{40,60}})));
+        Fluid.Movers.FlowControlled_dp fan(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=720*991/3600,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          constantHead(displayUnit="bar") = 187000)
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Modelica.Blocks.Sources.Constant const(k=1)
+          annotation (Placement(transformation(extent={{-20,80},{0,100}})));
+        Fluid.FixedResistances.PressureDrop res(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=865*1020/3600,
+          dp_nominal=65.9)
+          annotation (Placement(transformation(extent={{-20,40},{0,60}})));
+      equation
+        connect(sou1.ports[1], fan.port_a) annotation (Line(points={{-88,
+                -3.55271e-15},{-88,50},{-60,50}}, color={0,127,255}));
+        connect(val.port_b, sou1.ports[2]) annotation (Line(points={{40,50},{80,
+                50},{80,12},{-92,12},{-92,-3.55271e-15}}, color={0,127,255}));
+        connect(const.y, val.y)
+          annotation (Line(points={{1,90},{30,90},{30,62}}, color={0,0,127}));
+        connect(fan.port_b, res.port_a)
+          annotation (Line(points={{-40,50},{-20,50}}, color={0,127,255}));
+        connect(res.port_b, val.port_a)
+          annotation (Line(points={{0,50},{20,50}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end syst_edm_0;
+
+      model syst_edm_simple
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          use_p_in=false,
+          p(displayUnit="bar") = 100000,
+          T=298.15,
+          nPorts=2) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{10,-10},{-10,10}},
+              rotation=270,
+              origin={-90,-10})));
+        Fluid.Movers.FlowControlled_dp fan(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=720*991/3600,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          constantHead(displayUnit="bar") = 187000)
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Modelica.Blocks.Sources.Constant const(k=0.23)
+          annotation (Placement(transformation(extent={{-20,80},{0,100}})));
+        Fluid.Actuators.Valves.TwoWayTable val(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=865*1020/3600,
+          dpValve_nominal=2250,
+          y_start=0.23,
+          dpFixed_nominal=65900,
+          flowCharacteristics=Fluid.Actuators.Valves.Data.TFP_calc())
+          annotation (Placement(transformation(extent={{20,40},{40,60}})));
+      equation
+        connect(sou1.ports[1], fan.port_a) annotation (Line(points={{-88,
+                -3.55271e-15},{-88,50},{-60,50}}, color={0,127,255}));
+        connect(fan.port_b, val.port_a)
+          annotation (Line(points={{-40,50},{20,50}}, color={0,127,255}));
+        connect(val.port_b, sou1.ports[2]) annotation (Line(points={{40,50},{
+                100,50},{100,20},{-92,20},{-92,0}},
+                                               color={0,127,255}));
+        connect(const.y, val.y)
+          annotation (Line(points={{1,90},{30,90},{30,62}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end syst_edm_simple;
+
+      model valve_RJC
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          use_p_in=false,
+          p(displayUnit="bar") = 100000,
+          T=298.15,
+          nPorts=2) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{10,-10},{-10,10}},
+              rotation=270,
+              origin={-90,-10})));
+        Fluid.Movers.FlowControlled_dp fan(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=720*991/3600,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          constantHead(displayUnit="bar") = 187000)
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Modelica.Blocks.Sources.Constant const(k=0.23)
+          annotation (Placement(transformation(extent={{-20,80},{0,100}})));
+        Fluid.Actuators.Valves.TwoWayTable val(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=865*1020/3600,
+          dpValve_nominal=2250,
+          y_start=0.23,
+          dpFixed_nominal=65900,
+          flowCharacteristics=Fluid.Actuators.Valves.Data.TFP_calc())
+          annotation (Placement(transformation(extent={{20,40},{40,60}})));
+      equation
+        connect(sou1.ports[1], fan.port_a) annotation (Line(points={{-88,
+                -3.55271e-15},{-88,50},{-60,50}}, color={0,127,255}));
+        connect(fan.port_b, val.port_a)
+          annotation (Line(points={{-40,50},{20,50}}, color={0,127,255}));
+        connect(val.port_b, sou1.ports[2]) annotation (Line(points={{40,50},{
+                100,50},{100,20},{-92,20},{-92,0}},
+                                               color={0,127,255}));
+        connect(const.y, val.y)
+          annotation (Line(points={{1,90},{30,90},{30,62}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end valve_RJC;
+
+      model valve_RJC_bis
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          use_p_in=false,
+          p(displayUnit="bar") = 100000,
+          T=298.15,
+          nPorts=2) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{10,-10},{-10,10}},
+              rotation=270,
+              origin={-90,-10})));
+        Fluid.Movers.FlowControlled_dp fan(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=720*991/3600,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          use_inputFilter=false,
+          constantHead(displayUnit="bar") = 187000)
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Fluid.FixedResistances.PressureDrop res(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=865*1020/3600,
+          dp_nominal=65900)
+          annotation (Placement(transformation(extent={{-20,40},{0,60}})));
+        Modelica.Blocks.Sources.Ramp ramp(duration=500, startTime=50)
+          annotation (Placement(transformation(extent={{-20,80},{0,100}})));
+        Fluid.Actuators.Valves.TwoWayTable val(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=865*1020/3600,
+          dpValve_nominal=65000,
+          use_inputFilter=false,
+          flowCharacteristics=Fluid.Actuators.Valves.Data.TFP_data())
+          annotation (Placement(transformation(extent={{40,40},{60,60}})));
+      equation
+        connect(sou1.ports[1], fan.port_a) annotation (Line(points={{-88,-3.55271e-15},
+                {-88,50},{-60,50}},               color={0,127,255}));
+        connect(fan.port_b, res.port_a)
+          annotation (Line(points={{-40,50},{-20,50}}, color={0,127,255}));
+        connect(res.port_b, val.port_a)
+          annotation (Line(points={{0,50},{40,50}}, color={0,127,255}));
+        connect(ramp.y, val.y)
+          annotation (Line(points={{1,90},{50,90},{50,62}}, color={0,0,127}));
+        connect(val.port_b, sou1.ports[2]) annotation (Line(points={{60,50},{70,50},{70,
+                20},{-92,20},{-92,-3.55271e-15}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end valve_RJC_bis;
+
+      model valve_RJF_bis
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          use_p_in=false,
+          p(displayUnit="bar") = 100000,
+          T=298.15,
+          nPorts=4) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{10,-10},{-10,10}},
+              rotation=270,
+              origin={-90,-10})));
+        Fluid.Movers.FlowControlled_dp fan(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          use_inputFilter=false,
+          constantHead(displayUnit="bar") = 187000)
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Fluid.FixedResistances.PressureDrop res(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dp_nominal=65900)
+          annotation (Placement(transformation(extent={{-20,40},{0,60}})));
+        Fluid.Actuators.Valves.TwoWayTable val(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dpValve_nominal=2000,
+          use_inputFilter=false,
+          flowCharacteristics=Fluid.Actuators.Valves.Data.TFP_data())
+          annotation (Placement(transformation(extent={{40,40},{60,60}})));
+        Fluid.Sensors.VolumeFlowRate senVolFlo(redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water, m_flow_nominal=865*1020/3600)
+          annotation (Placement(transformation(extent={{20,0},{0,20}})));
+        Modelica.Blocks.Sources.Constant const(k=0.22)
+          annotation (Placement(transformation(extent={{0,80},{20,100}})));
+        Modelica.Blocks.Interfaces.RealOutput y
+          annotation (Placement(transformation(extent={{100,20},{120,40}})));
+        Fluid.Movers.SpeedControlled_y fan1(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          use_inputFilter=false)
+          annotation (Placement(transformation(extent={{-60,-80},{-40,-60}})));
+        Fluid.FixedResistances.PressureDrop res1(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dp_nominal=65900)
+          annotation (Placement(transformation(extent={{20,-80},{40,-60}})));
+        Fluid.Actuators.Valves.TwoWayTable val1(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dpValve_nominal=2000,
+          use_inputFilter=false,
+          flowCharacteristics=Fluid.Actuators.Valves.Data.TFP_data())
+          annotation (Placement(transformation(extent={{80,-80},{100,-60}})));
+        Fluid.Sensors.VolumeFlowRate senVolFlo1(redeclare package Medium =
+              Media.Sea_Water, m_flow_nominal=865*1020/3600)
+          annotation (Placement(transformation(extent={{0,-120},{-20,-100}})));
+        Modelica.Blocks.Sources.Constant const1(k=0.22)
+          annotation (Placement(transformation(extent={{40,-40},{60,-20}})));
+        Fluid.Sensors.RelativePressure senRelPre
+          annotation (Placement(transformation(extent={{-60,-40},{-40,-20}})));
+        Modelica.Blocks.Sources.Constant const2(k=187000)
+          annotation (Placement(transformation(extent={{-220,-60},{-200,-40}})));
+        Controls.Continuous.LimPID           conPID(
+          Td=1,
+          k=0.5,
+          Ti=15,
+          reverseActing=true)
+                 annotation (Placement(transformation(extent={{-160,-60},{-140,
+                  -40}})));
+        Modelica.Blocks.Math.Gain gain1(k=-1)
+          annotation (Placement(transformation(extent={{-120,-100},{-140,-80}})));
+      equation
+        connect(sou1.ports[1], fan.port_a) annotation (Line(points={{-87,
+                -3.55271e-15},{-87,50},{-60,50}}, color={0,127,255}));
+        connect(fan.port_b, res.port_a)
+          annotation (Line(points={{-40,50},{-20,50}}, color={0,127,255}));
+        connect(res.port_b, val.port_a)
+          annotation (Line(points={{0,50},{40,50}}, color={0,127,255}));
+        connect(val.port_b, senVolFlo.port_a) annotation (Line(points={{60,50},{70,50},
+                {70,10},{20,10}}, color={0,127,255}));
+        connect(const.y, val.y)
+          annotation (Line(points={{21,90},{50,90},{50,62}}, color={0,0,127}));
+        y=senVolFlo.V_flow*3600;
+        connect(res1.port_b, val1.port_a)
+          annotation (Line(points={{40,-70},{80,-70}}, color={0,127,255}));
+        connect(val1.port_b, senVolFlo1.port_a) annotation (Line(points={{100,-70},{110,
+                -70},{110,-110},{0,-110}}, color={0,127,255}));
+        connect(const1.y, val1.y)
+          annotation (Line(points={{61,-30},{90,-30},{90,-58}}, color={0,0,127}));
+        connect(fan1.port_b, res1.port_a)
+          annotation (Line(points={{-40,-70},{20,-70}}, color={0,127,255}));
+        connect(senRelPre.port_a, fan1.port_a) annotation (Line(points={{-60,-30},{-68,
+                -30},{-68,-70},{-60,-70}}, color={0,127,255}));
+        connect(senRelPre.port_b, fan1.port_b) annotation (Line(points={{-40,-30},{-28,
+                -30},{-28,-70},{-40,-70}}, color={0,127,255}));
+        connect(senVolFlo.port_b, sou1.ports[2]) annotation (Line(points={{0,10},
+                {-44,10},{-44,0},{-89,0}}, color={0,127,255}));
+        connect(senVolFlo1.port_b, sou1.ports[3]) annotation (Line(points={{-20,
+                -110},{-112,-110},{-112,10},{-91,10},{-91,0}}, color={0,127,255}));
+        connect(fan1.port_a, sou1.ports[4]) annotation (Line(points={{-60,-70},
+                {-102,-70},{-102,0},{-93,0}}, color={0,127,255}));
+        connect(const2.y, conPID.u_s) annotation (Line(points={{-199,-50},{-182,
+                -50},{-182,-50},{-162,-50}}, color={0,0,127}));
+        connect(conPID.y, fan1.y) annotation (Line(points={{-139,-50},{-50,-50},
+                {-50,-58}}, color={0,0,127}));
+        connect(senRelPre.p_rel, gain1.u) annotation (Line(points={{-50,-39},{
+                -50,-44},{-88,-44},{-88,-90},{-118,-90}}, color={0,0,127}));
+        connect(gain1.y, conPID.u_m) annotation (Line(points={{-141,-90},{-150,
+                -90},{-150,-62}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end valve_RJF_bis;
     end Valves;
   end Miscellaneous;
 
