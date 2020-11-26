@@ -7500,16 +7500,9 @@ has a higher priority to fire as alternative.split[2]).
         T_a1_nominal=298.15,
         T_a2_nominal=305.15)
           annotation (Placement(transformation(extent={{-20,44},{0,64}})));
-        Fluid.Actuators.Valves.TwoWayLinear CV211(redeclare package Medium =
-              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-        m_flow_nominal=1025*747.6/3600,
-        dpValve_nominal=5000)                                       annotation (Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=0,
-              origin={70,60})));
         Fluid.Sensors.TemperatureTwoPort ECH_TT211(redeclare package Medium =
             Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-          m_flow_nominal=1025*747.6/3600) annotation (Placement(transformation(
+          m_flow_nominal=1025*865/3600)   annotation (Placement(transformation(
             extent={{-10,-10},{10,10}},
             rotation=0,
             origin={30,60})));
@@ -7577,15 +7570,18 @@ has a higher priority to fire as alternative.split[2]).
         Fluid.Sensors.RelativePressure senRelPre(redeclare package Medium =
             Media.Sea_Water)
           annotation (Placement(transformation(extent={{-20,74},{0,94}})));
+        Fluid.Actuators.Valves.TwoWayTable CV211(
+        redeclare package Medium = Media.Sea_Water,
+        m_flow_nominal=865*1020/3600,
+        dpValve_nominal=2250,
+        use_inputFilter=false,
+        flowCharacteristics=Fluid.Actuators.Valves.Data.TFP_calc())
+        annotation (Placement(transformation(extent={{60,50},{80,70}})));
       equation
       connect(RJC.port_b1, ECH_TT211.port_a)
         annotation (Line(points={{0,60},{20,60}},   color={0,127,255}));
         connect(port_a1,RJC. port_a1) annotation (Line(points={{-100,60},{-20,
               60}},                 color={0,127,255}));
-      connect(ECH_TT211.port_b, CV211.port_a)
-        annotation (Line(points={{40,60},{60,60}}, color={0,127,255}));
-        connect(CV211.port_b, port_b1) annotation (Line(points={{80,60},{100,60}},
-                           color={0,127,255}));
       connect(jun.port_3, fan.port_a) annotation (Line(points={{1.77636e-15,-60},
               {-20,-60}}, color={0,127,255}));
       connect(jun1.port_1, fan.port_b)
@@ -7602,9 +7598,6 @@ has a higher priority to fire as alternative.split[2]).
       connect(PEM_TT200, pID_RJC.PEM_TT200) annotation (Line(points={{-120,-40},
               {-80,-40},{-80,118},{18,118}},
                                            color={0,0,127}));
-      connect(pID_RJC.y, CV211.y)
-        annotation (Line(points={{41,110},{70,110},{70,72}},
-                                                           color={0,0,127}));
       connect(TFP_CV522, pID_RJC.CV522) annotation (Line(points={{-120,40},{-70,
               40},{-70,110},{18,110}},
                                      color={0,0,127}));
@@ -7630,6 +7623,12 @@ has a higher priority to fire as alternative.split[2]).
         annotation (Line(points={{0,84},{0,60}}, color={0,127,255}));
       connect(senRelPre.p_rel, pID_RJC.DPT) annotation (Line(points={{-10,75},{
               -10,70},{12,70},{12,101},{18,101}}, color={0,0,127}));
+      connect(pID_RJC.y, CV211.y)
+        annotation (Line(points={{41,110},{70,110},{70,72}}, color={0,0,127}));
+      connect(ECH_TT211.port_b, CV211.port_a)
+        annotation (Line(points={{40,60},{60,60}}, color={0,127,255}));
+      connect(CV211.port_b, port_b1)
+        annotation (Line(points={{80,60},{100,60}}, color={0,127,255}));
         annotation (Icon(coordinateSystem(extent={{-100,-100},{100,100}}),
                          graphics={
               Rectangle(
@@ -8053,13 +8052,6 @@ has a higher priority to fire as alternative.split[2]).
         T_a1_nominal=283.65,
         T_a2_nominal=277.15)
         annotation (Placement(transformation(extent={{-40,-54},{-20,-34}})));
-      Fluid.Actuators.Valves.TwoWayLinear CV211(redeclare package Medium =
-            Buildings.Applications.DHC_Marseille.Media.Sea_Water,
-        m_flow_nominal=1025*747.6/3600,
-        dpValve_nominal=2250)                                     annotation (Placement(transformation(
-            extent={{-10,-10},{10,10}},
-            rotation=0,
-            origin={70,-10})));
       Fluid.Sensors.TemperatureTwoPort ECH_TT211(redeclare package Medium =
             Buildings.Applications.DHC_Marseille.Media.Sea_Water,
           m_flow_nominal=1025*747.6/3600) annotation (Placement(transformation(
@@ -8091,17 +8083,19 @@ has a higher priority to fire as alternative.split[2]).
       Fluid.Sensors.RelativePressure senRelPre(redeclare package Medium =
             Media.Sea_Water)
         annotation (Placement(transformation(extent={{-40,0},{-20,20}})));
+      Fluid.Actuators.Valves.TwoWayTable val(
+        redeclare package Medium = Media.Sea_Water,
+        m_flow_nominal=747.6*1025/3600,
+        dpValve_nominal=1700,
+        use_inputFilter=false,
+        flowCharacteristics=Fluid.Actuators.Valves.Data.TFP_calc())
+        annotation (Placement(transformation(extent={{60,-20},{80,0}})));
     equation
       connect(RJF.port_b1, ECH_TT211.port_a) annotation (Line(points={{-20,-38},
               {0,-38},{0,-10},{20,-10}}, color={0,127,255}));
       connect(port_a1, RJF.port_a1) annotation (Line(points={{-100,60},{-80,60},
               {-80,-28},{-60,-28},{-60,-38},{-40,-38}},
                                   color={0,127,255}));
-      connect(ECH_TT211.port_b, CV211.port_a) annotation (Line(points={{40,-10},
-              {60,-10}},                   color={0,127,255}));
-      connect(CV211.port_b, port_b1) annotation (Line(points={{80,-10},{88,-10},
-              {88,60},{100,60}},
-                         color={0,127,255}));
       connect(TT221.port_b, RJF.port_a2) annotation (Line(points={{0,-60},{-6,
               -60},{-6,-50},{-20,-50}}, color={0,127,255}));
       connect(TT211.port_a, RJF.port_b2) annotation (Line(points={{-60,-50},{-50,
@@ -8118,14 +8112,18 @@ has a higher priority to fire as alternative.split[2]).
               {-86,-40},{-86,0},{-50,0},{-50,54},{18,54}}, color={0,0,127}));
       connect(TFP_CV122, pID_RJF.TFP_CV122) annotation (Line(points={{-120,40},
               {-70,40},{-70,60},{18,60}}, color={0,0,127}));
-      connect(pID_RJF.y, CV211.y)
-        annotation (Line(points={{41,50},{70,50},{70,2}},   color={0,0,127}));
       connect(senRelPre.port_a, RJF.port_a1)
         annotation (Line(points={{-40,10},{-40,-38}}, color={0,127,255}));
       connect(senRelPre.port_b, RJF.port_b1)
         annotation (Line(points={{-20,10},{-20,-38}}, color={0,127,255}));
       connect(senRelPre.p_rel, pID_RJF.DPT) annotation (Line(points={{-30,1},{
               -30,-8},{-6,-8},{-6,40},{18,40}}, color={0,0,127}));
+      connect(ECH_TT211.port_b, val.port_a)
+        annotation (Line(points={{40,-10},{60,-10}}, color={0,127,255}));
+      connect(pID_RJF.y, val.y)
+        annotation (Line(points={{41,50},{70,50},{70,2}}, color={0,0,127}));
+      connect(val.port_b, port_b1) annotation (Line(points={{80,-10},{90,-10},{
+              90,60},{100,60}}, color={0,127,255}));
       annotation (Icon(coordinateSystem(extent={{-100,-100},{100,100}}),
                        graphics={
             Rectangle(
@@ -12109,6 +12107,58 @@ First implementation.
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end valve_RJC_ter;
+
+      model valve_RJF
+        Fluid.Sources.Boundary_pT           sou1(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          use_p_in=false,
+          p(displayUnit="bar") = 100000,
+          T=298.15,
+          nPorts=2) "Boundary condition for flow source"
+          annotation (Placement(
+              transformation(extent={{10,-10},{-10,10}},
+              rotation=270,
+              origin={-90,-10})));
+        Fluid.Movers.FlowControlled_dp fan(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=720*991/3600,
+          redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          use_inputFilter=false,
+          constantHead(displayUnit="bar") = 187000)
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Fluid.FixedResistances.PressureDrop res(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dp_nominal=69900)
+          annotation (Placement(transformation(extent={{-20,40},{0,60}})));
+        Fluid.Actuators.Valves.TwoWayTable val(
+          redeclare package Medium =
+              Buildings.Applications.DHC_Marseille.Media.Sea_Water,
+          m_flow_nominal=747.6*1025/3600,
+          dpValve_nominal=1700,
+          use_inputFilter=false,
+          flowCharacteristics=Fluid.Actuators.Valves.Data.TFP_calc())
+          annotation (Placement(transformation(extent={{40,40},{60,60}})));
+        Modelica.Blocks.Sources.Constant const(k=0.23)
+          annotation (Placement(transformation(extent={{0,80},{20,100}})));
+      equation
+        connect(sou1.ports[1], fan.port_a) annotation (Line(points={{-88,-3.55271e-15},
+                {-88,50},{-60,50}},               color={0,127,255}));
+        connect(fan.port_b, res.port_a)
+          annotation (Line(points={{-40,50},{-20,50}}, color={0,127,255}));
+        connect(res.port_b, val.port_a)
+          annotation (Line(points={{0,50},{40,50}}, color={0,127,255}));
+        connect(val.port_b, sou1.ports[2]) annotation (Line(points={{60,50},{70,50},{70,
+                20},{-92,20},{-92,-3.55271e-15}}, color={0,127,255}));
+        connect(const.y, val.y)
+          annotation (Line(points={{21,90},{50,90},{50,62}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end valve_RJF;
     end Valves;
   end Miscellaneous;
 
