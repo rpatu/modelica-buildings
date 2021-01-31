@@ -5884,8 +5884,330 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end test_1;
+
+      model complete_plant
+        PEM.pem pem
+          annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
+        RJC.Heat_exchanger heat_exchanger annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={30,30})));
+        RJF.Cold_exchanger cold_exchanger annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={30,70})));
+        GF.Chiller chiller annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={70,-50})));
+        GF.Chiller chiller1 annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={70,-10})));
+        TFP.TFP_solo tFP_solo
+          annotation (Placement(transformation(extent={{80,60},{100,80}})));
+        Fluid.FixedResistances.Junction jun annotation (Placement(
+              transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=180,
+              origin={-50,-70})));
+        Fluid.FixedResistances.Junction jun1 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=270,
+              origin={-50,-30})));
+        Fluid.FixedResistances.Junction jun2 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=270,
+              origin={-50,10})));
+        Fluid.FixedResistances.Junction jun3 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=270,
+              origin={-12,-8})));
+        Fluid.FixedResistances.Junction jun4 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=270,
+              origin={-10,32})));
+        Fluid.FixedResistances.Junction jun5 annotation (Placement(
+              transformation(
+              extent={{-10,10},{10,-10}},
+              rotation=180,
+              origin={-10,90})));
+      equation
+        connect(pem.port_b, jun.port_1) annotation (Line(points={{-80,-50},{-72,
+                -50},{-72,-70},{-60,-70}}, color={0,127,255}));
+        connect(jun.port_2, chiller.port_a1) annotation (Line(points={{-40,-70},
+                {64,-70},{64,-60}}, color={0,127,255}));
+        connect(jun1.port_1, jun.port_3)
+          annotation (Line(points={{-50,-40},{-50,-60}}, color={0,127,255}));
+        connect(jun1.port_3, chiller1.port_a1) annotation (Line(points={{-40,
+                -30},{64,-30},{64,-20}}, color={0,127,255}));
+        connect(jun2.port_1, jun1.port_2)
+          annotation (Line(points={{-50,0},{-50,-20}}, color={0,127,255}));
+        connect(heat_exchanger.port_a1, jun2.port_3) annotation (Line(points={{
+                24,20},{24,10},{-40,10}}, color={0,127,255}));
+        connect(jun2.port_2, cold_exchanger.port_a1) annotation (Line(points={{
+                -50,20},{-50,50},{24,50},{24,60}}, color={0,127,255}));
+        connect(chiller1.port_b1, jun3.port_3) annotation (Line(points={{64,0},
+                {4,0},{4,-8},{-2,-8}}, color={0,127,255}));
+        connect(chiller.port_b1, jun3.port_1) annotation (Line(points={{64,-40},
+                {-12,-40},{-12,-18}}, color={0,127,255}));
+        connect(jun3.port_2, jun4.port_1) annotation (Line(points={{-12,2},{-12,
+                12},{-12,22},{-10,22}}, color={0,127,255}));
+        connect(heat_exchanger.port_b1, jun4.port_3) annotation (Line(points={{
+                24,40},{12,40},{12,32},{0,32}}, color={0,127,255}));
+        connect(jun5.port_3, jun4.port_2)
+          annotation (Line(points={{-10,80},{-10,42}}, color={0,127,255}));
+        connect(cold_exchanger.port_b1, jun5.port_1) annotation (Line(points={{
+                24,80},{24,90},{0,90}}, color={0,127,255}));
+        connect(jun5.port_2, pem.port_a) annotation (Line(points={{-20,90},{
+                -118,90},{-118,-50},{-100,-50}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end complete_plant;
+
+      model complete_plant_b
+        PEM.pem pem
+          annotation (Placement(transformation(extent={{-20,80},{0,100}})));
+        Fluid.FixedResistances.Junction jun annotation (Placement(
+              transformation(
+              extent={{-10,10},{10,-10}},
+              rotation=270,
+              origin={-130,60})));
+        RJF.Cold_exchanger cold_exchanger annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={50,10})));
+        RJC.Heat_exchanger heat_exchanger annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={10,10})));
+        GF.Chiller chiller1 annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={-50,-10})));
+        GF.Chiller chiller annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={-90,-10})));
+        Fluid.FixedResistances.Junction jun1 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={-70,60})));
+        Fluid.FixedResistances.Junction jun2 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={-10,60})));
+        Fluid.FixedResistances.Junction jun3 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={-30,40})));
+        Fluid.FixedResistances.Junction jun4 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={20,40})));
+        Fluid.FixedResistances.Junction jun5 annotation (Placement(
+              transformation(
+              extent={{-10,10},{10,-10}},
+              rotation=90,
+              origin={70,40})));
+        TFP.TFP_solo tFP_solo
+          annotation (Placement(transformation(extent={{20,-40},{40,-20}})));
+        Fluid.FixedResistances.Junction jun6 annotation (Placement(
+              transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=90,
+              origin={-100,-70})));
+        Fluid.FixedResistances.Junction jun7 annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=180,
+              origin={-60,-70})));
+        PEC_PEG.pompes_pec pompes_pec
+          annotation (Placement(transformation(extent={{20,-140},{40,-120}})));
+        DEC_DEG.DEC dEC
+          annotation (Placement(transformation(extent={{80,-162},{100,-140}})));
+      equation
+        connect(pem.port_b, jun.port_1) annotation (Line(points={{0,90},{20,90},
+                {20,80},{-130,80},{-130,70}}, color={0,127,255}));
+        connect(jun.port_2, chiller.port_a1) annotation (Line(points={{-130,50},
+                {-130,-4},{-100,-4}}, color={0,127,255}));
+        connect(jun.port_3, jun1.port_1)
+          annotation (Line(points={{-120,60},{-80,60}}, color={0,127,255}));
+        connect(jun1.port_3, chiller1.port_a1) annotation (Line(points={{-70,50},
+                {-70,-4},{-60,-4}}, color={0,127,255}));
+        connect(jun1.port_2, jun2.port_1)
+          annotation (Line(points={{-60,60},{-20,60}}, color={0,127,255}));
+        connect(jun2.port_3, heat_exchanger.port_a1) annotation (Line(points={{
+                -10,50},{-10,16},{0,16}}, color={0,127,255}));
+        connect(jun2.port_2, cold_exchanger.port_a1) annotation (Line(points={{
+                1.77636e-15,60},{40,60},{40,16}}, color={0,127,255}));
+        connect(chiller.port_b1, jun3.port_1) annotation (Line(points={{-80,-4},
+                {-80,40},{-40,40}}, color={0,127,255}));
+        connect(chiller1.port_b1, jun3.port_3) annotation (Line(points={{-40,-4},
+                {-30,-4},{-30,30}}, color={0,127,255}));
+        connect(jun3.port_2, jun4.port_1)
+          annotation (Line(points={{-20,40},{10,40}}, color={0,127,255}));
+        connect(heat_exchanger.port_b1, jun4.port_3)
+          annotation (Line(points={{20,16},{20,30}}, color={0,127,255}));
+        connect(jun4.port_2, jun5.port_3)
+          annotation (Line(points={{30,40},{60,40}}, color={0,127,255}));
+        connect(cold_exchanger.port_b1, jun5.port_1) annotation (Line(points={{
+                60,16},{70,16},{70,30}}, color={0,127,255}));
+        connect(jun5.port_2, pem.port_a) annotation (Line(points={{70,50},{70,
+                100},{-40,100},{-40,90},{-20,90}}, color={0,127,255}));
+        connect(chiller.port_b2, jun6.port_1)
+          annotation (Line(points={{-100,-16},{-100,-60}}, color={0,127,255}));
+        connect(jun6.port_3, jun7.port_2)
+          annotation (Line(points={{-90,-70},{-70,-70}}, color={0,127,255}));
+        connect(jun7.port_3, chiller1.port_b2)
+          annotation (Line(points={{-60,-60},{-60,-16}}, color={0,127,255}));
+        connect(jun7.port_1, tFP_solo.port_b4) annotation (Line(points={{-50,
+                -70},{0,-70},{0,-38.5},{20,-38.5}}, color={0,127,255}));
+        connect(jun6.port_2, pompes_pec.port_a) annotation (Line(points={{-100,
+                -80},{-100,-130},{20,-130}}, color={0,127,255}));
+        connect(pompes_pec.port_b, dEC.port_a1) annotation (Line(points={{40,
+                -130},{60,-130},{60,-146},{80,-146}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end complete_plant_b;
     end Tests;
   end Plant;
+
+  package PEC_PEG
+    extends Modelica.Icons.VariantsPackage;
+    model pompes_pec
+    extends Buildings.Fluid.Interfaces.PartialTwoPortInterface;
+      Fluid.FixedResistances.CheckValve cheVal[3](
+        redeclare package Medium = Media.Sea_Water,
+        m_flow_nominal=720*1025/3600,
+        dpValve_nominal=3000)
+        annotation (Placement(transformation(extent={{40,-10},{60,10}})));
+      Fluid.Movers.FlowControlled_m_flow fan[3](
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=95.83,
+        redeclare Fluid.Movers.Data.Pumps.KSB.KSB_PEC per,
+        inputType=Buildings.Fluid.Types.InputType.Continuous,
+        dp_nominal(displayUnit="Pa") = 1078731.5)
+        annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
+      Modelica.Blocks.Interfaces.IntegerInput tfp
+        annotation (Placement(transformation(extent={{-140,80},{-100,120}})));
+      Modelica.Blocks.Interfaces.BooleanInput cha
+        annotation (Placement(transformation(extent={{-140,30},{-100,70}})));
+      Controls_a.PEC_PEG.activation_pec activation_pec
+        annotation (Placement(transformation(extent={{-60,80},{-40,100}})));
+    equation
+    for k in 1:3 loop
+      connect(port_a, fan[k].port_a)
+        annotation (Line(points={{-100,0},{-20,0}}, color={0,127,255}));
+      connect(cheVal[k].port_b, port_b)
+        annotation (Line(points={{60,0},{100,0}}, color={0,127,255}));
+    end for;
+
+      connect(fan.port_b, cheVal.port_a)
+        annotation (Line(points={{0,0},{40,0}},  color={0,127,255}));
+
+      connect(tfp, activation_pec.tfp) annotation (Line(points={{-120,100},{-92,
+              100},{-92,95},{-62,95}}, color={255,127,0}));
+      connect(cha, activation_pec.cha) annotation (Line(points={{-120,50},{-92,
+              50},{-92,85},{-62,85}}, color={255,0,255}));
+      connect(activation_pec.y, fan.m_flow_in) annotation (Line(points={{-39,90},
+              {-10,90},{-10,12}}, color={0,0,127}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
+            Rectangle(
+              extent={{-100,16},{100,-16}},
+              lineColor={0,0,0},
+              fillColor={238,46,47},
+              fillPattern=FillPattern.HorizontalCylinder),
+            Ellipse(
+              extent={{-58,58},{58,-58}},
+              lineColor={0,0,0},
+              fillPattern=FillPattern.Sphere,
+              fillColor={238,46,47}),
+            Polygon(
+              points={{0,50},{0,-50},{54,0},{0,50}},
+              lineColor={0,0,0},
+              pattern=LinePattern.None,
+              fillPattern=FillPattern.HorizontalCylinder,
+              fillColor={255,255,255}),
+            Ellipse(
+              extent={{4,16},{36,-16}},
+              lineColor={0,0,0},
+              fillPattern=FillPattern.Sphere,
+              fillColor={238,46,47})}),                              Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end pompes_pec;
+
+    model pompes_peg
+    extends Buildings.Fluid.Interfaces.PartialTwoPortInterface;
+      Fluid.FixedResistances.CheckValve cheVal[3](
+        redeclare package Medium = Media.Sea_Water,
+        m_flow_nominal=720*1025/3600,
+        dpValve_nominal=3000)
+        annotation (Placement(transformation(extent={{40,-10},{60,10}})));
+      Fluid.Movers.FlowControlled_m_flow fan[3](
+        redeclare package Medium = Buildings.Media.Water,
+        m_flow_nominal=95.83,
+        redeclare Fluid.Movers.Data.Pumps.KSB.KSB_PEC per,
+        inputType=Buildings.Fluid.Types.InputType.Continuous,
+        dp_nominal(displayUnit="Pa") = 1078731.5)
+        annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
+      Modelica.Blocks.Interfaces.IntegerInput tfp
+        annotation (Placement(transformation(extent={{-140,80},{-100,120}})));
+      Modelica.Blocks.Interfaces.BooleanInput cha
+        annotation (Placement(transformation(extent={{-140,30},{-100,70}})));
+      Controls_a.PEC_PEG.activation_pec activation_pec
+        annotation (Placement(transformation(extent={{-60,80},{-40,100}})));
+    equation
+    for k in 1:3 loop
+      connect(port_a, fan[k].port_a)
+        annotation (Line(points={{-100,0},{-20,0}}, color={0,127,255}));
+      connect(cheVal[k].port_b, port_b)
+        annotation (Line(points={{60,0},{100,0}}, color={0,127,255}));
+    end for;
+
+      connect(fan.port_b, cheVal.port_a)
+        annotation (Line(points={{0,0},{40,0}},  color={0,127,255}));
+
+      connect(tfp, activation_pec.tfp) annotation (Line(points={{-120,100},{-92,
+              100},{-92,95},{-62,95}}, color={255,127,0}));
+      connect(cha, activation_pec.cha) annotation (Line(points={{-120,50},{-92,
+              50},{-92,85},{-62,85}}, color={255,0,255}));
+      connect(activation_pec.y, fan.m_flow_in) annotation (Line(points={{-39,90},
+              {-10,90},{-10,12}}, color={0,0,127}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
+            Rectangle(
+              extent={{-100,16},{100,-16}},
+              lineColor={0,0,0},
+              fillColor={0,127,255},
+              fillPattern=FillPattern.HorizontalCylinder),
+            Ellipse(
+              extent={{-58,58},{58,-58}},
+              lineColor={0,0,0},
+              fillPattern=FillPattern.Sphere,
+              fillColor={0,100,199}),
+            Polygon(
+              points={{0,50},{0,-50},{54,0},{0,50}},
+              lineColor={0,0,0},
+              pattern=LinePattern.None,
+              fillPattern=FillPattern.HorizontalCylinder,
+              fillColor={255,255,255}),
+            Ellipse(
+              extent={{4,16},{36,-16}},
+              lineColor={0,0,0},
+              fillPattern=FillPattern.Sphere,
+              visible=energyDynamics <> Modelica.Fluid.Types.Dynamics.SteadyState,
+              fillColor={0,100,199})}),                              Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end pompes_peg;
+  end PEC_PEG;
 
   package PEM
   model pem
@@ -8282,6 +8604,32 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
   end Tests;
 
   end RJF;
+
+  package SST
+    extends Modelica.Icons.VariantsPackage;
+    model sst
+      extends Fluid.Interfaces.PartialTwoPort;
+      Fluid.Sources.MassFlowSource_T boundary(redeclare package Medium =
+            Buildings.Media.Water, nPorts=1)
+        annotation (Placement(transformation(extent={{-60,60},{-40,80}})));
+      Fluid.Sources.Boundary_pT bou(redeclare package Medium =
+            Buildings.Media.Water, nPorts=1)
+        annotation (Placement(transformation(extent={{60,60},{40,80}})));
+      Fluid.HeatExchangers.PlateHeatExchangerEffectivenessNTU hex(redeclare
+          package Medium1 = Buildings.Media.Water, redeclare package Medium2 =
+            Buildings.Media.Water)
+        annotation (Placement(transformation(extent={{-10,-4},{10,16}})));
+    equation
+      connect(port_a, hex.port_b2)
+        annotation (Line(points={{-100,0},{-10,0}}, color={0,127,255}));
+      connect(hex.port_a2, port_b)
+        annotation (Line(points={{10,0},{100,0}}, color={0,127,255}));
+      connect(boundary.ports[1], hex.port_a1) annotation (Line(points={{-40,70},
+              {-26,70},{-26,12},{-10,12}}, color={0,127,255}));
+      connect(hex.port_b1, bou.ports[1]) annotation (Line(points={{10,12},{26,
+              12},{26,70},{40,70}}, color={0,127,255}));
+    end sst;
+  end SST;
 
   package TFP
     extends Modelica.Icons.VariantsPackage;
@@ -15586,74 +15934,5 @@ See <a href=\"https://github.com/ibpsa/modelica-ibpsa/issues/1050\">#1050</a>.
     end SixtPort_modif;
   end Interfaces;
 
-  package SST
-    extends Modelica.Icons.VariantsPackage;
-    model sst
-      extends Fluid.Interfaces.PartialTwoPort;
-      Fluid.Sources.MassFlowSource_T boundary(redeclare package Medium =
-            Buildings.Media.Water, nPorts=1)
-        annotation (Placement(transformation(extent={{-60,60},{-40,80}})));
-      Fluid.Sources.Boundary_pT bou(redeclare package Medium =
-            Buildings.Media.Water, nPorts=1)
-        annotation (Placement(transformation(extent={{60,60},{40,80}})));
-      Fluid.HeatExchangers.PlateHeatExchangerEffectivenessNTU hex(redeclare
-          package Medium1 = Buildings.Media.Water, redeclare package Medium2 =
-            Buildings.Media.Water)
-        annotation (Placement(transformation(extent={{-10,-4},{10,16}})));
-    equation
-      connect(port_a, hex.port_b2)
-        annotation (Line(points={{-100,0},{-10,0}}, color={0,127,255}));
-      connect(hex.port_a2, port_b)
-        annotation (Line(points={{10,0},{100,0}}, color={0,127,255}));
-      connect(boundary.ports[1], hex.port_a1) annotation (Line(points={{-40,70},
-              {-26,70},{-26,12},{-10,12}}, color={0,127,255}));
-      connect(hex.port_b1, bou.ports[1]) annotation (Line(points={{10,12},{26,
-              12},{26,70},{40,70}}, color={0,127,255}));
-    end sst;
-  end SST;
-
-  package PEC_PEG
-    extends Modelica.Icons.VariantsPackage;
-    model pompes_pec
-    extends Buildings.Fluid.Interfaces.PartialTwoPortInterface;
-      Fluid.FixedResistances.CheckValve cheVal[3](
-        redeclare package Medium = Media.Sea_Water,
-        m_flow_nominal=720*1025/3600,
-        dpValve_nominal=3000)
-        annotation (Placement(transformation(extent={{40,-10},{60,10}})));
-      Fluid.Movers.FlowControlled_m_flow fan[3](
-        redeclare package Medium = Buildings.Media.Water,
-        m_flow_nominal=95.83,
-        redeclare Fluid.Movers.Data.Pumps.KSB.KSB_PEC per,
-        inputType=Buildings.Fluid.Types.InputType.Continuous,
-        dp_nominal(displayUnit="Pa") = 1078731.5)
-        annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
-      Modelica.Blocks.Interfaces.IntegerInput tfp
-        annotation (Placement(transformation(extent={{-140,80},{-100,120}})));
-      Modelica.Blocks.Interfaces.BooleanInput cha
-        annotation (Placement(transformation(extent={{-140,30},{-100,70}})));
-      Controls_a.PEC_PEG.activation_pec activation_pec
-        annotation (Placement(transformation(extent={{-60,80},{-40,100}})));
-    equation
-    for k in 1:3 loop
-      connect(port_a, fan[k].port_a)
-        annotation (Line(points={{-100,0},{-20,0}}, color={0,127,255}));
-      connect(cheVal[k].port_b, port_b)
-        annotation (Line(points={{60,0},{100,0}}, color={0,127,255}));
-    end for;
-
-      connect(fan.port_b, cheVal.port_a)
-        annotation (Line(points={{0,0},{40,0}},  color={0,127,255}));
-
-      connect(tfp, activation_pec.tfp) annotation (Line(points={{-120,100},{-92,
-              100},{-92,95},{-62,95}}, color={255,127,0}));
-      connect(cha, activation_pec.cha) annotation (Line(points={{-120,50},{-92,
-              50},{-92,85},{-62,85}}, color={255,0,255}));
-      connect(activation_pec.y, fan.m_flow_in) annotation (Line(points={{-39,90},
-              {-10,90},{-10,12}}, color={0,0,127}));
-      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-            coordinateSystem(preserveAspectRatio=false)));
-    end pompes_pec;
-  end PEC_PEG;
   annotation ();
 end DHC_Marseille;
