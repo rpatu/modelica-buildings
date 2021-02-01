@@ -70,103 +70,6 @@ package DHC_Marseille
             coordinateSystem(preserveAspectRatio=false)));
     end opposite;
 
-    model dp_law_hot
-
-      parameter Modelica.SIunits.Pressure W1(displayUnit="bar") = 30000;
-      parameter Modelica.SIunits.Pressure W2(displayUnit="bar") = 1100000;
-      parameter Modelica.SIunits.Conversions.NonSIunits.Temperature_degC T_min = -4;
-      parameter Modelica.SIunits.Conversions.NonSIunits.Temperature_degC T_max = 18;
-
-      Modelica.Blocks.Interfaces.RealInput T_ext
-        annotation (Placement(transformation(extent={{-140,60},{-100,100}})));
-      Modelica.Blocks.Interfaces.RealOutput y
-        annotation (Placement(transformation(extent={{100,-10},{120,10}})));
-
-    equation
-
-        if T_ext< T_min then
-        y = W2;
-        elseif T_ext>= T_min and T_ext <= T_max then
-        y = (sqrt(W2) - (sqrt(W2)-sqrt(W1))/(T_max-T_min)*(T_ext-T_min))^2;
-        else
-        y = W1;
-        end if;
-
-      annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Text(
-              extent={{-100,140},{100,100}},
-              lineColor={28,108,200},
-              textString="%name"),           Rectangle(
-              extent={{-100,100},{100,-100}},
-              fillColor={210,210,210},
-              fillPattern=FillPattern.Solid,
-              borderPattern=BorderPattern.Raised),
-            Line(points={{-60,60},{-60,-60},{-60,-60},{60,-60}}, color={28,108,200}),
-            Polygon(
-              points={{-54,60},{-66,60},{-60,80},{-54,60}},
-              lineColor={28,108,200},
-              fillColor={28,108,200},
-              fillPattern=FillPattern.Solid),
-            Polygon(
-              points={{6,-10},{-6,-10},{0,10},{6,-10}},
-              lineColor={28,108,200},
-              origin={70,-60},
-              rotation=270,
-              fillColor={28,108,200},
-              fillPattern=FillPattern.Solid),
-            Line(points={{-70,20},{-40,20},{20,-40},{50,-40}}, color={255,255,0},
-              thickness=1)}),                                        Diagram(
-            coordinateSystem(preserveAspectRatio=false)));
-    end dp_law_hot;
-
-    model dp_law_cold
-
-      parameter Modelica.SIunits.Pressure W1(displayUnit="bar") = 30000;
-      parameter Modelica.SIunits.Pressure W2(displayUnit="bar") = 1100000;
-      parameter Modelica.SIunits.Conversions.NonSIunits.Temperature_degC T_min = 18;
-      parameter Modelica.SIunits.Conversions.NonSIunits.Temperature_degC T_max = 34;
-
-
-      Modelica.Blocks.Interfaces.RealInput T_ext
-        annotation (Placement(transformation(extent={{-140,60},{-100,100}})));
-      Modelica.Blocks.Interfaces.RealOutput y
-        annotation (Placement(transformation(extent={{100,-10},{120,10}})));
-
-    equation
-
-        if T_ext< T_min then
-        y = W1;
-        elseif T_ext>= T_min and T_ext <= T_max then
-        y = (sqrt(W2) - (sqrt(W2)-sqrt(W1))/(T_max-T_min)*(T_max-T_ext))^2;
-        else
-        y = W2;
-        end if;
-
-      annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={Text(
-              extent={{-100,140},{100,100}},
-              lineColor={28,108,200},
-              textString="%name"),           Rectangle(
-              extent={{-100,100},{100,-100}},
-              fillColor={210,210,210},
-              fillPattern=FillPattern.Solid,
-              borderPattern=BorderPattern.Raised),
-            Line(points={{-60,60},{-60,-60},{-60,-60},{60,-60}}, color={28,108,200}),
-            Polygon(
-              points={{-54,60},{-66,60},{-60,80},{-54,60}},
-              lineColor={28,108,200},
-              fillColor={28,108,200},
-              fillPattern=FillPattern.Solid),
-            Polygon(
-              points={{6,-10},{-6,-10},{0,10},{6,-10}},
-              lineColor={28,108,200},
-              origin={70,-60},
-              rotation=270,
-              fillColor={28,108,200},
-              fillPattern=FillPattern.Solid),
-            Line(points={{-70,20},{-40,20},{20,-40},{50,-40}}, color={255,255,0},
-              thickness=1)}),                                        Diagram(
-            coordinateSystem(preserveAspectRatio=false)));
-    end dp_law_cold;
-
     block Switch_0 "Switch between two Real signals"
       extends Modelica.Blocks.Icons.PartialBooleanBlock;
       Modelica.Blocks.Interfaces.RealInput u1
@@ -2724,451 +2627,17 @@ I/O GF")}),                                Diagram(coordinateSystem(
       end Tests;
     end TFP;
 
-      package Tests
-      extends Modelica.Icons.ExamplesPackage;
-        model switch
-          Modelica.Blocks.Sources.RealExpression realExpression(y= if aa.y == 1 or aa.y == 15 then 10 else if aa.y == 2 then 15 else 0)
-            annotation (Placement(transformation(extent={{-40,80},{-20,100}})));
-          Modelica.Blocks.Math.RealToInteger aa
-            annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
-          Modelica.Blocks.Sources.Ramp ramp(height=20,  duration=400)
-            annotation (Placement(transformation(extent={{-100,40},{-80,60}})));
-        equation
-          connect(ramp.y, aa.u)
-            annotation (Line(points={{-79,50},{-62,50}}, color={0,0,127}));
-          annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-                coordinateSystem(preserveAspectRatio=false)));
-        end switch;
-
-        model loi_eau
-        Modelica.Blocks.Sources.Ramp ramp(
-          height=50,
-          duration=100,
-          offset=-10)
-          annotation (Placement(transformation(extent={{-60,0},{-40,20}})));
-        dp_law_hot dp_law_hot1(T_min(displayUnit="degC"))
-          annotation (Placement(transformation(extent={{0,0},{20,20}})));
-        dp_law_cold dp_law_cold1
-          annotation (Placement(transformation(extent={{0,-40},{20,-20}})));
-        equation
-        connect(ramp.y, dp_law_hot1.T_ext) annotation (Line(points={{-39,10},{
-                -19.5,10},{-19.5,18},{-2,18}}, color={0,0,127}));
-        connect(ramp.y, dp_law_cold1.T_ext) annotation (Line(points={{-39,10},{
-                -20,10},{-20,-22},{-2,-22}}, color={0,0,127}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-        end loi_eau;
-
-        model temps_0
-        Modelica.Blocks.Sources.Sine sine(freqHz(displayUnit="Hz") = 0.1)
-          annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
-        Modelica.Blocks.Logical.Timer timer
-          annotation (Placement(transformation(extent={{-20,0},{0,20}})));
-        Modelica.Blocks.Logical.GreaterEqualThreshold greaterEqualThreshold
-          annotation (Placement(transformation(extent={{20,0},{40,20}})));
-        Modelica.Blocks.Logical.LessEqualThreshold lessEqualThreshold
-          annotation (Placement(transformation(extent={{-60,0},{-40,20}})));
-        equation
-        connect(sine.y, lessEqualThreshold.u)
-          annotation (Line(points={{-79,10},{-62,10}}, color={0,0,127}));
-        connect(lessEqualThreshold.y, timer.u)
-          annotation (Line(points={{-39,10},{-22,10}}, color={255,0,255}));
-        connect(timer.y, greaterEqualThreshold.u)
-          annotation (Line(points={{1,10},{18,10}}, color={0,0,127}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-        end temps_0;
-
-        model root_0
-          inner Modelica.StateGraph.StateGraphRoot stateGraphRoot
-            annotation (Placement(transformation(extent={{80,78},{100,98}})));
-          Modelica.StateGraph.InitialStep initialStep
-            annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
-          Modelica.StateGraph.TransitionWithSignal transitionWithSignal
-            annotation (Placement(transformation(extent={{-40,-20},{-20,0}})));
-        Modelica.Blocks.Logical.Timer timer
-          annotation (Placement(transformation(extent={{-20,60},{0,80}})));
-        Modelica.Blocks.Logical.LessEqualThreshold lessEqualThreshold
-          annotation (Placement(transformation(extent={{-60,60},{-40,80}})));
-        Modelica.Blocks.Logical.GreaterEqualThreshold greaterEqualThreshold(
-            threshold=300)
-          annotation (Placement(transformation(extent={{20,60},{40,80}})));
-        Modelica.Blocks.Sources.Step step(
-          height=-1,
-          offset=1,
-          startTime=100)
-          annotation (Placement(transformation(extent={{-100,60},{-80,80}})));
-        Modelica.StateGraph.Transition transition1(enableTimer=true, waitTime=
-              100)
-          annotation (Placement(transformation(extent={{40,-20},{60,0}})));
-        Modelica.StateGraph.Step step1
-          annotation (Placement(transformation(extent={{0,-20},{20,0}})));
-        equation
-          connect(initialStep.outPort[1],transitionWithSignal. inPort)
-            annotation (Line(points={{-59.5,-10},{-34,-10}},   color={0,0,0}));
-        connect(lessEqualThreshold.y, timer.u)
-          annotation (Line(points={{-39,70},{-22,70}}, color={255,0,255}));
-        connect(timer.y, greaterEqualThreshold.u)
-          annotation (Line(points={{1,70},{18,70}}, color={0,0,127}));
-        connect(step.y, lessEqualThreshold.u) annotation (Line(points={{-79,70},
-                {-62,70},{-62,70}}, color={0,0,127}));
-        connect(transitionWithSignal.outPort, step1.inPort[1])
-          annotation (Line(points={{-28.5,-10},{-1,-10}}, color={0,0,0}));
-        connect(step1.outPort[1], transition1.inPort)
-          annotation (Line(points={{20.5,-10},{46,-10}}, color={0,0,0}));
-        connect(transition1.outPort, initialStep.inPort[1]) annotation (Line(
-              points={{51.5,-10},{72,-10},{72,20},{-90,20},{-90,-10},{-81,-10}},
-              color={0,0,0}));
-        connect(greaterEqualThreshold.y, transitionWithSignal.condition)
-          annotation (Line(points={{41,70},{52,70},{52,40},{-100,40},{-100,-34},
-                {-30,-34},{-30,-22}}, color={255,0,255}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-        end root_0;
-
-        model root_1
-          inner Modelica.StateGraph.StateGraphRoot stateGraphRoot
-            annotation (Placement(transformation(extent={{80,78},{100,98}})));
-          Modelica.StateGraph.InitialStep initialStep(nIn=1)
-            annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
-          Modelica.StateGraph.Transition transitionWithSignal(enableTimer=true, waitTime=
-             2)
-            annotation (Placement(transformation(extent={{-40,-20},{-20,0}})));
-          Modelica.StateGraph.Transition transition1(enableTimer=true, waitTime=
-             5)
-            annotation (Placement(transformation(extent={{40,-20},{60,0}})));
-          Modelica.StateGraph.Step step1(nIn=2,
-                                         nOut=2)
-            annotation (Placement(transformation(extent={{0,-20},{20,0}})));
-          Modelica.StateGraph.Transition transition2(enableTimer=true, waitTime=
-             2)
-            annotation (Placement(transformation(extent={{40,-60},{60,-40}})));
-          Modelica.StateGraph.Step step
-            annotation (Placement(transformation(extent={{80,-60},{100,-40}})));
-          Modelica.StateGraph.Transition transition3(enableTimer=true, waitTime=
-             1)
-            annotation (Placement(transformation(extent={{120,-60},{140,-40}})));
-        equation
-          connect(initialStep.outPort[1],transitionWithSignal. inPort)
-            annotation (Line(points={{-59.5,-10},{-34,-10}},   color={0,0,0}));
-          connect(step1.outPort[1], transition1.inPort)
-            annotation (Line(points={{20.5,-9.75},{34,-9.75},{34,-10},{46,-10}},
-                                                           color={0,0,0}));
-          connect(transition1.outPort, initialStep.inPort[1]) annotation (Line(points={{51.5,
-                -10},{72,-10},{72,20},{-90,20},{-90,-10},{-81,-10}},        color={0,0,0}));
-          connect(step1.outPort[2], transition2.inPort) annotation (Line(points={{20.5,
-                -10.25},{34,-10.25},{34,-50},{46,-50}},
-                                                 color={0,0,0}));
-          connect(transition2.outPort, step.inPort[1])
-            annotation (Line(points={{51.5,-50},{79,-50}}, color={0,0,0}));
-          connect(step.outPort[1], transition3.inPort)
-            annotation (Line(points={{100.5,-50},{126,-50}}, color={0,0,0}));
-        connect(transition3.outPort, step1.inPort[2]) annotation (Line(points={
-                {131.5,-50},{160,-50},{160,-80},{-14,-80},{-14,-10.5},{-1,-10.5}},
-              color={0,0,0}));
-        connect(transitionWithSignal.outPort, step1.inPort[1]) annotation (Line(
-              points={{-28.5,-10},{-14,-10},{-14,-9.5},{-1,-9.5}}, color={0,0,0}));
-          annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-                coordinateSystem(preserveAspectRatio=false)));
-        end root_1;
-
-        model temps_1
-        Modelica.Blocks.Sources.Sine sine(freqHz(displayUnit="Hz") = 0.1)
-          annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
-        WaitBefore waitBefore_comp(
-          threshold=0,
-          t_threshold=1,
-          superior=true)
-          annotation (Placement(transformation(extent={{-40,0},{-20,20}})));
-        equation
-        connect(sine.y, waitBefore_comp.u)
-          annotation (Line(points={{-79,10},{-42,10}}, color={0,0,127}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)),
-          experiment(
-            StopTime=500,
-            Interval=0.1,
-            __Dymola_Algorithm="Dassl"));
-        end temps_1;
-
-        model dec_controls
-          extends Modelica.Icons.Example;
-        DEC_DEG.DEC_controls_parallel dEC_controls
-          annotation (Placement(transformation(extent={{-42,-2},{22,62}})));
-        Modelica.Blocks.Sources.RealExpression realExpression
-          annotation (Placement(transformation(extent={{-120,40},{-100,60}})));
-        equation
-        connect(realExpression.y, dEC_controls.dp_DEC) annotation (Line(points=
-                {{-99,50},{-72,50},{-72,60},{-44,60}}, color={0,0,127}));
-        connect(realExpression.y, dEC_controls.TT_DEC) annotation (Line(points=
-                {{-99,50},{-72,50},{-72,56},{-44,56}}, color={0,0,127}));
-        connect(realExpression.y, dEC_controls.FT_DEC) annotation (Line(points=
-                {{-99,50},{-72,50},{-72,52},{-44,52}}, color={0,0,127}));
-        connect(realExpression.y, dEC_controls.FT_TFP) annotation (Line(points=
-                {{-99,50},{-72,50},{-72,48},{-44,48}}, color={0,0,127}));
-        connect(realExpression.y, dEC_controls.FT_CHA) annotation (Line(points=
-                {{-99,50},{-72,50},{-72,44},{-44,44}}, color={0,0,127}));
-        end dec_controls;
-
-        model ExecutionPaths
-        "Example to demonstrate parallel and alternative execution paths"
-
-          extends Modelica.Icons.Example;
-
-          Modelica.StateGraph.InitialStep step0
-            annotation (Placement(transformation(extent={{-140,-100},{-120,-80}})));
-          Modelica.StateGraph.Transition transition1(enableTimer=true, waitTime=1)
-            annotation (Placement(transformation(extent={{-100,-100},{-80,-80}})));
-          Modelica.StateGraph.Step step1
-            annotation (Placement(transformation(extent={{-10,-40},{10,-20}})));
-          Modelica.StateGraph.Transition transition2(enableTimer=true, waitTime=1)
-            annotation (Placement(transformation(extent={{90,-100},{110,-80}})));
-          Modelica.StateGraph.Step step6
-            annotation (Placement(transformation(extent={{120,-100},{140,-80}})));
-          Modelica.StateGraph.Step step2
-            annotation (Placement(transformation(extent={{-98,40},{-78,60}})));
-          Modelica.StateGraph.Transition transition3(enableTimer=true, waitTime=1.1)
-            annotation (Placement(transformation(extent={{-42,80},{-22,100}})));
-          Modelica.StateGraph.Transition transition4(enableTimer=true, waitTime=1)
-            annotation (Placement(transformation(extent={{-42,40},{-22,60}})));
-          Modelica.StateGraph.Step step3
-            annotation (Placement(transformation(extent={{-8,80},{12,100}})));
-          Modelica.StateGraph.Step step4
-            annotation (Placement(transformation(extent={{-8,40},{12,60}})));
-          Modelica.StateGraph.Transition transition5(enableTimer=true, waitTime=1)
-            annotation (Placement(transformation(extent={{26,80},{46,100}})));
-          Modelica.StateGraph.Transition transition6(enableTimer=true, waitTime=1)
-            annotation (Placement(transformation(extent={{26,40},{46,60}})));
-          Modelica.StateGraph.Step step5
-            annotation (Placement(transformation(extent={{80,40},{100,60}})));
-          Modelica.Blocks.Sources.RealExpression setReal(y=time)
-                                  annotation (Placement(transformation(extent={{21,
-                      -160},{41,-140}})));
-          Modelica.StateGraph.TransitionWithSignal transition7
-            annotation (Placement(transformation(extent={{9,-134},{-11,-114}})));
-          Modelica.Blocks.Sources.BooleanExpression setCondition(y=time >= 7)
-            annotation (Placement(transformation(extent={{-77,-160},{-19,-140}})));
-          Modelica.StateGraph.Transition transition4a(enableTimer=true, waitTime=1)
-            annotation (Placement(transformation(extent={{-42,0},{-22,20}})));
-          Modelica.StateGraph.Step step4a
-            annotation (Placement(transformation(extent={{-8,0},{12,20}})));
-          Modelica.StateGraph.Transition transition6a(enableTimer=true, waitTime=2)
-            annotation (Placement(transformation(extent={{26,0},{46,20}})));
-          Modelica.StateGraph.Temporary.NumericValue NumericValue1
-            annotation (Placement(transformation(extent={{61,-160},{81,-140}})));
-          Modelica.StateGraph.Alternative alternative(nBranches=3)
-            annotation (Placement(transformation(extent={{-70,-10},{72,110}})));
-          Modelica.StateGraph.Parallel Parallel1
-            annotation (Placement(transformation(extent={{-154,-50},{152,120}})));
-            inner Modelica.StateGraph.StateGraphRoot stateGraphRoot
-            annotation (Placement(transformation(extent={{-160,120},{-140,140}})));
-        equation
-          connect(transition3.outPort, step3.inPort[1])
-            annotation (Line(points={{-30.5,90},{-9,90}}));
-          connect(step3.outPort[1], transition5.inPort)
-            annotation (Line(points={{12.5,90},{32,90}}));
-          connect(transition4.outPort, step4.inPort[1])
-            annotation (Line(points={{-30.5,50},{-9,50}}));
-          connect(step4.outPort[1], transition6.inPort)
-            annotation (Line(points={{12.5,50},{32,50}}));
-          connect(transition7.outPort, step0.inPort[1]) annotation (Line(points={{
-                    -2.5,-124},{-149,-124},{-149,-90},{-141,-90}}));
-          connect(step6.outPort[1], transition7.inPort) annotation (Line(points={{
-                    140.5,-90},{150,-90},{150,-124},{3,-124}}));
-          connect(transition4a.outPort, step4a.inPort[1])
-            annotation (Line(points={{-30.5,10},{-9,10}}));
-          connect(step4a.outPort[1], transition6a.inPort)
-            annotation (Line(points={{12.5,10},{32,10}}));
-          connect(setCondition.y, transition7.condition) annotation (Line(points={{
-                    -16.1,-150},{-1,-150},{-1,-136}}, color={255,0,255}));
-          connect(setReal.y, NumericValue1.Value) annotation (Line(
-                points={{42,-150},{59,-150}}, color={0,0,255}));
-          connect(transition3.inPort, alternative.split[1]) annotation (Line(points={{-36,90},
-                    {-55.09,90}}));
-          connect(transition4.inPort, alternative.split[2]) annotation (Line(points={{-36,50},
-                    {-55.09,50}}));
-          connect(transition4a.inPort, alternative.split[3]) annotation (Line(points={{-36,10},
-                    {-45.0125,10},{-45.0125,10},{-55.09,10}}));
-          connect(transition5.outPort, alternative.join[1]) annotation (Line(points={{37.5,90},
-                    {57.09,90}}));
-          connect(transition6.outPort, alternative.join[2]) annotation (Line(points={{37.5,50},
-                    {57.09,50}}));
-          connect(transition6a.outPort, alternative.join[3]) annotation (Line(points={{37.5,10},
-                    {46.7625,10},{46.7625,10},{57.09,10}}));
-          connect(step2.outPort[1], alternative.inPort) annotation (Line(points={{
-                    -77.5,50},{-72.13,50}}));
-          connect(alternative.outPort, step5.inPort[1])
-            annotation (Line(points={{73.42,50},{79,50}}));
-          connect(step2.inPort[1], Parallel1.split[1]) annotation (Line(points={{-99,50},
-                  {-118,50},{-118,78},{-119.575,78},{-119.575,35}}));
-          connect(step1.outPort[1], Parallel1.join[2]) annotation (Line(points={{10.5,
-                  -30},{118,-30},{118,35},{117.575,35}}));
-          connect(step0.outPort[1], transition1.inPort) annotation (Line(points={{
-                    -119.5,-90},{-94,-90}}));
-          connect(transition2.outPort, step6.inPort[1]) annotation (Line(points={{
-                    101.5,-90},{119,-90}}));
-          connect(transition1.outPort, Parallel1.inPort) annotation (Line(points={{
-                    -88.5,-90},{-70,-90},{-70,-64},{-174,-64},{-174,35},{-158.59,35}}));
-          connect(Parallel1.outPort, transition2.inPort) annotation (Line(points={{
-                    155.06,35},{168,35},{168,-60},{80,-60},{80,-90},{96,-90}}));
-          connect(step5.outPort[1], Parallel1.join[1]) annotation (Line(points={{100.5,
-                  50},{116,50},{116,35},{117.575,35}}));
-          connect(Parallel1.split[2], step1.inPort[1]) annotation (Line(points={{
-                  -119.575,35},{-119.575,-8},{-119.575,-30},{-11,-30}}));
-          annotation (
-            Documentation(info="<html>
-<p>
-This is an example to demonstrate in which way <strong>parallel</strong> activities
-can be modelled by a StateGraph. When transition1 fires
-(after 1 second), two branches are executed in parallel.
-After 6 seconds the two branches are synchronized in order to arrive
-at step6.
-</p>
-<p>
-Before simulating the model, try to figure out whether which branch
-of the alternative sequence is executed. Note, that alternatives
-have priorities according to the port index (alternative.split[1]
-has a higher priority to fire as alternative.split[2]).
-</p>
-</html>"),            experiment(StopTime=15),
-              Diagram(coordinateSystem(extent={{-200,-200},{200,200}})));
-        end ExecutionPaths;
-
-        model inttoboo
-        Modelica.Blocks.Math.BooleanToInteger booleanToInteger(integerTrue=10)
-          annotation (Placement(transformation(extent={{20,0},{40,20}})));
-        Modelica.Blocks.Sources.BooleanPulse booleanPulse(period=100)
-          annotation (Placement(transformation(extent={{-100,40},{-80,60}})));
-        Modelica.Blocks.Logical.Or or1
-          annotation (Placement(transformation(extent={{-60,0},{-40,20}})));
-        Modelica.Blocks.Sources.BooleanPulse booleanPulse1(period=120)
-          annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
-        equation
-        connect(booleanPulse.y, or1.u1) annotation (Line(points={{-79,50},{-79,
-                30},{-62,30},{-62,10}}, color={255,0,255}));
-        connect(booleanPulse1.y, or1.u2) annotation (Line(points={{-79,10},{-72,
-                10},{-72,2},{-62,2}}, color={255,0,255}));
-        connect(or1.y, booleanToInteger.u)
-          annotation (Line(points={{-39,10},{18,10}}, color={255,0,255}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-        end inttoboo;
-
-        model or_test
-          Modelica.Blocks.Interfaces.BooleanInput u[2]
-            annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
-
-          Modelica.Blocks.Interfaces.BooleanOutput y
-            annotation (Placement(transformation(extent={{100,-10},{120,10}})));
-        equation
-            y = u[1] + u[2]
-          annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-                coordinateSystem(preserveAspectRatio=false)));
-
-        end or_test;
-
-        model test_or
-        Modelica.Blocks.MathInteger.MultiSwitch HPSHC_exit(
-          expr={1,10},
-          use_pre_as_default=false,
-          nu=2) annotation (Placement(transformation(extent={{20,20},{60,40}})));
-        Modelica.Blocks.Sources.BooleanPulse booleanPulse(period=100)
-          annotation (Placement(transformation(extent={{-100,40},{-80,60}})));
-        Modelica.Blocks.Sources.BooleanPulse booleanPulse1(period=120)
-          annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
-        equation
-        connect(booleanPulse.y, HPSHC_exit.u[1]) annotation (Line(points={{-79,
-                50},{-30,50},{-30,31.5},{20,31.5}}, color={255,0,255}));
-        connect(booleanPulse1.y, HPSHC_exit.u[2]) annotation (Line(points={{-79,
-                10},{-30,10},{-30,28.5},{20,28.5}}, color={255,0,255}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-        end test_or;
-
-        model DEC_test
-        DEC_DEG.DEC_controls_parallel dEC_controls_parallel
-          annotation (Placement(transformation(extent={{-20,-20},{44,44}})));
-        Modelica.Blocks.Sources.RealExpression realExpression
-          annotation (Placement(transformation(extent={{-80,80},{-60,100}})));
-        Modelica.Blocks.Sources.RealExpression realExpression1
-          annotation (Placement(transformation(extent={{-80,50},{-60,70}})));
-        Modelica.Blocks.Sources.RealExpression realExpression2
-          annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
-        Modelica.Blocks.Sources.RealExpression realExpression3
-          annotation (Placement(transformation(extent={{-80,-10},{-60,10}})));
-        Modelica.Blocks.Sources.RealExpression realExpression4
-          annotation (Placement(transformation(extent={{-80,-40},{-60,-20}})));
-        equation
-        connect(realExpression4.y, dEC_controls_parallel.FT_CHA) annotation (
-            Line(points={{-59,-30},{-40,-30},{-40,26},{-22,26}}, color={0,0,127}));
-        connect(realExpression3.y, dEC_controls_parallel.FT_TFP) annotation (
-            Line(points={{-59,0},{-42,0},{-42,30},{-22,30}}, color={0,0,127}));
-        connect(realExpression2.y, dEC_controls_parallel.FT_DEC) annotation (
-            Line(points={{-59,30},{-40,30},{-40,34},{-22,34}}, color={0,0,127}));
-        connect(realExpression1.y, dEC_controls_parallel.TT_DEC) annotation (
-            Line(points={{-59,60},{-42,60},{-42,38},{-22,38}}, color={0,0,127}));
-        connect(realExpression.y, dEC_controls_parallel.dp_DEC) annotation (
-            Line(points={{-59,90},{-42,90},{-42,42},{-22,42}}, color={0,0,127}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-        end DEC_test;
-
-        model test_greater
-        Modelica.Blocks.Interfaces.RealInput u
-          annotation (Placement(transformation(extent={{-120,-20},{-80,20}})));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-        end test_greater;
-
-        model output_test
-          Modelica.Blocks.Sources.Constant const(k=1)
-            annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
-          Modelica.Blocks.Sources.Constant const1(k=2)
-            annotation (Placement(transformation(extent={{-80,-20},{-60,0}})));
-          Modelica.Blocks.Interfaces.RealOutput y[2]
-            annotation (Placement(transformation(extent={{20,0},{40,20}})));
-        equation
-        connect(const.y, y[2]) annotation (Line(points={{-59,30},{-20,30},{-20,
-                15},{30,15}}, color={0,0,127}));
-        connect(const1.y, y[1]) annotation (Line(points={{-59,-10},{-20,-10},{
-                -20,5},{30,5}}, color={0,0,127}));
-          annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-                coordinateSystem(preserveAspectRatio=false)));
-        end output_test;
-
-        model test_switch
-          Switch_0 switch1[2]
-            annotation (Placement(transformation(extent={{-20,20},{0,40}})));
-          Modelica.Blocks.Sources.RealExpression realExpression(y=20)
-            annotation (Placement(transformation(extent={{-100,40},{-80,60}})));
-          Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=true)
-            annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
-          Modelica.Blocks.Sources.BooleanExpression booleanExpression1(y=true)
-            annotation (Placement(transformation(extent={{-100,-20},{-80,0}})));
-        equation
-        connect(realExpression.y, switch1[1].u1) annotation (Line(points={{-79,
-                50},{-50,50},{-50,38},{-22,38}}, color={0,0,127}));
-        connect(realExpression.y, switch1[2].u1) annotation (Line(points={{-79,
-                50},{-50,50},{-50,38},{-22,38}}, color={0,0,127}));
-        connect(booleanExpression.y, switch1[1].u2) annotation (Line(points={{
-                -79,10},{-50,10},{-50,30},{-22,30}}, color={255,0,255}));
-        connect(booleanExpression1.y, switch1[2].u2) annotation (Line(points={{
-                -79,-10},{-50,-10},{-50,30},{-22,30}}, color={255,0,255}));
-          annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-                coordinateSystem(preserveAspectRatio=false)));
-        end test_switch;
-      end Tests;
-
     package PEC_PEG
         extends Modelica.Icons.VariantsPackage;
-      block switch_tfp "Convert Integer to Real signals"
+      block switch_tfp_pec "Convert Integer to Real signals"
         extends Modelica.Blocks.Icons.Block;
         Modelica.Blocks.Interfaces.IntegerInput u "Connector of Integer input signal"
           annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
         Modelica.Blocks.Interfaces.RealOutput y "Connector of Real output signal"
           annotation (Placement(transformation(extent={{100,-10},{120,10}})));
+          parameter Real Q_tfp=211;
       equation
-        y = if u == 0 or u == 3 then 0 else 211*1000/3600;
+        y = if u == 0 or u == 3 then 0 else Q_tfp*1000/3600;
         annotation (Icon(coordinateSystem(
               preserveAspectRatio=true,
               extent={{-100.0,-100.0},{100.0,100.0}}), graphics={
@@ -3194,14 +2663,59 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
 </pre>
 <p>where <strong>u</strong> is of Integer and <strong>y</strong> of Real type.</p>
 </html>"));
-      end switch_tfp;
+      end switch_tfp_pec;
+
+      block switch_tfp_peg "Convert Integer to Real signals"
+        extends Modelica.Blocks.Icons.Block;
+        parameter Real Q_tfp_solo=166;
+      parameter Real Q_tfp_duo=322;
+        Modelica.Blocks.Interfaces.IntegerInput u "Connector of Integer input signal"
+          annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
+        Modelica.Blocks.Interfaces.RealOutput y "Connector of Real output signal"
+          annotation (Placement(transformation(extent={{100,-10},{120,10}})));
+      equation
+        if u == 0 then
+          y = 0;
+        else
+          if u == 1 then
+            y = Q_tfp_solo * 1000 / 3600;
+          else
+            y = Q_tfp_duo * 1000 / 3600;
+          end if;
+        end if;
+        annotation (Icon(coordinateSystem(
+              preserveAspectRatio=true,
+              extent={{-100.0,-100.0},{100.0,100.0}}), graphics={
+              Text(
+                lineColor={255,127,0},
+                extent={{-120.0,-40.0},{-20.0,40.0}},
+                textString="I"),
+              Text(
+                lineColor={0,0,127},
+                extent={{0.0,-40.0},{100.0,40.0}},
+                textString="R"),
+              Polygon(
+                lineColor={0,0,127},
+                fillColor={0,0,127},
+                fillPattern=FillPattern.Solid,
+                points={{10.0,0.0},{-10.0,20.0},{-10.0,10.0},{-40.0,10.0},{-40.0,-10.0},
+                    {-10.0,-10.0},{-10.0,-20.0},{10.0,0.0}})}), Documentation(info="<html>
+<p>
+This block computes the output <strong>y</strong>
+as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
+</p>
+<pre>    y = u;
+</pre>
+<p>where <strong>u</strong> is of Integer and <strong>y</strong> of Real type.</p>
+</html>"));
+      end switch_tfp_peg;
 
       model activation_pec
         Modelica.Blocks.Interfaces.IntegerInput tfp
           annotation (Placement(transformation(extent={{-140,30},{-100,70}})));
         Modelica.Blocks.Interfaces.BooleanInput cha
           annotation (Placement(transformation(extent={{-140,-70},{-100,-30}})));
-        switch_tfp integerToReal
+        switch_tfp_pec integerToReal
           annotation (Placement(transformation(extent={{-80,40},{-60,60}})));
         Modelica.Blocks.Math.BooleanToReal booleanToReal(realTrue=200*1000/3600)
           annotation (Placement(transformation(extent={{-80,-60},{-60,-40}})));
@@ -3384,51 +2898,6 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
               coordinateSystem(preserveAspectRatio=false)));
       end activation_pec;
 
-      package Tests
-        extends Modelica.Icons.ExamplesPackage;
-        model test_module
-          Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=false)
-            annotation (Placement(transformation(extent={{-80,40},{-60,60}})));
-          Modelica.Blocks.Sources.BooleanExpression booleanExpression1(y=false)
-            annotation (Placement(transformation(extent={{-80,10},{-60,30}})));
-          Modelica.Blocks.Sources.BooleanExpression booleanExpression2(y=true)
-            annotation (Placement(transformation(extent={{-80,80},{-60,100}})));
-          mass_rate_pump mass_rate_pum1
-            annotation (Placement(transformation(extent={{-20,40},{0,60}})));
-          Modelica.Blocks.Sources.RealExpression realExpression(y=30)
-            annotation (Placement(transformation(extent={{-60,-20},{-40,0}})));
-        equation
-          connect(booleanExpression2.y, mass_rate_pum1.u1) annotation (Line(
-                points={{-59,90},{-38,90},{-38,58},{-22,58},{-22,60}}, color={
-                  255,0,255}));
-          connect(booleanExpression.y, mass_rate_pum1.u2) annotation (Line(
-                points={{-59,50},{-40,50},{-40,54},{-22,54}}, color={255,0,255}));
-          connect(booleanExpression1.y, mass_rate_pum1.u3) annotation (Line(
-                points={{-59,20},{-40,20},{-40,48},{-22,48}}, color={255,0,255}));
-          connect(realExpression.y, mass_rate_pum1.u) annotation (Line(points={
-                  {-39,-10},{-32,-10},{-32,40},{-22,40}}, color={0,0,127}));
-          annotation (Icon(coordinateSystem(preserveAspectRatio=false)),
-              Diagram(coordinateSystem(preserveAspectRatio=false)));
-        end test_module;
-
-        model debit_pump
-          activation_pec activation_pec1
-            annotation (Placement(transformation(extent={{-20,20},{0,40}})));
-          Modelica.Blocks.Sources.IntegerExpression integerExpression(y=1)
-            annotation (Placement(transformation(extent={{-100,40},{-80,60}})));
-          Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=true)
-            annotation (Placement(transformation(extent={{-100,-20},{-80,0}})));
-        equation
-          connect(booleanExpression.y, activation_pec1.cha) annotation (Line(
-                points={{-79,-10},{-52,-10},{-52,25},{-22,25}}, color={255,0,
-                  255}));
-          connect(integerExpression.y, activation_pec1.tfp) annotation (Line(
-                points={{-79,50},{-52,50},{-52,35},{-22,35}}, color={255,127,0}));
-          annotation (Icon(coordinateSystem(preserveAspectRatio=false)),
-              Diagram(coordinateSystem(preserveAspectRatio=false)));
-        end debit_pump;
-      end Tests;
-
       block mass_rate_pump
 
         Controls.OBC.CDL.Interfaces.BooleanInput u1
@@ -3498,6 +2967,256 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
                 lineColor={0,0,0},
                 textString="m_flow")}));
       end mass_rate_pump;
+
+      model activation_peg
+        Modelica.Blocks.Interfaces.IntegerInput tfp
+          annotation (Placement(transformation(extent={{-140,50},{-100,90}})));
+        Modelica.Blocks.Interfaces.BooleanInput gf1
+          annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
+        switch_tfp_pec integerToReal
+          annotation (Placement(transformation(extent={{-80,60},{-60,80}})));
+        Modelica.Blocks.Math.BooleanToReal booleanToReal(realTrue=500*1000/3600)
+          annotation (Placement(transformation(extent={{-80,-10},{-60,10}})));
+        Modelica.Blocks.Math.MultiSum add(nu=3)
+          annotation (Placement(transformation(extent={{-40,40},{-20,60}})));
+        Modelica.StateGraph.InitialStep initialStep1
+          annotation (Placement(transformation(extent={{100,60},{120,80}})));
+        Modelica.StateGraph.StepWithSignal pump_1_start1(nIn=1, nOut=1)
+          annotation (Placement(transformation(extent={{180,60},{200,80}})));
+        Modelica.StateGraph.Transition transition9(enableTimer=true, waitTime=120)
+          annotation (Placement(transformation(extent={{220,60},{240,80}})));
+        Modelica.StateGraph.StepWithSignal pump_6(nIn=2, nOut=2)
+          annotation (Placement(transformation(extent={{260,60},{280,80}})));
+        Modelica.StateGraph.TransitionWithSignal transitionWithSignal8
+          annotation (Placement(transformation(extent={{140,60},{160,80}})));
+        Modelica.StateGraph.StepWithSignal pump_2_start1(nIn=1, nOut=1)
+          annotation (Placement(transformation(extent={{340,20},{360,40}})));
+        Modelica.StateGraph.Transition transition10(enableTimer=true, waitTime=120)
+          annotation (Placement(transformation(extent={{380,20},{400,40}})));
+        Modelica.StateGraph.StepWithSignal pump_7(nIn=2, nOut=2)
+          annotation (Placement(transformation(extent={{420,20},{440,40}})));
+        Modelica.StateGraph.TransitionWithSignal transitionWithSignal9
+          annotation (Placement(transformation(extent={{460,20},{480,40}})));
+        Modelica.Blocks.Logical.GreaterThreshold greaterThreshold
+          annotation (Placement(transformation(extent={{0,60},{20,80}})));
+        Modelica.StateGraph.TransitionWithSignal transitionWithSignal10
+          annotation (Placement(transformation(extent={{300,20},{320,40}})));
+        Modelica.Blocks.Logical.GreaterThreshold greaterThreshold1(threshold=
+              760*1000/3600)
+                     annotation (Placement(transformation(extent={{0,20},{20,40}})));
+        Modelica.StateGraph.TransitionWithSignal transitionWithSignal11
+          annotation (Placement(transformation(extent={{300,60},{320,80}})));
+        Modelica.Blocks.Logical.Not not1
+          annotation (Placement(transformation(extent={{160,0},{180,20}})));
+        Modelica.StateGraph.TransitionWithSignal transitionWithSignal12
+          annotation (Placement(transformation(extent={{460,-20},{480,0}})));
+        Modelica.Blocks.Logical.LessThreshold lessThreshold(threshold=300*1000/3600)
+          annotation (Placement(transformation(extent={{340,-40},{360,-20}})));
+        Modelica.Blocks.Logical.GreaterThreshold greaterThreshold2(threshold=700*1000
+              /3600)
+          annotation (Placement(transformation(extent={{380,-60},{400,-40}})));
+        Modelica.StateGraph.StepWithSignal pump_2_start2(nIn=1, nOut=1)
+          annotation (Placement(transformation(extent={{500,-20},{520,0}})));
+        Modelica.StateGraph.Transition transition11(enableTimer=true, waitTime=120)
+          annotation (Placement(transformation(extent={{540,-20},{560,0}})));
+        Modelica.StateGraph.StepWithSignal pump_8(nIn=1, nOut=1)
+          annotation (Placement(transformation(extent={{580,-20},{600,0}})));
+        Modelica.StateGraph.TransitionWithSignal transitionWithSignal13
+          annotation (Placement(transformation(extent={{620,-20},{640,0}})));
+        Modelica.Blocks.Logical.LessThreshold lessThreshold1(threshold=650*1000/3600)
+          annotation (Placement(transformation(extent={{540,-80},{560,-60}})));
+        Modelica.Blocks.MathBoolean.Or pump_working1(nu=2)
+          annotation (Placement(transformation(extent={{280,-120},{300,-100}})));
+        Modelica.Blocks.MathBoolean.Or pump_working2(nu=2)
+          annotation (Placement(transformation(extent={{440,-120},{460,-100}})));
+        Modelica.Blocks.MathBoolean.Or pump_working3(nu=2)
+          annotation (Placement(transformation(extent={{600,-120},{620,-100}})));
+        mass_rate_pump mass_rate_pum1 annotation (Placement(transformation(
+                extent={{640,-160},{660,-140}})));
+        Modelica.Blocks.Interfaces.RealOutput y[3]
+          annotation (Placement(transformation(extent={{100,-10},{120,10}})));
+        Modelica.Blocks.Math.BooleanToReal booleanToReal1(realTrue=500*1000/
+              3600)
+          annotation (Placement(transformation(extent={{-80,-80},{-60,-60}})));
+        Modelica.Blocks.Interfaces.BooleanInput gf2 annotation (Placement(
+              transformation(extent={{-140,-90},{-100,-50}})));
+      equation
+        connect(tfp, integerToReal.u)
+          annotation (Line(points={{-120,70},{-82,70}}, color={255,127,0}));
+        connect(gf1, booleanToReal.u)
+          annotation (Line(points={{-120,0},{-82,0}},     color={255,0,255}));
+        connect(initialStep1.outPort[1], transitionWithSignal8.inPort)
+          annotation (Line(points={{120.5,70},{146,70}}, color={0,0,0}));
+        connect(add.y, greaterThreshold.u) annotation (Line(points={{-18.3,50},
+                {-12,50},{-12,70},{-2,70}},
+                                   color={0,0,127}));
+        connect(greaterThreshold.y, transitionWithSignal8.condition) annotation (
+            Line(points={{21,70},{60,70},{60,40},{150,40},{150,58}}, color={255,0,255}));
+        connect(transitionWithSignal8.outPort, pump_1_start1.inPort[1])
+          annotation (Line(points={{151.5,70},{179,70}}, color={0,0,0}));
+        connect(pump_1_start1.outPort[1], transition9.inPort)
+          annotation (Line(points={{200.5,70},{226,70}}, color={0,0,0}));
+        connect(add.y, greaterThreshold1.u) annotation (Line(points={{-18.3,50},
+                {-12,50},{-12,30},{-2,30}},
+                                   color={0,0,127}));
+        connect(greaterThreshold1.y, transitionWithSignal10.condition) annotation (
+            Line(points={{21,30},{40,30},{40,-10},{310,-10},{310,18}}, color={255,0,
+                255}));
+        connect(pump_6.outPort[1], transitionWithSignal11.inPort) annotation (Line(
+              points={{280.5,70.25},{292,70.25},{292,70},{306,70}}, color={0,0,0}));
+        connect(greaterThreshold.y, not1.u) annotation (Line(points={{21,70},{60,70},
+                {60,10},{158,10}}, color={255,0,255}));
+        connect(not1.y, transitionWithSignal11.condition) annotation (Line(points={{
+                181,10},{300,10},{300,52},{310,52},{310,58}}, color={255,0,255}));
+        connect(pump_6.outPort[2], transitionWithSignal10.inPort) annotation (Line(
+              points={{280.5,69.75},{292,69.75},{292,30},{306,30}}, color={0,0,0}));
+        connect(transitionWithSignal10.outPort, pump_2_start1.inPort[1])
+          annotation (Line(points={{311.5,30},{339,30}}, color={0,0,0}));
+        connect(pump_2_start1.outPort[1], transition10.inPort)
+          annotation (Line(points={{360.5,30},{386,30}}, color={0,0,0}));
+        connect(transition10.outPort, pump_7.inPort[1]) annotation (Line(points={{391.5,
+                30},{406,30},{406,30.5},{419,30.5}}, color={0,0,0}));
+        connect(pump_7.outPort[1], transitionWithSignal9.inPort) annotation (Line(
+              points={{440.5,30.25},{454,30.25},{454,30},{466,30}}, color={0,0,0}));
+        connect(add.y, lessThreshold.u) annotation (Line(points={{-18.3,50},{
+                -12,50},{-12,-30},{338,-30}},
+                                     color={0,0,127}));
+        connect(transitionWithSignal11.outPort, initialStep1.inPort[1]) annotation (
+           Line(points={{311.5,70},{340,70},{340,120},{88,120},{88,70},{99,70}},
+              color={0,0,0}));
+        connect(transition9.outPort, pump_6.inPort[1]) annotation (Line(points={{231.5,
+                70},{246,70},{246,70.5},{259,70.5}}, color={0,0,0}));
+        connect(transitionWithSignal9.outPort, pump_6.inPort[2]) annotation (Line(
+              points={{471.5,30},{500,30},{500,100},{248,100},{248,69.5},{259,69.5}},
+              color={0,0,0}));
+        connect(pump_7.outPort[2], transitionWithSignal12.inPort) annotation (Line(
+              points={{440.5,29.75},{452,29.75},{452,-10},{466,-10}}, color={0,0,0}));
+        connect(lessThreshold.y, transitionWithSignal9.condition) annotation (Line(
+              points={{361,-30},{460,-30},{460,10},{470,10},{470,18}}, color={255,0,
+                255}));
+        connect(greaterThreshold2.y, transitionWithSignal12.condition) annotation (
+            Line(points={{401,-50},{470,-50},{470,-22}}, color={255,0,255}));
+        connect(transitionWithSignal12.outPort, pump_2_start2.inPort[1])
+          annotation (Line(points={{471.5,-10},{499,-10}}, color={0,0,0}));
+        connect(pump_2_start2.outPort[1], transition11.inPort)
+          annotation (Line(points={{520.5,-10},{546,-10}}, color={0,0,0}));
+        connect(transition11.outPort, pump_8.inPort[1])
+          annotation (Line(points={{551.5,-10},{579,-10}}, color={0,0,0}));
+        connect(add.y, greaterThreshold2.u) annotation (Line(points={{-18.3,50},
+                {-12,50},{-12,-50},{378,-50}},
+                                      color={0,0,127}));
+        connect(pump_8.outPort[1], transitionWithSignal13.inPort)
+          annotation (Line(points={{600.5,-10},{626,-10}}, color={0,0,0}));
+        connect(lessThreshold1.y, transitionWithSignal13.condition) annotation (
+            Line(points={{561,-70},{630,-70},{630,-22}}, color={255,0,255}));
+        connect(add.y, lessThreshold1.u) annotation (Line(points={{-18.3,50},{
+                -12,50},{-12,-70},{538,-70}},
+                                      color={0,0,127}));
+        connect(transitionWithSignal13.outPort, pump_7.inPort[2]) annotation (Line(
+              points={{631.5,-10},{660,-10},{660,60},{410,60},{410,29.5},{419,29.5}},
+              color={0,0,0}));
+        connect(pump_1_start1.active, pump_working1.u[1]) annotation (Line(points={{
+                190,59},{190,-106.5},{280,-106.5}}, color={255,0,255}));
+        connect(pump_6.active, pump_working1.u[2]) annotation (Line(points={{270,59},
+                {270,-113.5},{280,-113.5}}, color={255,0,255}));
+        connect(pump_2_start1.active, pump_working2.u[1]) annotation (Line(points={{
+                350,19},{350,0},{420,0},{420,-106.5},{440,-106.5}}, color={255,0,255}));
+        connect(pump_7.active, pump_working2.u[2]) annotation (Line(points={{430,19},
+                {430,-113.5},{440,-113.5}}, color={255,0,255}));
+        connect(pump_2_start2.active, pump_working3.u[1]) annotation (Line(points={{
+                510,-21},{510,-40},{580,-40},{580,-106.5},{600,-106.5}}, color={255,
+                0,255}));
+        connect(pump_8.active, pump_working3.u[2]) annotation (Line(points={{590,-21},
+                {590,-113.5},{600,-113.5}}, color={255,0,255}));
+        connect(pump_working1.y, mass_rate_pum1.u1) annotation (Line(points={{
+                301.5,-110},{380,-110},{380,-140},{638,-140}}, color={255,0,255}));
+        connect(pump_working2.y, mass_rate_pum1.u2) annotation (Line(points={{
+                461.5,-110},{482,-110},{482,-146},{638,-146}}, color={255,0,255}));
+        connect(pump_working3.y, mass_rate_pum1.u3) annotation (Line(points={{
+                621.5,-110},{630,-110},{630,-152},{638,-152}}, color={255,0,255}));
+        connect(add.y, mass_rate_pum1.u) annotation (Line(points={{-18.3,50},{
+                -12,50},{-12,-160},{638,-160}},
+                                            color={0,0,127}));
+        connect(mass_rate_pum1.y, y) annotation (Line(points={{661,-150},{680,-150},{680,
+                -180},{80,-180},{80,0},{110,0}}, color={0,0,127}));
+        connect(gf2, booleanToReal1.u)
+          annotation (Line(points={{-120,-70},{-82,-70}}, color={255,0,255}));
+        connect(integerToReal.y, add.u[1]) annotation (Line(points={{-59,70},{
+                -52,70},{-52,54.6667},{-40,54.6667}}, color={0,0,127}));
+        connect(booleanToReal.y, add.u[2]) annotation (Line(points={{-59,0},{
+                -50,0},{-50,50},{-40,50}}, color={0,0,127}));
+        connect(booleanToReal1.y, add.u[3]) annotation (Line(points={{-59,-70},
+                {-48,-70},{-48,45.3333},{-40,45.3333}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
+              Rectangle(
+                extent={{-100,100},{100,-100}},
+                lineColor={28,108,200},
+                fillColor={255,255,255},
+                fillPattern=FillPattern.Solid),
+              Text(
+                extent={{-100,100},{0,0}},
+                lineColor={0,0,0},
+                fillColor={255,255,255},
+                fillPattern=FillPattern.None,
+                textString="+"),
+              Text(
+                extent={{0,0},{100,-100}},
+                lineColor={0,0,0},
+                fillColor={255,255,255},
+                fillPattern=FillPattern.None,
+                textString="-"),
+              Line(
+                points={{-54,-58},{66,62}},
+                color={0,0,0},
+                thickness=1)}),                                        Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end activation_peg;
+
+      package Tests
+        extends Modelica.Icons.ExamplesPackage;
+        model test_module
+          Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=false)
+            annotation (Placement(transformation(extent={{-80,40},{-60,60}})));
+          Modelica.Blocks.Sources.BooleanExpression booleanExpression1(y=false)
+            annotation (Placement(transformation(extent={{-80,10},{-60,30}})));
+          Modelica.Blocks.Sources.BooleanExpression booleanExpression2(y=true)
+            annotation (Placement(transformation(extent={{-80,80},{-60,100}})));
+          mass_rate_pump mass_rate_pum1
+            annotation (Placement(transformation(extent={{-20,40},{0,60}})));
+          Modelica.Blocks.Sources.RealExpression realExpression(y=30)
+            annotation (Placement(transformation(extent={{-60,-20},{-40,0}})));
+        equation
+          connect(booleanExpression2.y, mass_rate_pum1.u1) annotation (Line(
+                points={{-59,90},{-38,90},{-38,58},{-22,58},{-22,60}}, color={
+                  255,0,255}));
+          connect(booleanExpression.y, mass_rate_pum1.u2) annotation (Line(
+                points={{-59,50},{-40,50},{-40,54},{-22,54}}, color={255,0,255}));
+          connect(booleanExpression1.y, mass_rate_pum1.u3) annotation (Line(
+                points={{-59,20},{-40,20},{-40,48},{-22,48}}, color={255,0,255}));
+          connect(realExpression.y, mass_rate_pum1.u) annotation (Line(points={
+                  {-39,-10},{-32,-10},{-32,40},{-22,40}}, color={0,0,127}));
+          annotation (Icon(coordinateSystem(preserveAspectRatio=false)),
+              Diagram(coordinateSystem(preserveAspectRatio=false)));
+        end test_module;
+
+        model debit_pump
+          activation_pec activation_pec1
+            annotation (Placement(transformation(extent={{-20,20},{0,40}})));
+          Modelica.Blocks.Sources.IntegerExpression integerExpression(y=1)
+            annotation (Placement(transformation(extent={{-100,40},{-80,60}})));
+          Modelica.Blocks.Sources.BooleanExpression booleanExpression(y=true)
+            annotation (Placement(transformation(extent={{-100,-20},{-80,0}})));
+        equation
+          connect(booleanExpression.y, activation_pec1.cha) annotation (Line(
+                points={{-79,-10},{-52,-10},{-52,25},{-22,25}}, color={255,0,
+                  255}));
+          connect(integerExpression.y, activation_pec1.tfp) annotation (Line(
+                points={{-79,50},{-52,50},{-52,35},{-22,35}}, color={255,127,0}));
+          annotation (Icon(coordinateSystem(preserveAspectRatio=false)),
+              Diagram(coordinateSystem(preserveAspectRatio=false)));
+        end debit_pump;
+      end Tests;
+
     end PEC_PEG;
   end Controls_a;
   extends Modelica.Icons.VariantsPackage;
@@ -5798,289 +5517,6 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
     end Calibration;
   end GF;
 
-  package Plant
-    extends Modelica.Icons.VariantsPackage;
-
-    package Tests
-      extends Modelica.Icons.ExamplesPackage;
-      model test0
-        import Media;
-        import Media;
-        import Media;
-        TFP.TFP_solo tFP_solo
-          annotation (Placement(transformation(extent={{-100,-20},{-80,0}})));
-        RJC.Heat_exchanger heat_exchanger
-          annotation (Placement(transformation(extent={{-10,-10},{10,10}},
-              rotation=270,
-              origin={-50,10})));
-        RJF.Cold_exchanger cold_exchanger
-          annotation (Placement(transformation(extent={{-10,-10},{10,10}},
-              rotation=270,
-              origin={-50,-50})));
-        GF.Chiller chiller annotation (Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=180,
-              origin={40,90})));
-        PEM.PEM_simple pEM_simple annotation (Placement(transformation(
-              extent={{10,-10},{-10,10}},
-              rotation=0,
-              origin={90,10})));
-        Fluid.FixedResistances.Junction jun2(
-          redeclare package Medium = Media.Sea_Water,
-          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
-          dp_nominal={0,0,0}) annotation (Placement(transformation(
-              extent={{10,10},{-10,-10}},
-              rotation=90,
-              origin={70,50})));
-        Fluid.FixedResistances.Junction jun1(
-          redeclare package Medium = Media.Sea_Water,
-          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
-          dp_nominal={0,0,0}) annotation (Placement(transformation(
-              extent={{10,10},{-10,-10}},
-              rotation=90,
-              origin={-10,30})));
-        Fluid.FixedResistances.Junction jun4(
-          redeclare package Medium = Media.Sea_Water,
-          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
-          dp_nominal={0,0,0}) annotation (Placement(transformation(
-              extent={{10,10},{-10,-10}},
-              rotation=90,
-              origin={20,-10})));
-        Fluid.FixedResistances.Junction jun5(
-          redeclare package Medium = Media.Sea_Water,
-          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
-          dp_nominal={0,0,0}) annotation (Placement(transformation(
-              extent={{-10,10},{10,-10}},
-              rotation=0,
-              origin={20,-70})));
-      equation
-        connect(pEM_simple.port_b, jun2.port_2) annotation (Line(points={{80,10},
-                {70,10},{70,40}}, color={0,127,255}));
-        connect(jun2.port_1, chiller.port_a1) annotation (Line(points={{70,60},
-                {70,84},{50,84}}, color={0,127,255}));
-        connect(jun2.port_3, jun1.port_1) annotation (Line(points={{60,50},{-10,
-                50},{-10,40}}, color={0,127,255}));
-        connect(jun1.port_3, heat_exchanger.port_a1) annotation (Line(points={{
-                -20,30},{-44,30},{-44,20}}, color={0,127,255}));
-        connect(chiller.port_b1, jun4.port_1) annotation (Line(points={{30,84},
-                {20,84},{20,0}}, color={0,127,255}));
-        connect(heat_exchanger.port_b1, jun4.port_3) annotation (Line(points={{
-                -44,0},{-44,-10},{10,-10}}, color={0,127,255}));
-        connect(cold_exchanger.port_b1, jun5.port_1) annotation (Line(points={{
-                -44,-60},{-44,-70},{10,-70}}, color={0,127,255}));
-        connect(jun4.port_2, jun5.port_3) annotation (Line(points={{20,-20},{20,
-                -60},{20,-60}}, color={0,127,255}));
-        connect(jun1.port_2, cold_exchanger.port_a1) annotation (Line(points={{
-                -10,20},{-10,-28},{-44,-28},{-44,-40}}, color={0,127,255}));
-        connect(jun5.port_2, pEM_simple.port_a) annotation (Line(points={{30,
-                -70},{120,-70},{120,10},{100,10}}, color={0,127,255}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-      end test0;
-
-      model test_1
-        PEM.pem pem(lolilol(displayUnit="bar") = 500000)
-          annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-      end test_1;
-
-      model complete_plant
-        PEM.pem pem
-          annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
-        RJC.Heat_exchanger heat_exchanger annotation (Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=90,
-              origin={30,30})));
-        RJF.Cold_exchanger cold_exchanger annotation (Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=90,
-              origin={30,70})));
-        GF.Chiller chiller annotation (Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=90,
-              origin={70,-50})));
-        GF.Chiller chiller1 annotation (Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=90,
-              origin={70,-10})));
-        TFP.TFP_solo tFP_solo
-          annotation (Placement(transformation(extent={{80,60},{100,80}})));
-        Fluid.FixedResistances.Junction jun annotation (Placement(
-              transformation(
-              extent={{10,-10},{-10,10}},
-              rotation=180,
-              origin={-50,-70})));
-        Fluid.FixedResistances.Junction jun1 annotation (Placement(
-              transformation(
-              extent={{10,10},{-10,-10}},
-              rotation=270,
-              origin={-50,-30})));
-        Fluid.FixedResistances.Junction jun2 annotation (Placement(
-              transformation(
-              extent={{10,10},{-10,-10}},
-              rotation=270,
-              origin={-50,10})));
-        Fluid.FixedResistances.Junction jun3 annotation (Placement(
-              transformation(
-              extent={{10,10},{-10,-10}},
-              rotation=270,
-              origin={-12,-8})));
-        Fluid.FixedResistances.Junction jun4 annotation (Placement(
-              transformation(
-              extent={{10,10},{-10,-10}},
-              rotation=270,
-              origin={-10,32})));
-        Fluid.FixedResistances.Junction jun5 annotation (Placement(
-              transformation(
-              extent={{-10,10},{10,-10}},
-              rotation=180,
-              origin={-10,90})));
-      equation
-        connect(pem.port_b, jun.port_1) annotation (Line(points={{-80,-50},{-72,
-                -50},{-72,-70},{-60,-70}}, color={0,127,255}));
-        connect(jun.port_2, chiller.port_a1) annotation (Line(points={{-40,-70},
-                {64,-70},{64,-60}}, color={0,127,255}));
-        connect(jun1.port_1, jun.port_3)
-          annotation (Line(points={{-50,-40},{-50,-60}}, color={0,127,255}));
-        connect(jun1.port_3, chiller1.port_a1) annotation (Line(points={{-40,
-                -30},{64,-30},{64,-20}}, color={0,127,255}));
-        connect(jun2.port_1, jun1.port_2)
-          annotation (Line(points={{-50,0},{-50,-20}}, color={0,127,255}));
-        connect(heat_exchanger.port_a1, jun2.port_3) annotation (Line(points={{
-                24,20},{24,10},{-40,10}}, color={0,127,255}));
-        connect(jun2.port_2, cold_exchanger.port_a1) annotation (Line(points={{
-                -50,20},{-50,50},{24,50},{24,60}}, color={0,127,255}));
-        connect(chiller1.port_b1, jun3.port_3) annotation (Line(points={{64,0},
-                {4,0},{4,-8},{-2,-8}}, color={0,127,255}));
-        connect(chiller.port_b1, jun3.port_1) annotation (Line(points={{64,-40},
-                {-12,-40},{-12,-18}}, color={0,127,255}));
-        connect(jun3.port_2, jun4.port_1) annotation (Line(points={{-12,2},{-12,
-                12},{-12,22},{-10,22}}, color={0,127,255}));
-        connect(heat_exchanger.port_b1, jun4.port_3) annotation (Line(points={{
-                24,40},{12,40},{12,32},{0,32}}, color={0,127,255}));
-        connect(jun5.port_3, jun4.port_2)
-          annotation (Line(points={{-10,80},{-10,42}}, color={0,127,255}));
-        connect(cold_exchanger.port_b1, jun5.port_1) annotation (Line(points={{
-                24,80},{24,90},{0,90}}, color={0,127,255}));
-        connect(jun5.port_2, pem.port_a) annotation (Line(points={{-20,90},{
-                -118,90},{-118,-50},{-100,-50}}, color={0,127,255}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-      end complete_plant;
-
-      model complete_plant_b
-        PEM.pem pem
-          annotation (Placement(transformation(extent={{-20,80},{0,100}})));
-        Fluid.FixedResistances.Junction jun annotation (Placement(
-              transformation(
-              extent={{-10,10},{10,-10}},
-              rotation=270,
-              origin={-130,60})));
-        RJF.Cold_exchanger cold_exchanger annotation (Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=0,
-              origin={50,10})));
-        RJC.Heat_exchanger heat_exchanger annotation (Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=0,
-              origin={10,10})));
-        GF.Chiller chiller1 annotation (Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=0,
-              origin={-50,-10})));
-        GF.Chiller chiller annotation (Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=0,
-              origin={-90,-10})));
-        Fluid.FixedResistances.Junction jun1 annotation (Placement(
-              transformation(
-              extent={{10,10},{-10,-10}},
-              rotation=180,
-              origin={-70,60})));
-        Fluid.FixedResistances.Junction jun2 annotation (Placement(
-              transformation(
-              extent={{10,10},{-10,-10}},
-              rotation=180,
-              origin={-10,60})));
-        Fluid.FixedResistances.Junction jun3 annotation (Placement(
-              transformation(
-              extent={{10,10},{-10,-10}},
-              rotation=180,
-              origin={-30,40})));
-        Fluid.FixedResistances.Junction jun4 annotation (Placement(
-              transformation(
-              extent={{10,10},{-10,-10}},
-              rotation=180,
-              origin={20,40})));
-        Fluid.FixedResistances.Junction jun5 annotation (Placement(
-              transformation(
-              extent={{-10,10},{10,-10}},
-              rotation=90,
-              origin={70,40})));
-        TFP.TFP_solo tFP_solo
-          annotation (Placement(transformation(extent={{20,-40},{40,-20}})));
-        Fluid.FixedResistances.Junction jun6 annotation (Placement(
-              transformation(
-              extent={{10,-10},{-10,10}},
-              rotation=90,
-              origin={-100,-70})));
-        Fluid.FixedResistances.Junction jun7 annotation (Placement(
-              transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=180,
-              origin={-60,-70})));
-        PEC_PEG.pompes_pec pompes_pec
-          annotation (Placement(transformation(extent={{20,-140},{40,-120}})));
-        DEC_DEG.DEC dEC
-          annotation (Placement(transformation(extent={{80,-162},{100,-140}})));
-      equation
-        connect(pem.port_b, jun.port_1) annotation (Line(points={{0,90},{20,90},
-                {20,80},{-130,80},{-130,70}}, color={0,127,255}));
-        connect(jun.port_2, chiller.port_a1) annotation (Line(points={{-130,50},
-                {-130,-4},{-100,-4}}, color={0,127,255}));
-        connect(jun.port_3, jun1.port_1)
-          annotation (Line(points={{-120,60},{-80,60}}, color={0,127,255}));
-        connect(jun1.port_3, chiller1.port_a1) annotation (Line(points={{-70,50},
-                {-70,-4},{-60,-4}}, color={0,127,255}));
-        connect(jun1.port_2, jun2.port_1)
-          annotation (Line(points={{-60,60},{-20,60}}, color={0,127,255}));
-        connect(jun2.port_3, heat_exchanger.port_a1) annotation (Line(points={{
-                -10,50},{-10,16},{0,16}}, color={0,127,255}));
-        connect(jun2.port_2, cold_exchanger.port_a1) annotation (Line(points={{
-                1.77636e-15,60},{40,60},{40,16}}, color={0,127,255}));
-        connect(chiller.port_b1, jun3.port_1) annotation (Line(points={{-80,-4},
-                {-80,40},{-40,40}}, color={0,127,255}));
-        connect(chiller1.port_b1, jun3.port_3) annotation (Line(points={{-40,-4},
-                {-30,-4},{-30,30}}, color={0,127,255}));
-        connect(jun3.port_2, jun4.port_1)
-          annotation (Line(points={{-20,40},{10,40}}, color={0,127,255}));
-        connect(heat_exchanger.port_b1, jun4.port_3)
-          annotation (Line(points={{20,16},{20,30}}, color={0,127,255}));
-        connect(jun4.port_2, jun5.port_3)
-          annotation (Line(points={{30,40},{60,40}}, color={0,127,255}));
-        connect(cold_exchanger.port_b1, jun5.port_1) annotation (Line(points={{
-                60,16},{70,16},{70,30}}, color={0,127,255}));
-        connect(jun5.port_2, pem.port_a) annotation (Line(points={{70,50},{70,
-                100},{-40,100},{-40,90},{-20,90}}, color={0,127,255}));
-        connect(chiller.port_b2, jun6.port_1)
-          annotation (Line(points={{-100,-16},{-100,-60}}, color={0,127,255}));
-        connect(jun6.port_3, jun7.port_2)
-          annotation (Line(points={{-90,-70},{-70,-70}}, color={0,127,255}));
-        connect(jun7.port_3, chiller1.port_b2)
-          annotation (Line(points={{-60,-60},{-60,-16}}, color={0,127,255}));
-        connect(jun7.port_1, tFP_solo.port_b4) annotation (Line(points={{-50,
-                -70},{0,-70},{0,-38.5},{20,-38.5}}, color={0,127,255}));
-        connect(jun6.port_2, pompes_pec.port_a) annotation (Line(points={{-100,
-                -80},{-100,-130},{20,-130}}, color={0,127,255}));
-        connect(pompes_pec.port_b, dEC.port_a1) annotation (Line(points={{40,
-                -130},{60,-130},{60,-146},{80,-146}}, color={0,127,255}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-      end complete_plant_b;
-    end Tests;
-  end Plant;
-
   package PEC_PEG
     extends Modelica.Icons.VariantsPackage;
     model pompes_pec
@@ -6152,6 +5588,10 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
         m_flow_nominal=720*1025/3600,
         dpValve_nominal=3000)
         annotation (Placement(transformation(extent={{40,-10},{60,10}})));
+      Modelica.Blocks.Interfaces.IntegerInput tfp
+        annotation (Placement(transformation(extent={{-140,80},{-100,120}})));
+      Modelica.Blocks.Interfaces.BooleanInput gf1
+        annotation (Placement(transformation(extent={{-140,-60},{-100,-20}})));
       Fluid.Movers.FlowControlled_m_flow fan[3](
         redeclare package Medium = Buildings.Media.Water,
         m_flow_nominal=95.83,
@@ -6159,11 +5599,9 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
         inputType=Buildings.Fluid.Types.InputType.Continuous,
         dp_nominal(displayUnit="Pa") = 1078731.5)
         annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
-      Modelica.Blocks.Interfaces.IntegerInput tfp
-        annotation (Placement(transformation(extent={{-140,80},{-100,120}})));
-      Modelica.Blocks.Interfaces.BooleanInput cha
-        annotation (Placement(transformation(extent={{-140,30},{-100,70}})));
-      Controls_a.PEC_PEG.activation_pec activation_pec
+      Modelica.Blocks.Interfaces.BooleanInput gf2
+        annotation (Placement(transformation(extent={{-140,-120},{-100,-80}})));
+      Controls_a.PEC_PEG.activation_peg activation_peg
         annotation (Placement(transformation(extent={{-60,80},{-40,100}})));
     equation
     for k in 1:3 loop
@@ -6176,11 +5614,13 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
       connect(fan.port_b, cheVal.port_a)
         annotation (Line(points={{0,0},{40,0}},  color={0,127,255}));
 
-      connect(tfp, activation_pec.tfp) annotation (Line(points={{-120,100},{-92,
-              100},{-92,95},{-62,95}}, color={255,127,0}));
-      connect(cha, activation_pec.cha) annotation (Line(points={{-120,50},{-92,
-              50},{-92,85},{-62,85}}, color={255,0,255}));
-      connect(activation_pec.y, fan.m_flow_in) annotation (Line(points={{-39,90},
+      connect(tfp, activation_peg.tfp) annotation (Line(points={{-120,100},{-90,
+              100},{-90,97},{-62,97}}, color={255,127,0}));
+      connect(gf1, activation_peg.gf1) annotation (Line(points={{-120,-40},{-80,
+              -40},{-80,90},{-62,90}}, color={255,0,255}));
+      connect(gf2, activation_peg.gf2) annotation (Line(points={{-120,-100},{
+              -70,-100},{-70,83},{-62,83}}, color={255,0,255}));
+      connect(activation_peg.y, fan.m_flow_in) annotation (Line(points={{-39,90},
               {-10,90},{-10,12}}, color={0,0,127}));
       annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
             Rectangle(
@@ -7412,6 +6852,316 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
             fillColor={0,100,199})}));
   end pem_simplifie;
   end PEM;
+
+  package Plant
+    extends Modelica.Icons.VariantsPackage;
+
+    package Tests
+      extends Modelica.Icons.ExamplesPackage;
+      model test0
+        import Media;
+        import Media;
+        import Media;
+        TFP.TFP_solo tFP_solo
+          annotation (Placement(transformation(extent={{-100,-20},{-80,0}})));
+        RJC.Heat_exchanger heat_exchanger
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-50,10})));
+        RJF.Cold_exchanger cold_exchanger
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-50,-50})));
+        GF.Chiller chiller annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=180,
+              origin={40,90})));
+        PEM.PEM_simple pEM_simple annotation (Placement(transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=0,
+              origin={90,10})));
+        Fluid.FixedResistances.Junction jun2(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
+          dp_nominal={0,0,0}) annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=90,
+              origin={70,50})));
+        Fluid.FixedResistances.Junction jun1(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
+          dp_nominal={0,0,0}) annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=90,
+              origin={-10,30})));
+        Fluid.FixedResistances.Junction jun4(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
+          dp_nominal={0,0,0}) annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=90,
+              origin={20,-10})));
+        Fluid.FixedResistances.Junction jun5(
+          redeclare package Medium = Media.Sea_Water,
+          m_flow_nominal={190/3.6,-190/3.6,-190/3.6},
+          dp_nominal={0,0,0}) annotation (Placement(transformation(
+              extent={{-10,10},{10,-10}},
+              rotation=0,
+              origin={20,-70})));
+      equation
+        connect(pEM_simple.port_b, jun2.port_2) annotation (Line(points={{80,10},
+                {70,10},{70,40}}, color={0,127,255}));
+        connect(jun2.port_1, chiller.port_a1) annotation (Line(points={{70,60},
+                {70,84},{50,84}}, color={0,127,255}));
+        connect(jun2.port_3, jun1.port_1) annotation (Line(points={{60,50},{-10,
+                50},{-10,40}}, color={0,127,255}));
+        connect(jun1.port_3, heat_exchanger.port_a1) annotation (Line(points={{
+                -20,30},{-44,30},{-44,20}}, color={0,127,255}));
+        connect(chiller.port_b1, jun4.port_1) annotation (Line(points={{30,84},
+                {20,84},{20,0}}, color={0,127,255}));
+        connect(heat_exchanger.port_b1, jun4.port_3) annotation (Line(points={{
+                -44,0},{-44,-10},{10,-10}}, color={0,127,255}));
+        connect(cold_exchanger.port_b1, jun5.port_1) annotation (Line(points={{
+                -44,-60},{-44,-70},{10,-70}}, color={0,127,255}));
+        connect(jun4.port_2, jun5.port_3) annotation (Line(points={{20,-20},{20,
+                -60},{20,-60}}, color={0,127,255}));
+        connect(jun1.port_2, cold_exchanger.port_a1) annotation (Line(points={{
+                -10,20},{-10,-28},{-44,-28},{-44,-40}}, color={0,127,255}));
+        connect(jun5.port_2, pEM_simple.port_a) annotation (Line(points={{30,
+                -70},{120,-70},{120,10},{100,10}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end test0;
+
+      model test_1
+        PEM.pem pem(lolilol(displayUnit="bar") = 500000)
+          annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end test_1;
+
+      model complete_plant
+        PEM.pem pem
+          annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
+        RJC.Heat_exchanger heat_exchanger annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={30,30})));
+        RJF.Cold_exchanger cold_exchanger annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={30,70})));
+        GF.Chiller chiller annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={70,-50})));
+        GF.Chiller chiller1 annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={70,-10})));
+        TFP.TFP_solo tFP_solo
+          annotation (Placement(transformation(extent={{80,60},{100,80}})));
+        Fluid.FixedResistances.Junction jun annotation (Placement(
+              transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=180,
+              origin={-50,-70})));
+        Fluid.FixedResistances.Junction jun1 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=270,
+              origin={-50,-30})));
+        Fluid.FixedResistances.Junction jun2 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=270,
+              origin={-50,10})));
+        Fluid.FixedResistances.Junction jun3 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=270,
+              origin={-12,-8})));
+        Fluid.FixedResistances.Junction jun4 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=270,
+              origin={-10,32})));
+        Fluid.FixedResistances.Junction jun5 annotation (Placement(
+              transformation(
+              extent={{-10,10},{10,-10}},
+              rotation=180,
+              origin={-10,90})));
+      equation
+        connect(pem.port_b, jun.port_1) annotation (Line(points={{-80,-50},{-72,
+                -50},{-72,-70},{-60,-70}}, color={0,127,255}));
+        connect(jun.port_2, chiller.port_a1) annotation (Line(points={{-40,-70},
+                {64,-70},{64,-60}}, color={0,127,255}));
+        connect(jun1.port_1, jun.port_3)
+          annotation (Line(points={{-50,-40},{-50,-60}}, color={0,127,255}));
+        connect(jun1.port_3, chiller1.port_a1) annotation (Line(points={{-40,
+                -30},{64,-30},{64,-20}}, color={0,127,255}));
+        connect(jun2.port_1, jun1.port_2)
+          annotation (Line(points={{-50,0},{-50,-20}}, color={0,127,255}));
+        connect(heat_exchanger.port_a1, jun2.port_3) annotation (Line(points={{
+                24,20},{24,10},{-40,10}}, color={0,127,255}));
+        connect(jun2.port_2, cold_exchanger.port_a1) annotation (Line(points={{
+                -50,20},{-50,50},{24,50},{24,60}}, color={0,127,255}));
+        connect(chiller1.port_b1, jun3.port_3) annotation (Line(points={{64,0},
+                {4,0},{4,-8},{-2,-8}}, color={0,127,255}));
+        connect(chiller.port_b1, jun3.port_1) annotation (Line(points={{64,-40},
+                {-12,-40},{-12,-18}}, color={0,127,255}));
+        connect(jun3.port_2, jun4.port_1) annotation (Line(points={{-12,2},{-12,
+                12},{-12,22},{-10,22}}, color={0,127,255}));
+        connect(heat_exchanger.port_b1, jun4.port_3) annotation (Line(points={{
+                24,40},{12,40},{12,32},{0,32}}, color={0,127,255}));
+        connect(jun5.port_3, jun4.port_2)
+          annotation (Line(points={{-10,80},{-10,42}}, color={0,127,255}));
+        connect(cold_exchanger.port_b1, jun5.port_1) annotation (Line(points={{
+                24,80},{24,90},{0,90}}, color={0,127,255}));
+        connect(jun5.port_2, pem.port_a) annotation (Line(points={{-20,90},{
+                -118,90},{-118,-50},{-100,-50}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end complete_plant;
+
+      model complete_plant_b
+        PEM.pem pem
+          annotation (Placement(transformation(extent={{-20,80},{0,100}})));
+        Fluid.FixedResistances.Junction jun annotation (Placement(
+              transformation(
+              extent={{-10,10},{10,-10}},
+              rotation=270,
+              origin={-130,60})));
+        RJF.Cold_exchanger cold_exchanger annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={50,-10})));
+        RJC.Heat_exchanger heat_exchanger annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={10,-10})));
+        GF.Chiller gf1 annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={-50,-50})));
+        GF.Chiller gf2 annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={-90,-50})));
+        Fluid.FixedResistances.Junction jun1 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={-70,60})));
+        Fluid.FixedResistances.Junction jun2 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={-10,60})));
+        Fluid.FixedResistances.Junction jun3 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={-30,40})));
+        Fluid.FixedResistances.Junction jun4 annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={20,40})));
+        Fluid.FixedResistances.Junction jun5 annotation (Placement(
+              transformation(
+              extent={{-10,10},{10,-10}},
+              rotation=90,
+              origin={70,40})));
+        TFP.TFP_solo tFP_solo
+          annotation (Placement(transformation(extent={{20,-60},{40,-40}})));
+        Fluid.FixedResistances.Junction jun6 annotation (Placement(
+              transformation(
+              extent={{10,-10},{-10,10}},
+              rotation=90,
+              origin={-100,-90})));
+        Fluid.FixedResistances.Junction jun7 annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=180,
+              origin={-60,-90})));
+        PEC_PEG.pompes_pec pompes_pec
+          annotation (Placement(transformation(extent={{20,-120},{40,-100}})));
+        DEC_DEG.DEC dEC
+          annotation (Placement(transformation(extent={{80,-126},{100,-104}})));
+        PEC_PEG.pompes_peg pompes_peg
+          annotation (Placement(transformation(extent={{20,-180},{40,-160}})));
+        DEC_DEG.DEG dEG
+          annotation (Placement(transformation(extent={{80,-186},{100,-164}})));
+      equation
+        connect(pem.port_b, jun.port_1) annotation (Line(points={{0,90},{20,90},
+                {20,80},{-130,80},{-130,70}}, color={0,127,255}));
+        connect(jun.port_2, gf2.port_a1) annotation (Line(points={{-130,50},{
+                -130,-44},{-100,-44}}, color={0,127,255}));
+        connect(jun.port_3, jun1.port_1)
+          annotation (Line(points={{-120,60},{-80,60}}, color={0,127,255}));
+        connect(jun1.port_3, gf1.port_a1) annotation (Line(points={{-70,50},{
+                -70,-44},{-60,-44}}, color={0,127,255}));
+        connect(jun1.port_2, jun2.port_1)
+          annotation (Line(points={{-60,60},{-20,60}}, color={0,127,255}));
+        connect(jun2.port_3, heat_exchanger.port_a1) annotation (Line(points={{-10,50},
+                {-10,-4},{0,-4}},         color={0,127,255}));
+        connect(jun2.port_2, cold_exchanger.port_a1) annotation (Line(points={{
+                1.77636e-15,60},{40,60},{40,-4}}, color={0,127,255}));
+        connect(gf2.port_b1, jun3.port_1) annotation (Line(points={{-80,-44},{
+                -80,40},{-40,40}}, color={0,127,255}));
+        connect(gf1.port_b1, jun3.port_3) annotation (Line(points={{-40,-44},{
+                -30,-44},{-30,30}}, color={0,127,255}));
+        connect(jun3.port_2, jun4.port_1)
+          annotation (Line(points={{-20,40},{10,40}}, color={0,127,255}));
+        connect(heat_exchanger.port_b1, jun4.port_3)
+          annotation (Line(points={{20,-4},{20,30}}, color={0,127,255}));
+        connect(jun4.port_2, jun5.port_3)
+          annotation (Line(points={{30,40},{60,40}}, color={0,127,255}));
+        connect(cold_exchanger.port_b1, jun5.port_1) annotation (Line(points={{60,-4},
+                {70,-4},{70,30}},        color={0,127,255}));
+        connect(jun5.port_2, pem.port_a) annotation (Line(points={{70,50},{70,
+                100},{-40,100},{-40,90},{-20,90}}, color={0,127,255}));
+        connect(gf2.port_b2, jun6.port_1)
+          annotation (Line(points={{-100,-56},{-100,-80}}, color={0,127,255}));
+        connect(jun6.port_3, jun7.port_2)
+          annotation (Line(points={{-90,-90},{-70,-90}}, color={0,127,255}));
+        connect(jun7.port_3, gf1.port_b2)
+          annotation (Line(points={{-60,-80},{-60,-56}}, color={0,127,255}));
+        connect(pompes_pec.port_b, dEC.port_a1) annotation (Line(points={{40,-110},
+                {80,-110}},                           color={0,127,255}));
+        connect(heat_exchanger.port_b2, tFP_solo.port_a2) annotation (Line(
+              points={{0,-16},{-10,-16},{-10,-34},{52,-34},{52,-47},{40,-47}},
+              color={238,46,47}));
+        connect(dEC.port_b2, tFP_solo.port_a1) annotation (Line(points={{80,
+                -122},{60,-122},{60,-140},{120,-140},{120,-80},{0,-80},{0,-42},
+                {20,-42}}, color={238,46,47}));
+        connect(tFP_solo.port_b1, heat_exchanger.port_a2) annotation (Line(
+              points={{40,-42},{46,-42},{46,-26},{28,-26},{28,-16},{20,-16}},
+              color={238,46,47}));
+        connect(tFP_solo.port_b2, pompes_pec.port_a) annotation (Line(points={{
+                20,-47},{12,-47},{12,-48},{-10,-48},{-10,-110},{20,-110}},
+              color={238,46,47}));
+        connect(pompes_peg.port_b, dEG.port_a1)
+          annotation (Line(points={{40,-170},{80,-170}}, color={0,127,255}));
+        connect(dEG.port_b2, tFP_solo.port_a4) annotation (Line(points={{80,
+                -182},{60,-182},{60,-200},{140,-200},{140,-58},{40,-58}}, color
+              ={0,127,255}));
+        connect(tFP_solo.port_b3, cold_exchanger.port_a2) annotation (Line(
+              points={{40,-53.1},{54,-53.1},{54,-54},{70,-54},{70,-16},{60,-16}},
+              color={0,127,255}));
+        connect(cold_exchanger.port_b2, tFP_solo.port_a3) annotation (Line(
+              points={{40,-16},{40,-30},{10,-30},{10,-53.2},{20,-53.2}}, color=
+                {0,127,255}));
+        connect(tFP_solo.port_b4, jun7.port_1) annotation (Line(points={{20,
+                -58.5},{-20,-58.5},{-20,-90},{-50,-90}}, color={0,127,255}));
+        connect(jun6.port_2, pompes_peg.port_a) annotation (Line(points={{-100,
+                -100},{-100,-170},{20,-170}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end complete_plant_b;
+    end Tests;
+  end Plant;
 
     package RJC
     extends Modelica.Icons.VariantsPackage;
