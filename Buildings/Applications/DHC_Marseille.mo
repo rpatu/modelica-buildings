@@ -229,257 +229,289 @@ u1, else it is set equal to u3.</p>
       extends Modelica.Icons.VariantsPackage;
       model DEC_controls_parallel
         Modelica.Blocks.Interfaces.RealInput dp_DEC
-          annotation (Placement(transformation(extent={{-360,280},{-320,320}})));
+          annotation (Placement(transformation(extent={{-240,168},{-200,208}})));
         Modelica.Blocks.Interfaces.RealInput FT_DEC
-          annotation (Placement(transformation(extent={{-360,200},{-320,240}})));
+          annotation (Placement(transformation(extent={{-240,-20},{-200,20}})));
         Modelica.Blocks.Interfaces.RealInput FT_TFP
-          annotation (Placement(transformation(extent={{-360,160},{-320,200}})));
+          annotation (Placement(transformation(extent={{-240,-110},{-200,-70}})));
         Modelica.Blocks.Interfaces.RealInput FT_CHA
-          annotation (Placement(transformation(extent={{-360,120},{-320,160}})));
+          annotation (Placement(transformation(extent={{-240,-200},{-200,-160}})));
         inner Modelica.StateGraph.StateGraphRoot stateGraphRoot
-          annotation (Placement(transformation(extent={{300,300},{320,320}})));
+          annotation (Placement(transformation(extent={{140,180},{160,200}})));
         Modelica.StateGraph.TransitionWithSignal transitionWithSignal
-          annotation (Placement(transformation(extent={{-180,-60},{-160,-40}})));
-        Modelica.Blocks.Interfaces.RealInput TT_DEC
-          annotation (Placement(transformation(extent={{-360,240},{-320,280}})));
-        Modelica.StateGraph.StepWithSignal HPSHC1_start(nIn=3, nOut=1)
-          annotation (Placement(transformation(extent={{-140,-60},{-120,-40}})));
-        Modelica.StateGraph.Transition HPSHC_start_buffer(enableTimer=true, waitTime=2)
-          annotation (Placement(transformation(extent={{-100,-60},{-80,-40}})));
-        Modelica.StateGraph.StepWithSignal HPSHC1_on(nIn=2, nOut=3)
-          annotation (Placement(transformation(extent={{-60,-60},{-40,-40}})));
-        Modelica.StateGraph.TransitionWithSignal Temp_solo
-          annotation (Placement(transformation(extent={{-20,0},{0,20}})));
-        Modelica.StateGraph.TransitionWithSignal HPSHC_turnoff
-          annotation (Placement(transformation(extent={{-20,-60},{0,-40}})));
-        Modelica.StateGraph.TransitionWithSignal CHA_need
           annotation (Placement(transformation(extent={{-20,-220},{0,-200}})));
+        Modelica.Blocks.Interfaces.RealInput TT_DEC
+          annotation (Placement(transformation(extent={{-240,70},{-200,110}})));
+        Modelica.StateGraph.StepWithSignal HPSHC1_start(nIn=3, nOut=1)
+          annotation (Placement(transformation(extent={{20,-220},{40,-200}})));
+        Modelica.StateGraph.Transition HPSHC_start_buffer(enableTimer=true, waitTime=2)
+          annotation (Placement(transformation(extent={{60,-220},{80,-200}})));
+        Modelica.StateGraph.StepWithSignal HPSHC1_on(nIn=2, nOut=3)
+          annotation (Placement(transformation(extent={{100,-220},{120,-200}})));
+        Modelica.StateGraph.TransitionWithSignal Temp_solo
+          annotation (Placement(transformation(extent={{140,-160},{160,-140}})));
+        Modelica.StateGraph.TransitionWithSignal HPSHC_turnoff
+          annotation (Placement(transformation(extent={{140,-220},{160,-200}})));
+        Modelica.StateGraph.TransitionWithSignal CHA_need
+          annotation (Placement(transformation(extent={{140,-380},{160,-360}})));
         WaitBefore waitBefore(
           threshold=0,
           t_threshold=2,
           superior=false)
-          annotation (Placement(transformation(extent={{-238,290},{-218,310}})));
+          annotation (Placement(transformation(extent={{-78,178},{-58,198}})));
         WaitBefore waitBefore1(
           threshold=53.5,
           t_threshold=2,
           superior=true)
-          annotation (Placement(transformation(extent={{-120,-20},{-100,0}})));
+          annotation (Placement(transformation(extent={{40,-180},{60,-160}})));
         Modelica.StateGraph.StepWithSignal HPSHC_solo_switch
-          annotation (Placement(transformation(extent={{20,0},{40,20}})));
+          annotation (Placement(transformation(extent={{180,-160},{200,-140}})));
         Modelica.StateGraph.Transition HPSHC_solo_buffer(enableTimer=true, waitTime=2)
-          annotation (Placement(transformation(extent={{60,0},{80,20}})));
+          annotation (Placement(transformation(extent={{220,-160},{240,-140}})));
         Modelica.StateGraph.StepWithSignal HPSHC_solo(nOut=2)
-          annotation (Placement(transformation(extent={{100,0},{120,20}})));
+          annotation (Placement(transformation(extent={{260,-160},{280,-140}})));
         Modelica.StateGraph.TransitionWithSignal temp_duo
-          annotation (Placement(transformation(extent={{140,40},{160,60}})));
+          annotation (Placement(transformation(extent={{300,-120},{320,-100}})));
         Modelica.StateGraph.TransitionWithSignal HPSHC_solo_off
-          annotation (Placement(transformation(extent={{140,-20},{160,0}})));
+          annotation (Placement(transformation(extent={{300,-180},{320,-160}})));
         WaitBefore waitBefore2(
           threshold=53.5,
           t_threshold=2,
           superior=false)
-          annotation (Placement(transformation(extent={{40,40},{60,60}})));
+          annotation (Placement(transformation(extent={{200,-120},{220,-100}})));
         Modelica.Blocks.Math.Add add(k1=-1, k2=+1)
-          annotation (Placement(transformation(extent={{-260,200},{-240,220}})));
+          annotation (Placement(transformation(extent={{-100,40},{-80,60}})));
         Modelica.Blocks.Logical.GreaterEqual greaterEqualThreshold
-          annotation (Placement(transformation(extent={{-200,200},{-180,220}})));
+          annotation (Placement(transformation(extent={{-40,40},{-20,60}})));
         Modelica.StateGraph.InitialStepWithSignal initialStepWithSignal
-          annotation (Placement(transformation(extent={{-220,-60},{-200,-40}})));
+          annotation (Placement(transformation(extent={{-60,-220},{-40,-200}})));
         Modelica.StateGraph.Step HPSHC_off(nIn=2, nOut=1)
-          annotation (Placement(transformation(extent={{180,-60},{200,-40}})));
+          annotation (Placement(transformation(extent={{340,-220},{360,-200}})));
         Modelica.StateGraph.Transition HPSHC_off_buffer(enableTimer=true, waitTime=2)
-          annotation (Placement(transformation(extent={{220,-60},{240,-40}})));
+          annotation (Placement(transformation(extent={{380,-220},{400,-200}})));
         Modelica.StateGraph.StepWithSignal HPSHC_cooling(nIn=1, nOut=2)
-          annotation (Placement(transformation(extent={{20,-80},{40,-60}})));
+          annotation (Placement(transformation(extent={{180,-240},{200,-220}})));
         Modelica.StateGraph.Transition HPSC_turnoff_buffer(enableTimer=true, waitTime=
-             2) annotation (Placement(transformation(extent={{140,-80},{160,-60}})));
+             2) annotation (Placement(transformation(extent={{300,-240},{320,-220}})));
         Modelica.StateGraph.TransitionWithSignal transitionWithSignal7
-          annotation (Placement(transformation(extent={{140,-140},{160,-120}})));
+          annotation (Placement(transformation(extent={{300,-300},{320,-280}})));
         Modelica.StateGraph.StepWithSignal CHA_start(nIn=1, nOut=1)
-          annotation (Placement(transformation(extent={{60,-200},{80,-180}})));
+          annotation (Placement(transformation(extent={{220,-360},{240,-340}})));
         Modelica.StateGraph.Transition CHA_start_buffer(enableTimer=true, waitTime=2)
-          annotation (Placement(transformation(extent={{100,-200},{120,-180}})));
+          annotation (Placement(transformation(extent={{260,-360},{280,-340}})));
         Modelica.StateGraph.StepWithSignal CHA_on(nOut=1)
-          annotation (Placement(transformation(extent={{140,-200},{160,-180}})));
+          annotation (Placement(transformation(extent={{300,-360},{320,-340}})));
         Modelica.Blocks.Math.Add add2(k1=-1, k2=+1)
-          annotation (Placement(transformation(extent={{-220,150},{-200,170}})));
+          annotation (Placement(transformation(extent={{-60,-10},{-40,10}})));
         Modelica.Blocks.Logical.GreaterEqual greaterEqualThreshold1
-          annotation (Placement(transformation(extent={{-180,150},{-160,170}})));
+          annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
         Modelica.StateGraph.TransitionWithSignal CHA_turnoff
-          annotation (Placement(transformation(extent={{180,-200},{200,-180}})));
+          annotation (Placement(transformation(extent={{340,-360},{360,-340}})));
         Modelica.StateGraph.Step CHA_off(nIn=1, nOut=1)
-          annotation (Placement(transformation(extent={{220,-200},{240,-180}})));
+          annotation (Placement(transformation(extent={{380,-360},{400,-340}})));
         Modelica.StateGraph.Transition CHA_off_buffer(enableTimer=true, waitTime=2)
-          annotation (Placement(transformation(extent={{300,-220},{320,-200}})));
+          annotation (Placement(transformation(extent={{460,-380},{480,-360}})));
 
         Modelica.StateGraph.Parallel parallel
-          annotation (Placement(transformation(extent={{14,-240},{288,-180}})));
+          annotation (Placement(transformation(extent={{174,-400},{448,-340}})));
         Modelica.StateGraph.StepWithSignal HPSHC1_on1(nIn=1, nOut=1)
-          annotation (Placement(transformation(extent={{140,-240},{160,-220}})));
+          annotation (Placement(transformation(extent={{300,-400},{320,-380}})));
         Modelica.Blocks.MathBoolean.Or HPSC_boo(nu=3)
-          annotation (Placement(transformation(extent={{-138,-142},{-118,-122}})));
+          annotation (Placement(transformation(extent={{22,-302},{42,-282}})));
         Modelica.Blocks.Logical.Or HPSC_solo_boo
-          annotation (Placement(transformation(extent={{40,-40},{60,-20}})));
+          annotation (Placement(transformation(extent={{200,-200},{220,-180}})));
         Modelica.Blocks.MathInteger.MultiSwitch HPSHC_exit(
           expr={1,2,3},
           use_pre_as_default=false,
-          nu=3) annotation (Placement(transformation(extent={{280,180},{320,200}})));
+          nu=3) annotation (Placement(transformation(extent={{440,20},{480,40}})));
         Modelica.Blocks.Interfaces.IntegerOutput HPSHC annotation (Placement(
-              transformation(extent={{320,220},{360,260}}), iconTransformation(
-                extent={{320,220},{360,260}})));
+              transformation(extent={{200,150},{240,190}}), iconTransformation(
+                extent={{200,150},{240,190}})));
         Modelica.Blocks.MathBoolean.Or CHA_boo(nu=2)
-          annotation (Placement(transformation(extent={{160,-322},{180,-302}})));
+          annotation (Placement(transformation(extent={{320,-482},{340,-462}})));
         Modelica.Blocks.Interfaces.BooleanOutput CHA annotation (Placement(
-              transformation(extent={{320,-300},{360,-260}}), iconTransformation(
-                extent={{320,-300},{360,-260}})));
+              transformation(extent={{200,50},{240,90}}),     iconTransformation(
+                extent={{200,50},{240,90}})));
       equation
         connect(transitionWithSignal.outPort, HPSHC1_start.inPort[1]) annotation (
-            Line(points={{-168.5,-50},{-154,-50},{-154,-49.3333},{-141,-49.3333}},
+            Line(points={{-8.5,-210},{6,-210},{6,-209.333},{19,-209.333}},
               color={0,0,0}));
         connect(HPSHC1_start.outPort[1], HPSHC_start_buffer.inPort)
-          annotation (Line(points={{-119.5,-50},{-94,-50}}, color={0,0,0}));
+          annotation (Line(points={{40.5,-210},{66,-210}},  color={0,0,0}));
         connect(HPSHC_start_buffer.outPort, HPSHC1_on.inPort[1]) annotation (Line(
-              points={{-88.5,-50},{-74,-50},{-74,-49.5},{-61,-49.5}}, color={0,0,0}));
-        connect(HPSHC1_on.outPort[1], Temp_solo.inPort) annotation (Line(points={{-39.5,
-                -49.6667},{-30,-49.6667},{-30,10},{-14,10}},   color={0,0,0}));
+              points={{71.5,-210},{86,-210},{86,-209.5},{99,-209.5}}, color={0,0,0}));
+        connect(HPSHC1_on.outPort[1], Temp_solo.inPort) annotation (Line(points={{120.5,
+                -209.667},{130,-209.667},{130,-150},{146,-150}},
+                                                               color={0,0,0}));
         connect(HPSHC1_on.outPort[2], HPSHC_turnoff.inPort)
-          annotation (Line(points={{-39.5,-50},{-14,-50}}, color={0,0,0}));
-        connect(HPSHC1_on.outPort[3], CHA_need.inPort) annotation (Line(points={{-39.5,
-                -50.3333},{-30,-50.3333},{-30,-210},{-14,-210}}, color={0,0,0}));
+          annotation (Line(points={{120.5,-210},{146,-210}},
+                                                           color={0,0,0}));
+        connect(HPSHC1_on.outPort[3], CHA_need.inPort) annotation (Line(points={{120.5,
+                -210.333},{130,-210.333},{130,-370},{146,-370}}, color={0,0,0}));
         connect(dp_DEC, waitBefore.u)
-          annotation (Line(points={{-340,300},{-240,300}}, color={0,0,127}));
-        connect(waitBefore.y, transitionWithSignal.condition) annotation (Line(points={{-217,
-                300},{-180,300},{-180,240},{-280,240},{-280,-80},{-170,-80},{-170,-62}},
+          annotation (Line(points={{-220,188},{-80,188}},  color={0,0,127}));
+        connect(waitBefore.y, transitionWithSignal.condition) annotation (Line(points={{-57,188},
+                {-20,188},{-20,80},{-120,80},{-120,-240},{-10,-240},{-10,-222}},
                         color={255,0,255}));
-        connect(TT_DEC, waitBefore1.u) annotation (Line(points={{-340,260},{-140,260},
-                {-140,-10},{-122,-10}},color={0,0,127}));
-        connect(waitBefore1.y, Temp_solo.condition) annotation (Line(points={{-99,-10},
-                {-10,-10},{-10,-2}},  color={255,0,255}));
+        connect(TT_DEC, waitBefore1.u) annotation (Line(points={{-220,90},{20,90},{20,
+                -170},{38,-170}},      color={0,0,127}));
+        connect(waitBefore1.y, Temp_solo.condition) annotation (Line(points={{61,-170},
+                {150,-170},{150,-162}},
+                                      color={255,0,255}));
         connect(Temp_solo.outPort, HPSHC_solo_switch.inPort[1])
-          annotation (Line(points={{-8.5,10},{19,10}},   color={0,0,0}));
+          annotation (Line(points={{151.5,-150},{179,-150}},
+                                                         color={0,0,0}));
         connect(HPSHC_solo_switch.outPort[1], HPSHC_solo_buffer.inPort)
-          annotation (Line(points={{40.5,10},{66,10}},   color={0,0,0}));
+          annotation (Line(points={{200.5,-150},{226,-150}},
+                                                         color={0,0,0}));
         connect(HPSHC_solo_buffer.outPort, HPSHC_solo.inPort[1])
-          annotation (Line(points={{71.5,10},{99,10}},   color={0,0,0}));
-        connect(HPSHC_solo.outPort[1], temp_duo.inPort) annotation (Line(points={{120.5,
-                10.25},{132,10.25},{132,50},{146,50}}, color={0,0,0}));
-        connect(HPSHC_solo.outPort[2], HPSHC_solo_off.inPort) annotation (Line(points={{120.5,
-                9.75},{132,9.75},{132,-10},{146,-10}},            color={0,0,0}));
-        connect(TT_DEC, waitBefore2.u) annotation (Line(points={{-340,260},{-102,260},
-                {-102,50},{38,50}}, color={0,0,127}));
-        connect(waitBefore2.y, temp_duo.condition) annotation (Line(points={{61,50},{120,
-                50},{120,30},{150,30},{150,38}}, color={255,0,255}));
-        connect(temp_duo.outPort, HPSHC1_start.inPort[2]) annotation (Line(points={{151.5,
-                50},{180,50},{180,80},{-152,80},{-152,-50},{-141,-50}}, color={0,0,0}));
-        connect(FT_DEC, add.u1) annotation (Line(points={{-340,220},{-290,220},{-290,216},
-                {-262,216}}, color={0,0,127}));
-        connect(FT_TFP, add.u2) annotation (Line(points={{-340,180},{-290,180},{-290,204},
-                {-262,204}}, color={0,0,127}));
+          annotation (Line(points={{231.5,-150},{259,-150}},
+                                                         color={0,0,0}));
+        connect(HPSHC_solo.outPort[1], temp_duo.inPort) annotation (Line(points={{280.5,
+                -149.75},{292,-149.75},{292,-110},{306,-110}},
+                                                       color={0,0,0}));
+        connect(HPSHC_solo.outPort[2], HPSHC_solo_off.inPort) annotation (Line(points={{280.5,
+                -150.25},{292,-150.25},{292,-170},{306,-170}},    color={0,0,0}));
+        connect(TT_DEC, waitBefore2.u) annotation (Line(points={{-220,90},{58,90},{58,
+                -110},{198,-110}},  color={0,0,127}));
+        connect(waitBefore2.y, temp_duo.condition) annotation (Line(points={{221,-110},
+                {280,-110},{280,-130},{310,-130},{310,-122}},
+                                                 color={255,0,255}));
+        connect(temp_duo.outPort, HPSHC1_start.inPort[2]) annotation (Line(points={{311.5,
+                -110},{340,-110},{340,-80},{8,-80},{8,-210},{19,-210}}, color={0,0,0}));
+        connect(FT_DEC, add.u1) annotation (Line(points={{-220,0},{-180,0},{-180,56},{
+                -102,56}},   color={0,0,127}));
+        connect(FT_TFP, add.u2) annotation (Line(points={{-220,-90},{-160,-90},{-160,44},
+                {-102,44}},  color={0,0,127}));
         connect(add.y, greaterEqualThreshold.u1)
-          annotation (Line(points={{-239,210},{-202,210}}, color={0,0,127}));
+          annotation (Line(points={{-79,50},{-42,50}},     color={0,0,127}));
         connect(greaterEqualThreshold.y, HPSHC_solo_off.condition) annotation (Line(
-              points={{-179,210},{128,210},{128,-40},{150,-40},{150,-22}}, color={255,
+              points={{-19,50},{288,50},{288,-200},{310,-200},{310,-182}}, color={255,
                 0,255}));
         connect(greaterEqualThreshold.y, HPSHC_turnoff.condition) annotation (Line(
-              points={{-179,210},{-20,210},{-20,-80},{-10,-80},{-10,-62}},   color={255,
+              points={{-19,50},{140,50},{140,-240},{150,-240},{150,-222}},   color={255,
                 0,255}));
         connect(initialStepWithSignal.outPort[1], transitionWithSignal.inPort)
-          annotation (Line(points={{-199.5,-50},{-174,-50}}, color={0,0,0}));
-        connect(HPSHC_solo_off.outPort, HPSHC_off.inPort[2]) annotation (Line(points={{151.5,
-                -10},{166,-10},{166,-50.5},{179,-50.5}},        color={0,0,0}));
+          annotation (Line(points={{-39.5,-210},{-14,-210}}, color={0,0,0}));
+        connect(HPSHC_solo_off.outPort, HPSHC_off.inPort[2]) annotation (Line(points={{311.5,
+                -170},{326,-170},{326,-210.5},{339,-210.5}},    color={0,0,0}));
         connect(HPSHC_off.outPort[1], HPSHC_off_buffer.inPort)
-          annotation (Line(points={{200.5,-50},{226,-50}}, color={0,0,0}));
+          annotation (Line(points={{360.5,-210},{386,-210}},
+                                                           color={0,0,0}));
         connect(HPSHC_off_buffer.outPort, initialStepWithSignal.inPort[1])
-          annotation (Line(points={{231.5,-50},{260,-50},{260,100},{-240,100},{-240,-50},
-                {-221,-50}}, color={0,0,0}));
-        connect(waitBefore.y, CHA_need.condition) annotation (Line(points={{-217,
-                300},{-180,300},{-180,240},{-280,240},{-280,-260},{-10,-260},{-10,
-                -222}},
+          annotation (Line(points={{391.5,-210},{420,-210},{420,-60},{-80,-60},{-80,-210},
+                {-61,-210}}, color={0,0,0}));
+        connect(waitBefore.y, CHA_need.condition) annotation (Line(points={{-57,188},{
+                -20,188},{-20,80},{-120,80},{-120,-420},{150,-420},{150,-382}},
               color={255,0,255}));
         connect(HPSHC_turnoff.outPort, HPSHC_cooling.inPort[1]) annotation (Line(
-              points={{-8.5,-50},{4,-50},{4,-70},{19,-70}}, color={0,0,0}));
+              points={{151.5,-210},{164,-210},{164,-230},{179,-230}},
+                                                            color={0,0,0}));
         connect(HPSHC_cooling.outPort[1], HPSC_turnoff_buffer.inPort) annotation (
-            Line(points={{40.5,-69.75},{94,-69.75},{94,-70},{146,-70}}, color={0,0,0}));
+            Line(points={{200.5,-229.75},{254,-229.75},{254,-230},{306,-230}},
+                                                                        color={0,0,0}));
         connect(HPSC_turnoff_buffer.outPort, HPSHC_off.inPort[1]) annotation (Line(
-              points={{151.5,-70},{166,-70},{166,-49.5},{179,-49.5}}, color={0,0,0}));
+              points={{311.5,-230},{326,-230},{326,-209.5},{339,-209.5}},
+                                                                      color={0,0,0}));
         connect(waitBefore.y, transitionWithSignal7.condition) annotation (Line(
-              points={{-217,300},{-180,300},{-180,240},{-280,240},{-280,-160},{150,-160},
-                {150,-142}}, color={255,0,255}));
+              points={{-57,188},{-20,188},{-20,80},{-120,80},{-120,-320},{310,-320},{310,
+                -302}},      color={255,0,255}));
         connect(HPSHC_cooling.outPort[2], transitionWithSignal7.inPort) annotation (
-            Line(points={{40.5,-70.25},{94,-70.25},{94,-130},{146,-130}},   color={0,0,
+            Line(points={{200.5,-230.25},{254,-230.25},{254,-290},{306,-290}},
+                                                                            color={0,0,
                 0}));
         connect(transitionWithSignal7.outPort, HPSHC1_start.inPort[3]) annotation (
-            Line(points={{151.5,-130},{300,-130},{300,94},{-148,94},{-148,-50},{-146,
-                -50},{-146,-50.6667},{-141,-50.6667}},
+            Line(points={{311.5,-290},{460,-290},{460,-66},{12,-66},{12,-210},{
+                14,-210},{14,-210.667},{19,-210.667}},
                                   color={0,0,0}));
-        connect(add2.y, greaterEqualThreshold1.u1) annotation (Line(points={{-199,160},
-                {-191.5,160},{-191.5,160},{-182,160}}, color={0,0,127}));
-        connect(CHA_off_buffer.outPort, HPSHC1_on.inPort[2]) annotation (Line(points={{311.5,
-                -210},{348,-210},{348,90},{-70,90},{-70,-50.5},{-61,-50.5}},
+        connect(add2.y, greaterEqualThreshold1.u1) annotation (Line(points={{-39,0},{-22,
+                0}},                                   color={0,0,127}));
+        connect(CHA_off_buffer.outPort, HPSHC1_on.inPort[2]) annotation (Line(points={{471.5,
+                -370},{508,-370},{508,-70},{90,-70},{90,-210.5},{99,-210.5}},
               color={0,0,0}));
         connect(greaterEqualThreshold1.y, CHA_turnoff.condition) annotation (Line(
-              points={{-159,160},{-150,160},{-150,120},{-300,120},{-300,-280},{
-                190,-280},{190,-202}},
+              points={{1,0},{10,0},{10,-40},{-140,-40},{-140,-440},{350,-440},{350,-362}},
                              color={255,0,255}));
-        connect(CHA_start.inPort[1], parallel.split[1]) annotation (Line(points={{59,-190},
-                {48,-190},{48,-210},{44.825,-210}}, color={0,0,0}));
-        connect(HPSHC1_on1.inPort[1], parallel.split[2]) annotation (Line(points={{139,
-                -230},{44,-230},{44,-210},{44.825,-210}}, color={0,0,0}));
-        connect(CHA_off.outPort[1], parallel.join[1]) annotation (Line(points={{240.5,
-                -190},{256,-190},{256,-210},{257.175,-210}}, color={0,0,0}));
-        connect(HPSHC1_on1.outPort[1], parallel.join[2]) annotation (Line(points={{160.5,
-                -230},{256,-230},{256,-210},{257.175,-210}}, color={0,0,0}));
+        connect(CHA_start.inPort[1], parallel.split[1]) annotation (Line(points={{219,
+                -350},{208,-350},{208,-370},{204.825,-370}},
+                                                    color={0,0,0}));
+        connect(HPSHC1_on1.inPort[1], parallel.split[2]) annotation (Line(points={{299,
+                -390},{204,-390},{204,-370},{204.825,-370}},
+                                                          color={0,0,0}));
+        connect(CHA_off.outPort[1], parallel.join[1]) annotation (Line(points={{400.5,
+                -350},{416,-350},{416,-370},{417.175,-370}}, color={0,0,0}));
+        connect(HPSHC1_on1.outPort[1], parallel.join[2]) annotation (Line(points={{320.5,
+                -390},{416,-390},{416,-370},{417.175,-370}}, color={0,0,0}));
         connect(CHA_need.outPort, parallel.inPort)
-          annotation (Line(points={{-8.5,-210},{9.89,-210}}, color={0,0,0}));
+          annotation (Line(points={{151.5,-370},{169.89,-370}},
+                                                             color={0,0,0}));
         connect(parallel.outPort, CHA_off_buffer.inPort)
-          annotation (Line(points={{290.74,-210},{306,-210}}, color={0,0,0}));
+          annotation (Line(points={{450.74,-370},{466,-370}}, color={0,0,0}));
         connect(CHA_start.outPort[1], CHA_start_buffer.inPort)
-          annotation (Line(points={{80.5,-190},{106,-190}}, color={0,0,0}));
-        connect(CHA_start_buffer.outPort, CHA_on.inPort[1]) annotation (Line(points={{
-                111.5,-190},{126,-190},{126,-190},{139,-190}}, color={0,0,0}));
-        connect(CHA_on.outPort[1], CHA_turnoff.inPort) annotation (Line(points={{160.5,
-                -190},{174,-190},{174,-190},{186,-190}}, color={0,0,0}));
-        connect(CHA_turnoff.outPort, CHA_off.inPort[1]) annotation (Line(points={{191.5,
-                -190},{206,-190},{206,-190},{219,-190}}, color={0,0,0}));
-        connect(HPSHC1_start.active, HPSC_boo.u[1]) annotation (Line(points={{-130,-61},
-                {-130,-90},{-152,-90},{-152,-127.333},{-138,-127.333}}, color={255,0,255}));
-        connect(HPSHC1_on.active, HPSC_boo.u[2]) annotation (Line(points={{-50,-61},{-50,
-                -90},{-152,-90},{-152,-132},{-138,-132}}, color={255,0,255}));
-        connect(HPSHC1_on1.active, HPSC_boo.u[3]) annotation (Line(points={{150,-241},
-                {150,-250},{-152,-250},{-152,-134},{-138,-134},{-138,-136.667}},
+          annotation (Line(points={{240.5,-350},{266,-350}},color={0,0,0}));
+        connect(CHA_start_buffer.outPort, CHA_on.inPort[1]) annotation (Line(points={{271.5,
+                -350},{299,-350}},                             color={0,0,0}));
+        connect(CHA_on.outPort[1], CHA_turnoff.inPort) annotation (Line(points={{320.5,
+                -350},{346,-350}},                       color={0,0,0}));
+        connect(CHA_turnoff.outPort, CHA_off.inPort[1]) annotation (Line(points={{351.5,
+                -350},{379,-350}},                       color={0,0,0}));
+        connect(HPSHC1_start.active, HPSC_boo.u[1]) annotation (Line(points={{30,-221},
+                {30,-250},{8,-250},{8,-287.333},{22,-287.333}},         color={255,0,255}));
+        connect(HPSHC1_on.active, HPSC_boo.u[2]) annotation (Line(points={{110,-221},{
+                110,-250},{8,-250},{8,-292},{22,-292}},   color={255,0,255}));
+        connect(HPSHC1_on1.active, HPSC_boo.u[3]) annotation (Line(points={{310,
+                -401},{310,-410},{8,-410},{8,-294},{22,-294},{22,-296.667}},
               color={255,0,255}));
         connect(HPSHC_solo_switch.active, HPSC_solo_boo.u1)
-          annotation (Line(points={{30,-1},{30,-30},{38,-30}}, color={255,0,255}));
-        connect(HPSHC_solo.active, HPSC_solo_boo.u2) annotation (Line(points={{110,-1},
-                {110,-12},{30,-12},{30,-38},{38,-38}}, color={255,0,255}));
-        connect(HPSC_solo_boo.y, HPSHC_exit.u[3]) annotation (Line(points={{61,-30},
-                {240,-30},{240,188},{280,188}},
+          annotation (Line(points={{190,-161},{190,-190},{198,-190}},
+                                                               color={255,0,255}));
+        connect(HPSHC_solo.active, HPSC_solo_boo.u2) annotation (Line(points={{270,-161},
+                {270,-172},{190,-172},{190,-198},{198,-198}},
+                                                       color={255,0,255}));
+        connect(HPSC_solo_boo.y, HPSHC_exit.u[3]) annotation (Line(points={{221,-190},
+                {400,-190},{400,28},{440,28}},
                                            color={255,0,255}));
-        connect(HPSC_boo.y, HPSHC_exit.u[2]) annotation (Line(points={{-116.5,-132},{60,
-                -132},{60,-100},{270,-100},{270,190},{280,190}}, color={255,0,255}));
-        connect(HPSHC_cooling.active, HPSHC_exit.u[1]) annotation (Line(points={{30,-81},
-                {30,-100},{270,-100},{270,188.5},{280,188.5},{280,192}}, color={255,0,
+        connect(HPSC_boo.y, HPSHC_exit.u[2]) annotation (Line(points={{43.5,-292},{220,
+                -292},{220,-260},{430,-260},{430,30},{440,30}},  color={255,0,255}));
+        connect(HPSHC_cooling.active, HPSHC_exit.u[1]) annotation (Line(points={{190,-241},
+                {190,-260},{430,-260},{430,28.5},{440,28.5},{440,32}},   color={255,0,
                 255}));
-        connect(CHA_on.active, CHA_boo.u[1]) annotation (Line(points={{150,-201},
-                {150,-210},{120,-210},{120,-308.5},{160,-308.5}}, color={255,0,
+        connect(CHA_on.active, CHA_boo.u[1]) annotation (Line(points={{310,-361},{310,
+                -370},{280,-370},{280,-468.5},{320,-468.5}},      color={255,0,
                 255}));
-        connect(CHA_start.active, CHA_boo.u[2]) annotation (Line(points={{70,-201},
-                {70,-315.5},{160,-315.5}}, color={255,0,255}));
-        connect(HPSHC_exit.y, HPSHC) annotation (Line(points={{321,190},{340,190},
-                {340,212},{308,212},{308,240},{340,240}}, color={255,127,0}));
-        connect(CHA_boo.y, CHA) annotation (Line(points={{181.5,-312},{252,-312},
-                {252,-280},{340,-280}}, color={255,0,255}));
-        connect(add.y, add2.u1) annotation (Line(points={{-239,210},{-230,210},{-230,166},
-                {-222,166}}, color={0,0,127}));
-        connect(FT_CHA, add2.u2) annotation (Line(points={{-340,140},{-260,140},{-260,
-                154},{-222,154}}, color={0,0,127}));
-        connect(FT_TFP, greaterEqualThreshold.u2) annotation (Line(points={{-340,180},
-                {-219,180},{-219,202},{-202,202}}, color={0,0,127}));
-        connect(FT_CHA, greaterEqualThreshold1.u2) annotation (Line(points={{-340,140},
-                {-192,140},{-192,152},{-182,152}}, color={0,0,127}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-320,-320},
-                  {320,320}})),            Diagram(coordinateSystem(
-                preserveAspectRatio=false, extent={{-320,-320},{320,320}})));
+        connect(CHA_start.active, CHA_boo.u[2]) annotation (Line(points={{230,-361},{230,
+                -475.5},{320,-475.5}},     color={255,0,255}));
+        connect(HPSHC_exit.y, HPSHC) annotation (Line(points={{481,30},{500,30},{500,120},
+                {180,120},{180,170},{220,170}},           color={255,127,0}));
+        connect(CHA_boo.y, CHA) annotation (Line(points={{341.5,-472},{520,-472},{520,
+                100},{180,100},{180,70},{220,70}},
+                                        color={255,0,255}));
+        connect(add.y, add2.u1) annotation (Line(points={{-79,50},{-70,50},{-70,6},{-62,
+                6}},         color={0,0,127}));
+        connect(FT_CHA, add2.u2) annotation (Line(points={{-220,-180},{-148,-180},{-148,
+                -6},{-62,-6}},    color={0,0,127}));
+        connect(FT_TFP, greaterEqualThreshold.u2) annotation (Line(points={{-220,-90},
+                {-160,-90},{-160,30},{-52,30},{-52,42},{-42,42}},
+                                                   color={0,0,127}));
+        connect(FT_CHA, greaterEqualThreshold1.u2) annotation (Line(points={{-220,-180},
+                {-148,-180},{-148,-20},{-32,-20},{-32,-8},{-22,-8}},
+                                                   color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-200,-200},
+                  {200,200}}), graphics={
+              Rectangle(
+                extent={{-200,200},{200,-200}},
+                lineColor={0,0,0},
+                fillColor={210,210,210},
+                fillPattern=FillPattern.Solid,
+                borderPattern=BorderPattern.Raised), Text(
+                extent={{-160,180},{160,-160}},
+                lineColor={238,46,47},
+                fillColor={210,210,210},
+                fillPattern=FillPattern.Solid,
+                textString="I/O HPSHC
+
+I/O CHA")}),                               Diagram(coordinateSystem(
+                preserveAspectRatio=false, extent={{-200,-200},{200,200}})));
       end DEC_controls_parallel;
 
       model DEC_controls
@@ -937,16 +969,17 @@ where <strong>threshold</strong> is a parameter.
 
       model DEG_controls_parallel
         Modelica.Blocks.Interfaces.RealInput dp_DEG
-          annotation (Placement(transformation(extent={{-360,280},{-320,320}})));
+          annotation (Placement(transformation(extent={{-240,260},{-200,300}})));
         Modelica.Blocks.Interfaces.RealInput FT_DEG
-          annotation (Placement(transformation(extent={{-360,240},{-320,280}})));
+          annotation (Placement(transformation(extent={{-240,220},{-200,260}})));
         Modelica.Blocks.Interfaces.RealInput FT_GF1
-          annotation (Placement(transformation(extent={{-360,200},{-320,240}})));
+          annotation (Placement(transformation(extent={{-240,180},{-200,220}})));
         Modelica.Blocks.Interfaces.RealInput FT_GF2
-          annotation (Placement(transformation(extent={{-360,160},{-320,200}})));
+          annotation (Placement(transformation(extent={{-240,140},{-200,180}})));
 
         Modelica.Blocks.Interfaces.RealInput FT_TFP
-          annotation (Placement(transformation(extent={{-360,120},{-320,160}})));
+          annotation (Placement(transformation(extent={{-240,100},{-200,140}}),
+              iconTransformation(extent={{-240,100},{-200,140}})));
         inner Modelica.StateGraph.StateGraphRoot stateGraphRoot
           annotation (Placement(transformation(extent={{300,300},{320,320}})));
         Modelica.StateGraph.TransitionWithSignal transitionWithSignal
@@ -963,13 +996,13 @@ where <strong>threshold</strong> is a parameter.
           threshold=0,
           t_threshold=2,
           superior=false)
-          annotation (Placement(transformation(extent={{-238,290},{-218,310}})));
+          annotation (Placement(transformation(extent={{0,270},{20,290}})));
         Modelica.Blocks.Math.Add add(k1=-1, k2=+1)
-          annotation (Placement(transformation(extent={{-280,240},{-260,260}})));
+          annotation (Placement(transformation(extent={{-180,240},{-160,260}})));
         Modelica.StateGraph.InitialStep initialStep
           annotation (Placement(transformation(extent={{-260,-20},{-240,0}})));
         Modelica.Blocks.Math.Add add1(k1=+1, k2=+1)
-          annotation (Placement(transformation(extent={{-220,200},{-200,220}})));
+          annotation (Placement(transformation(extent={{-120,200},{-100,220}})));
 
         Modelica.Blocks.Logical.Or GF1_active
           annotation (Placement(transformation(extent={{-60,-220},{-40,-200}})));
@@ -978,20 +1011,20 @@ where <strong>threshold</strong> is a parameter.
           use_pre_as_default=false,
           nu=1) annotation (Placement(transformation(extent={{220,230},{260,250}})));
         Modelica.Blocks.Interfaces.IntegerOutput HPSHC annotation (Placement(
-              transformation(extent={{320,220},{360,260}}), iconTransformation(
-                extent={{320,220},{360,260}})));
+              transformation(extent={{200,160},{240,200}}), iconTransformation(
+                extent={{200,160},{240,200}})));
         Modelica.Blocks.Interfaces.BooleanOutput GF2 annotation (Placement(
-              transformation(extent={{320,-300},{360,-260}}), iconTransformation(
-                extent={{320,-300},{360,-260}})));
+              transformation(extent={{200,80},{240,120}}),    iconTransformation(
+                extent={{200,80},{240,120}})));
 
         Modelica.Blocks.Logical.GreaterEqual greaterEqual
-          annotation (Placement(transformation(extent={{-160,240},{-140,260}})));
+          annotation (Placement(transformation(extent={{0,240},{20,260}})));
         Modelica.Blocks.Logical.GreaterEqual greaterEqual1
-          annotation (Placement(transformation(extent={{-160,200},{-140,220}})));
+          annotation (Placement(transformation(extent={{0,200},{20,220}})));
         Modelica.Blocks.Math.Add add2(k1=+1, k2=+1)
-          annotation (Placement(transformation(extent={{-160,160},{-140,180}})));
+          annotation (Placement(transformation(extent={{-60,160},{-40,180}})));
         Modelica.Blocks.Logical.GreaterEqual greaterEqual2
-          annotation (Placement(transformation(extent={{-100,160},{-80,180}})));
+          annotation (Placement(transformation(extent={{0,160},{20,180}})));
         Modelica.StateGraph.Step GF1_stopping
           annotation (Placement(transformation(extent={{-20,20},{0,40}})));
         Modelica.StateGraph.Transition GF1_stop_buffer(enableTimer=true, waitTime=2)
@@ -1015,8 +1048,8 @@ where <strong>threshold</strong> is a parameter.
         Modelica.StateGraph.StepWithSignal TFP_on(nIn=1, nOut=1)
           annotation (Placement(transformation(extent={{220,-100},{240,-80}})));
         Modelica.Blocks.Interfaces.BooleanOutput GF1 annotation (Placement(
-              transformation(extent={{320,-230},{360,-190}}), iconTransformation(
-                extent={{320,-300},{360,-260}})));
+              transformation(extent={{200,120},{240,160}}),   iconTransformation(
+                extent={{200,0},{240,40}})));
         Modelica.StateGraph.Transition GF2_stop_buffer(enableTimer=true, waitTime=2)
           annotation (Placement(transformation(extent={{180,-20},{200,0}})));
         Modelica.StateGraph.Step GF2_stopping
@@ -1030,59 +1063,69 @@ where <strong>threshold</strong> is a parameter.
         Modelica.StateGraph.Transition TFP_stop_buffer(enableTimer=true, waitTime=2)
           annotation (Placement(transformation(extent={{340,-100},{360,-80}})));
         Modelica.Blocks.Interfaces.IntegerInput TFP_DEC
-          annotation (Placement(transformation(extent={{-360,-180},{-320,-140}})));
+          annotation (Placement(transformation(extent={{-240,-180},{-200,-140}})));
         Controls.OBC.CDL.Integers.LessThreshold intLesThr(threshold=1)
-          annotation (Placement(transformation(extent={{-280,-170},{-260,-150}})));
+          annotation (Placement(transformation(extent={{-180,-170},{-160,-150}})));
         Controls.OBC.CDL.Logical.And and2
-          annotation (Placement(transformation(extent={{-220,-140},{-200,-120}})));
+          annotation (Placement(transformation(extent={{-140,-140},{-120,-120}})));
         Controls.OBC.CDL.Logical.Or or2
           annotation (Placement(transformation(extent={{240,-160},{260,-140}})));
         Controls.OBC.CDL.Integers.GreaterEqualThreshold intGreEquThr(threshold=1)
-          annotation (Placement(transformation(extent={{-280,-240},{-260,-220}})));
+          annotation (Placement(transformation(extent={{-180,-220},{-160,-200}})));
         Modelica.Blocks.Logical.Or TFP_active
           annotation (Placement(transformation(extent={{200,-190},{220,-170}})));
       equation
         connect(dp_DEG, waitBefore.u)
-          annotation (Line(points={{-340,300},{-240,300}}, color={0,0,127}));
-        connect(FT_DEG, add.u1) annotation (Line(points={{-340,260},{-300,260},{-300,256},
-                {-282,256}}, color={0,0,127}));
-        connect(HPSHC_exit.y, HPSHC) annotation (Line(points={{261,240},{340,240}},
+          annotation (Line(points={{-220,280},{-2,280}},   color={0,0,127}));
+        connect(FT_DEG, add.u1) annotation (Line(points={{-220,240},{-196,240},
+                {-196,256},{-182,256}},
+                             color={0,0,127}));
+        connect(HPSHC_exit.y, HPSHC) annotation (Line(points={{261,240},{280,
+                240},{280,260},{160,260},{160,180},{220,180}},
                                                           color={255,127,0}));
-        connect(FT_GF1, add.u2) annotation (Line(points={{-340,220},{-300,220},{-300,244},
-                {-282,244}}, color={0,0,127}));
-        connect(FT_GF2, add1.u2) annotation (Line(points={{-340,180},{-300,180},{-300,
-                204},{-222,204}}, color={0,0,127}));
-        connect(add.y, add1.u1) annotation (Line(points={{-259,250},{-240,250},{-240,216},
-                {-222,216}}, color={0,0,127}));
+        connect(FT_GF1, add.u2) annotation (Line(points={{-220,200},{-190,200},
+                {-190,244},{-182,244}},
+                             color={0,0,127}));
+        connect(FT_GF2, add1.u2) annotation (Line(points={{-220,160},{-140,160},
+                {-140,204},{-122,204}},
+                                  color={0,0,127}));
+        connect(add.y, add1.u1) annotation (Line(points={{-159,250},{-140,250},
+                {-140,216},{-122,216}},
+                             color={0,0,127}));
         connect(add.y, greaterEqual.u1)
-          annotation (Line(points={{-259,250},{-162,250}}, color={0,0,127}));
-        connect(FT_GF1, greaterEqual.u2) annotation (Line(points={{-340,220},{-254,220},
-                {-254,242},{-162,242}}, color={0,0,127}));
-        connect(add1.y, greaterEqual1.u1) annotation (Line(points={{-199,210},{-180.5,
-                210},{-180.5,210},{-162,210}}, color={0,0,127}));
-        connect(FT_GF2, greaterEqual1.u2) annotation (Line(points={{-340,180},{-190,180},
-                {-190,202},{-162,202}}, color={0,0,127}));
-        connect(FT_TFP, add2.u2) annotation (Line(points={{-340,140},{-252,140},{-252,
-                164},{-162,164}}, color={0,0,127}));
-        connect(add1.y, add2.u1) annotation (Line(points={{-199,210},{-180,210},{-180,
-                176},{-162,176}}, color={0,0,127}));
+          annotation (Line(points={{-159,250},{-2,250}},   color={0,0,127}));
+        connect(FT_GF1, greaterEqual.u2) annotation (Line(points={{-220,200},{
+                -150,200},{-150,242},{-2,242}},
+                                        color={0,0,127}));
+        connect(add1.y, greaterEqual1.u1) annotation (Line(points={{-99,210},{
+                -2,210}},                      color={0,0,127}));
+        connect(FT_GF2, greaterEqual1.u2) annotation (Line(points={{-220,160},{
+                -72,160},{-72,202},{-2,202}},
+                                        color={0,0,127}));
+        connect(FT_TFP, add2.u2) annotation (Line(points={{-220,120},{-80,120},
+                {-80,164},{-62,164}},
+                                  color={0,0,127}));
+        connect(add1.y, add2.u1) annotation (Line(points={{-99,210},{-80,210},{
+                -80,176},{-62,176}},
+                                  color={0,0,127}));
         connect(add2.y, greaterEqual2.u1)
-          annotation (Line(points={{-139,170},{-102,170}}, color={0,0,127}));
-        connect(FT_TFP, greaterEqual2.u2) annotation (Line(points={{-340,140},{-128,140},
-                {-128,162},{-102,162}}, color={0,0,127}));
+          annotation (Line(points={{-39,170},{-2,170}},    color={0,0,127}));
+        connect(FT_TFP, greaterEqual2.u2) annotation (Line(points={{-220,120},{
+                -20,120},{-20,162},{-2,162}},
+                                        color={0,0,127}));
         connect(initialStep.outPort[1], transitionWithSignal.inPort)
           annotation (Line(points={{-239.5,-10},{-214,-10}}, color={0,0,0}));
         connect(GF1_start.outPort[1], GF1_start_buffer.inPort)
           annotation (Line(points={{-159.5,-10},{-134,-10}}, color={0,0,0}));
         connect(GF1_start_buffer.outPort, GF1_on.inPort[1]) annotation (Line(points={{
                 -128.5,-10},{-114,-10},{-114,-9.5},{-101,-9.5}}, color={0,0,0}));
-        connect(waitBefore.y, transitionWithSignal.condition) annotation (Line(points=
-               {{-217,300},{0,300},{0,100},{-300,100},{-300,-40},{-210,-40},{-210,-22}},
+        connect(waitBefore.y, transitionWithSignal.condition) annotation (Line(points={{21,280},
+                {60,280},{60,100},{-300,100},{-300,-40},{-210,-40},{-210,-22}},
               color={255,0,255}));
         connect(GF1_on.outPort[1], GF1_stop.inPort) annotation (Line(points={{-79.5,-9.75},
                 {-66,-9.75},{-66,30},{-54,30}}, color={0,0,0}));
-        connect(greaterEqual.y, GF1_stop.condition) annotation (Line(points={{-139,250},
-                {-20,250},{-20,80},{-100,80},{-100,8},{-50,8},{-50,18}}, color={255,0,
+        connect(greaterEqual.y, GF1_stop.condition) annotation (Line(points={{21,250},
+                {40,250},{40,88},{-100,88},{-100,8},{-50,8},{-50,18}},   color={255,0,
                 255}));
         connect(GF1_stop.outPort, GF1_stopping.inPort[1])
           annotation (Line(points={{-48.5,30},{-21,30}}, color={0,0,0}));
@@ -1091,8 +1134,9 @@ where <strong>threshold</strong> is a parameter.
         connect(GF1_stop_buffer.outPort, initialStep.inPort[1]) annotation (Line(
               points={{31.5,30},{80,30},{80,72},{-280,72},{-280,-10},{-261,-10}},
               color={0,0,0}));
-        connect(waitBefore.y, GF2_need.condition) annotation (Line(points={{-217,300},
-                {0,300},{0,100},{-300,100},{-300,-80},{-50,-80},{-50,-62}}, color={255,
+        connect(waitBefore.y, GF2_need.condition) annotation (Line(points={{21,280},
+                {60,280},{60,100},{-300,100},{-300,-80},{-50,-80},{-50,-62}},
+                                                                            color={255,
                 0,255}));
         connect(GF1_on.outPort[2], GF2_need.inPort) annotation (Line(points={{-79.5,-10.25},
                 {-66,-10.25},{-66,-50},{-54,-50}}, color={0,0,0}));
@@ -1118,20 +1162,23 @@ where <strong>threshold</strong> is a parameter.
           annotation (Line(points={{160.5,-10},{186,-10}}, color={0,0,0}));
         connect(transitionWithSignal.outPort, GF1_start.inPort[1]) annotation (Line(
               points={{-208.5,-10},{-194,-10},{-194,-10},{-181,-10}}, color={0,0,0}));
-        connect(GF1_start.active, GF1_active.u1) annotation (Line(points={{-170,-21},{
-                -170,-210},{-62,-210}}, color={255,0,255}));
+        connect(GF1_start.active, GF1_active.u1) annotation (Line(points={{-170,
+                -21},{-170,-88},{-100,-88},{-100,-210},{-62,-210}},
+                                        color={255,0,255}));
         connect(GF1_on.active, GF1_active.u2) annotation (Line(points={{-90,-21},{-90,
                 -218},{-62,-218}}, color={255,0,255}));
         connect(GF1_active.y, GF1)
-          annotation (Line(points={{-39,-210},{340,-210}}, color={255,0,255}));
-        connect(GF2_active.y, GF2) annotation (Line(points={{121,-280},{222,-280},{222,
-                -280},{340,-280}}, color={255,0,255}));
+          annotation (Line(points={{-39,-210},{190,-210},{190,-208},{420,-208},
+                {420,120},{180,120},{180,140},{220,140}},  color={255,0,255}));
+        connect(GF2_active.y, GF2) annotation (Line(points={{121,-280},{440,
+                -280},{440,80},{180,80},{180,100},{220,100}},
+                                   color={255,0,255}));
         connect(GF2_stop_buffer.outPort, GF1_on.inPort[2]) annotation (Line(points={{191.5,
                 -10},{220,-10},{220,60},{-108,60},{-108,-10.5},{-101,-10.5}}, color={0,
                 0,0}));
         connect(TFP_on.outPort[1], TFP_stop.inPort) annotation (Line(points={{240.5,-90},
                 {254,-90},{254,-90},{266,-90}}, color={0,0,0}));
-        connect(greaterEqual1.y, GF2_stop.condition) annotation (Line(points={{-139,210},
+        connect(greaterEqual1.y, GF2_stop.condition) annotation (Line(points={{21,210},
                 {88,210},{88,-40},{110,-40},{110,-22}}, color={255,0,255}));
         connect(TFP_stop.outPort, TFP_stopping.inPort[1])
           annotation (Line(points={{271.5,-90},{299,-90}}, color={0,0,0}));
@@ -1144,19 +1191,25 @@ where <strong>threshold</strong> is a parameter.
         connect(GF2_on.active, GF2_active.u2) annotation (Line(points={{70,-61},{70,-288},
                 {98,-288}}, color={255,0,255}));
         connect(TFP_DEC, intLesThr.u)
-          annotation (Line(points={{-340,-160},{-282,-160}}, color={255,127,0}));
-        connect(intLesThr.y, and2.u2) annotation (Line(points={{-258,-160},{-240,-160},
-                {-240,-138},{-222,-138}}, color={255,0,255}));
-        connect(waitBefore.y, and2.u1) annotation (Line(points={{-217,300},{0,300},{0,
-                100},{-300,100},{-300,-130},{-222,-130}}, color={255,0,255}));
-        connect(and2.y, TFP_need.condition) annotation (Line(points={{-198,-130},{110,
-                -130},{110,-102}}, color={255,0,255}));
-        connect(greaterEqual2.y, or2.u1) annotation (Line(points={{-79,170},{250,170},
-                {250,-128},{228,-128},{228,-150},{238,-150}}, color={255,0,255}));
-        connect(TFP_DEC, intGreEquThr.u) annotation (Line(points={{-340,-160},{-300,-160},
-                {-300,-230},{-282,-230}}, color={255,127,0}));
-        connect(intGreEquThr.y, or2.u2) annotation (Line(points={{-258,-230},{-140,-230},
-                {-140,-158},{238,-158}}, color={255,0,255}));
+          annotation (Line(points={{-220,-160},{-182,-160}}, color={255,127,0}));
+        connect(intLesThr.y, and2.u2) annotation (Line(points={{-158,-160},{
+                -152,-160},{-152,-138},{-142,-138}},
+                                          color={255,0,255}));
+        connect(waitBefore.y, and2.u1) annotation (Line(points={{21,280},{60,
+                280},{60,100},{-300,100},{-300,-130},{-142,-130}},
+                                                          color={255,0,255}));
+        connect(and2.y, TFP_need.condition) annotation (Line(points={{-118,-130},
+                {110,-130},{110,-102}},
+                                   color={255,0,255}));
+        connect(greaterEqual2.y, or2.u1) annotation (Line(points={{21,170},{100,
+                170},{100,70},{250,70},{250,-128},{228,-128},{228,-150},{238,
+                -150}},                                       color={255,0,255}));
+        connect(TFP_DEC, intGreEquThr.u) annotation (Line(points={{-220,-160},{
+                -190,-160},{-190,-210},{-182,-210}},
+                                          color={255,127,0}));
+        connect(intGreEquThr.y, or2.u2) annotation (Line(points={{-158,-210},{
+                -120,-210},{-120,-158},{238,-158}},
+                                         color={255,0,255}));
         connect(or2.y, TFP_stop.condition) annotation (Line(points={{262,-150},{270,-150},
                 {270,-102}}, color={255,0,255}));
         connect(TFP_start.active, TFP_active.u2) annotation (Line(points={{150,-101},{
@@ -1165,20 +1218,24 @@ where <strong>threshold</strong> is a parameter.
                 -120},{180,-120},{180,-180},{198,-180}}, color={255,0,255}));
         connect(TFP_active.y, HPSHC_exit.u[1]) annotation (Line(points={{221,-180},{400,
                 -180},{400,210},{200,210},{200,240},{220,240}}, color={255,0,255}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-320,-320},
-                  {320,320}}), graphics={Rectangle(
-                extent={{-320,320},{320,-320}},
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-200,
+                  -200},{200,200}}),
+                               graphics={Rectangle(
+                extent={{-200,200},{200,-200}},
                 lineColor={0,0,0},
                 fillColor={210,210,210},
                 fillPattern=FillPattern.Solid,
                 borderPattern=BorderPattern.Raised), Text(
-                extent={{-210,180},{162,-100}},
+                extent={{-160,160},{160,-160}},
                 lineColor={28,108,200},
                 fillColor={210,210,210},
                 fillPattern=FillPattern.Solid,
                 textString="I/O HPSHC
-I/O GF")}),                                Diagram(coordinateSystem(
-                preserveAspectRatio=false, extent={{-320,-320},{320,320}})));
+
+I/O GF1
+
+I/O GF2")}),                               Diagram(coordinateSystem(
+                preserveAspectRatio=false, extent={{-200,-200},{200,200}})));
       end DEG_controls_parallel;
 
       model dp_law_hot
@@ -5659,12 +5716,13 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
           Buildings.Applications.DHC_Marseille.Media.Sea_Water,
         use_p_in=false,
         p(displayUnit="bar") = 100000,
-      T=293.15,
+        use_T_in=true,
+        T=293.15,
       nPorts=7) "Boundary condition for flow source" annotation (Placement(
           transformation(
           extent={{-10,-10},{10,10}},
           rotation=0,
-          origin={-90,-30})));
+          origin={-150,-50})));
     Fluid.Movers.SpeedControlled_y fan1[5](redeclare package Medium =
           Buildings.Applications.DHC_Marseille.Media.Sea_Water, redeclare Fluid.Movers.Data.Pumps.KSB.KSB_edm per)
              annotation (Placement(transformation(extent={{-70,-70},{-50,-50}})));
@@ -5673,7 +5731,7 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
           Buildings.Applications.DHC_Marseille.Media.Sea_Water)
       annotation (Placement(transformation(extent={{-30,-30},{-10,-10}})));
     Controls_a.PEM.control_pumps control_pumps
-      annotation (Placement(transformation(extent={{-40,20},{-20,40}})));
+      annotation (Placement(transformation(extent={{-20,20},{0,40}})));
     Fluid.Sensors.TemperatureTwoPort TT200(redeclare package Medium =
           Buildings.Applications.DHC_Marseille.Media.Sea_Water, m_flow_nominal=3600
           *1020/3600)
@@ -5682,7 +5740,7 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
           Buildings.Applications.DHC_Marseille.Media.Sea_Water, m_flow_nominal=3600*1020/3600)
       annotation (Placement(transformation(extent={{40,-70},{60,-50}})));
       Controls_a.PEM.PID_PEM pID_PEM
-        annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
+        annotation (Placement(transformation(extent={{-60,20},{-40,40}})));
     Fluid.FixedResistances.CheckValve cheVal[5](
       redeclare package Medium = Media.Sea_Water,
       m_flow_nominal=720*1025/3600,
@@ -5691,39 +5749,43 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
     Filters.filtrer_dp filtrer_dp(redeclare package Medium =
             Buildings.Media.Water, m_flow_nominal=50)
       annotation (Placement(transformation(extent={{0,-70},{20,-50}})));
+    Fluid.Sensors.TemperatureTwoPort TT201(redeclare package Medium =
+            Media.Sea_Water, m_flow_nominal=3600*1020/3600)
+        annotation (Placement(transformation(extent={{-100,-80},{-120,-60}})));
+      Modelica.Blocks.Interfaces.RealOutput PEM_TT200
+        annotation (Placement(transformation(extent={{100,90},{120,110}})));
+      Modelica.Blocks.Interfaces.RealInput T_sea
+        annotation (Placement(transformation(extent={{-140,80},{-100,120}})));
   equation
   for k in 1:5 loop
     connect(cheVal[k].port_b, filtrer_dp.port_a)
       annotation (Line(points={{-20,-60},{0,-60}}, color={0,127,255}));
   end for;
     connect(control_pumps.pump_y, fan1.y)
-      annotation (Line(points={{-19,30},{-10,30},{-10,0},{-60,0},{-60,-48}},
+      annotation (Line(points={{1,30},{10,30},{10,0},{-60,0},{-60,-48}},
                                                             color={0,0,127}));
     connect(fan1.y_actual, control_pumps.pump_opening) annotation (Line(points={{-49,-53},
-              {-40,-53},{-40,-6},{10,-6},{10,60},{-50,60},{-50,38},{-42,38}},
+              {-40,-53},{-40,-6},{20,-6},{20,60},{-30,60},{-30,38},{-22,38}},
                                                                       color={0,0,127}));
 
     connect(senRelPre.port_a, sea_water.ports[1]) annotation (Line(points={{-30,-20},
-              {-68,-20},{-68,-26.5714},{-80,-26.5714}},
+              {-68,-20},{-68,-46.5714},{-140,-46.5714}},
                                                      color={0,127,255}));
-    connect(sea_water.ports[2:6], fan1.port_a) annotation (Line(points={{-80,
-              -32.2857},{-76,-32.2857},{-76,-60},{-70,-60}},
+    connect(sea_water.ports[2:6], fan1.port_a) annotation (Line(points={{-140,
+              -52.2857},{-76,-52.2857},{-76,-60},{-70,-60}},
                                              color={0,127,255}));
-    connect(port_a, sea_water.ports[7]) annotation (Line(points={{-100,0},{-74,
-              0},{-74,-33.4286},{-80,-33.4286}},
-                                            color={0,127,255}));
 
     connect(TT200.port_b, port_b)
       annotation (Line(points={{90,-60},{100,-60},{100,0}}, color={0,127,255}));
     connect(TT200.port_a, FQT200.port_b)
       annotation (Line(points={{70,-60},{60,-60}}, color={0,127,255}));
       connect(senRelPre.p_rel, pID_PEM.P) annotation (Line(points={{-20,-29},{
-              -20,-40},{40,-40},{40,70},{-88,70},{-88,35},{-82,35}},
+              -20,-40},{40,-40},{40,70},{-70,70},{-70,35},{-62,35}},
                                                                  color={0,0,127}));
       connect(FQT200.V_flow, pID_PEM.v_flow) annotation (Line(points={{50,-49},
-              {50,80},{-92,80},{-92,25},{-82,25}}, color={0,0,127}));
-      connect(pID_PEM.y, control_pumps.pid) annotation (Line(points={{-59,30},{
-              -50,30},{-50,22},{-42,22}}, color={0,0,127}));
+              {50,80},{-80,80},{-80,25},{-62,25}}, color={0,0,127}));
+      connect(pID_PEM.y, control_pumps.pid) annotation (Line(points={{-39,30},{
+              -30,30},{-30,22},{-22,22}}, color={0,0,127}));
     connect(fan1.port_b, cheVal.port_a)
       annotation (Line(points={{-50,-60},{-40,-60}}, color={0,127,255}));
 
@@ -5732,6 +5794,15 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
       annotation (Line(points={{20,-60},{40,-60}}, color={0,127,255}));
       connect(senRelPre.port_b, filtrer_dp.port_a) annotation (Line(points={{
               -10,-20},{-6,-20},{-6,-60},{0,-60}}, color={0,127,255}));
+      connect(port_a, TT201.port_a) annotation (Line(points={{-100,0},{-86,0},{
+              -86,-70},{-100,-70}}, color={0,127,255}));
+      connect(TT201.port_b, sea_water.ports[7]) annotation (Line(points={{-120,
+              -70},{-127,-70},{-127,-53.4286},{-140,-53.4286}}, color={0,127,
+              255}));
+      connect(TT200.T, PEM_TT200) annotation (Line(points={{80,-49},{80,100},{
+              110,100}}, color={0,0,127}));
+      connect(T_sea, sea_water.T_in) annotation (Line(points={{-120,100},{-90,
+              100},{-90,40},{-170,40},{-170,-46},{-162,-46}}, color={0,0,127}));
       annotation (Icon(graphics={
           Rectangle(
             extent={{-100,16},{100,-16}},
@@ -7074,17 +7145,17 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
               rotation=90,
               origin={70,40})));
         TFP.TFP_solo tFP_solo
-          annotation (Placement(transformation(extent={{20,-60},{40,-40}})));
+          annotation (Placement(transformation(extent={{20,-80},{40,-60}})));
         Fluid.FixedResistances.Junction jun6 annotation (Placement(
               transformation(
               extent={{10,-10},{-10,10}},
               rotation=90,
-              origin={-100,-90})));
+              origin={-110,-130})));
         Fluid.FixedResistances.Junction jun7 annotation (Placement(
               transformation(
               extent={{-10,-10},{10,10}},
               rotation=180,
-              origin={-60,-90})));
+              origin={-60,-130})));
         PEC_PEG.pompes_pec pompes_pec
           annotation (Placement(transformation(extent={{20,-120},{40,-100}})));
         DEC_DEG.DEC dEC
@@ -7093,9 +7164,19 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
           annotation (Placement(transformation(extent={{20,-180},{40,-160}})));
         DEC_DEG.DEG dEG
           annotation (Placement(transformation(extent={{80,-186},{100,-164}})));
+        Fluid.FixedResistances.Junction jun8 annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=180,
+              origin={-40,-90})));
+        Fluid.FixedResistances.Junction jun9 annotation (Placement(
+              transformation(
+              extent={{-10,10},{10,-10}},
+              rotation=90,
+              origin={140,-150})));
       equation
-        connect(pem.port_b, jun.port_1) annotation (Line(points={{0,90},{20,90},
-                {20,80},{-130,80},{-130,70}}, color={0,127,255}));
+        connect(pem.port_b, jun.port_1) annotation (Line(points={{0,90},{40,90},
+                {40,80},{-130,80},{-130,70}}, color={0,127,255}));
         connect(jun.port_2, gf2.port_a1) annotation (Line(points={{-130,50},{
                 -130,-44},{-100,-44}}, color={0,127,255}));
         connect(jun.port_3, jun1.port_1)
@@ -7121,42 +7202,64 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
         connect(cold_exchanger.port_b1, jun5.port_1) annotation (Line(points={{60,-4},
                 {70,-4},{70,30}},        color={0,127,255}));
         connect(jun5.port_2, pem.port_a) annotation (Line(points={{70,50},{70,
-                100},{-40,100},{-40,90},{-20,90}}, color={0,127,255}));
+                120},{-40,120},{-40,90},{-20,90}}, color={0,127,255}));
         connect(gf2.port_b2, jun6.port_1)
-          annotation (Line(points={{-100,-56},{-100,-80}}, color={0,127,255}));
+          annotation (Line(points={{-100,-56},{-110,-56},{-110,-120}},
+                                                           color={0,127,255}));
         connect(jun6.port_3, jun7.port_2)
-          annotation (Line(points={{-90,-90},{-70,-90}}, color={0,127,255}));
+          annotation (Line(points={{-100,-130},{-70,-130}},
+                                                         color={0,127,255}));
         connect(jun7.port_3, gf1.port_b2)
-          annotation (Line(points={{-60,-80},{-60,-56}}, color={0,127,255}));
+          annotation (Line(points={{-60,-120},{-60,-56}},color={0,127,255}));
         connect(pompes_pec.port_b, dEC.port_a1) annotation (Line(points={{40,-110},
-                {80,-110}},                           color={0,127,255}));
+                {80,-110}},                           color={238,46,47}));
         connect(heat_exchanger.port_b2, tFP_solo.port_a2) annotation (Line(
-              points={{0,-16},{-10,-16},{-10,-34},{52,-34},{52,-47},{40,-47}},
+              points={{0,-16},{-10,-16},{-10,-40},{52,-40},{52,-67},{40,-67}},
               color={238,46,47}));
         connect(dEC.port_b2, tFP_solo.port_a1) annotation (Line(points={{80,
-                -122},{60,-122},{60,-140},{120,-140},{120,-80},{0,-80},{0,-42},
-                {20,-42}}, color={238,46,47}));
+                -122},{60,-122},{60,-140},{120,-140},{120,-90},{0,-90},{0,-62},
+                {20,-62}}, color={238,46,47}));
         connect(tFP_solo.port_b1, heat_exchanger.port_a2) annotation (Line(
-              points={{40,-42},{46,-42},{46,-26},{28,-26},{28,-16},{20,-16}},
+              points={{40,-62},{46,-62},{46,-26},{28,-26},{28,-16},{20,-16}},
               color={238,46,47}));
         connect(tFP_solo.port_b2, pompes_pec.port_a) annotation (Line(points={{
-                20,-47},{12,-47},{12,-48},{-10,-48},{-10,-110},{20,-110}},
+                20,-67},{12,-67},{12,-48},{-10,-48},{-10,-110},{20,-110}},
               color={238,46,47}));
         connect(pompes_peg.port_b, dEG.port_a1)
           annotation (Line(points={{40,-170},{80,-170}}, color={0,127,255}));
-        connect(dEG.port_b2, tFP_solo.port_a4) annotation (Line(points={{80,
-                -182},{60,-182},{60,-200},{140,-200},{140,-58},{40,-58}}, color
-              ={0,127,255}));
         connect(tFP_solo.port_b3, cold_exchanger.port_a2) annotation (Line(
-              points={{40,-53.1},{54,-53.1},{54,-54},{70,-54},{70,-16},{60,-16}},
+              points={{40,-73.1},{54,-73.1},{54,-54},{70,-54},{70,-16},{60,-16}},
               color={0,127,255}));
         connect(cold_exchanger.port_b2, tFP_solo.port_a3) annotation (Line(
-              points={{40,-16},{40,-30},{10,-30},{10,-53.2},{20,-53.2}}, color=
+              points={{40,-16},{40,-44},{10,-44},{10,-73.2},{20,-73.2}}, color=
                 {0,127,255}));
         connect(tFP_solo.port_b4, jun7.port_1) annotation (Line(points={{20,
-                -58.5},{-20,-58.5},{-20,-90},{-50,-90}}, color={0,127,255}));
-        connect(jun6.port_2, pompes_peg.port_a) annotation (Line(points={{-100,
-                -100},{-100,-170},{20,-170}}, color={0,127,255}));
+                -78.5},{-20,-78.5},{-20,-130},{-50,-130}},
+                                                         color={0,127,255}));
+        connect(jun6.port_2, pompes_peg.port_a) annotation (Line(points={{-110,
+                -140},{-110,-170},{20,-170}}, color={0,127,255}));
+        connect(pem.PEM_TT200, gf2.PEM_TT200) annotation (Line(points={{1,100},
+                {20,100},{20,130},{-180,130},{-180,-40},{-102,-40}}, color={0,0,
+                127}));
+        connect(pem.PEM_TT200, gf1.PEM_TT200) annotation (Line(points={{1,100},
+                {20,100},{20,130},{-180,130},{-180,-32},{-66,-32},{-66,-40},{
+                -62,-40}}, color={0,0,127}));
+        connect(pem.PEM_TT200, heat_exchanger.PEM_TT200) annotation (Line(
+              points={{1,100},{20,100},{20,130},{-180,130},{-180,-14},{-2,-14}},
+              color={0,0,127}));
+        connect(pem.PEM_TT200, cold_exchanger.PEM_TT200) annotation (Line(
+              points={{1,100},{20,100},{20,130},{-180,130},{-180,12},{32,12},{
+                32,-14},{38,-14}}, color={0,0,127}));
+        connect(dEG.port_b2, jun9.port_1) annotation (Line(points={{80,-182},{
+                60,-182},{60,-200},{140,-200},{140,-160}}, color={0,127,255}));
+        connect(jun9.port_2, tFP_solo.port_a4) annotation (Line(points={{140,
+                -140},{140,-78},{40,-78}}, color={0,127,255}));
+        connect(jun9.port_3, jun8.port_1) annotation (Line(points={{130,-150},{
+                -26,-150},{-26,-90},{-30,-90}}, color={0,127,255}));
+        connect(jun8.port_3, gf1.port_a2)
+          annotation (Line(points={{-40,-80},{-40,-56}}, color={0,127,255}));
+        connect(jun8.port_2, gf2.port_a2) annotation (Line(points={{-50,-90},{
+                -74,-90},{-74,-56},{-80,-56}}, color={0,127,255}));
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end complete_plant_b;
