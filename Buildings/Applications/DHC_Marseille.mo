@@ -372,8 +372,9 @@ u1, else it is set equal to u3.</p>
                                                        color={0,0,0}));
         connect(HPSHC_solo.outPort[2], HPSHC_solo_off.inPort) annotation (Line(points={{280.5,
                 -150.25},{292,-150.25},{292,-170},{306,-170}},    color={0,0,0}));
-        connect(TT_DEC, waitBefore2.u) annotation (Line(points={{-220,90},{58,90},{58,
-                -110},{198,-110}},  color={0,0,127}));
+        connect(TT_DEC, waitBefore2.u) annotation (Line(points={{-220,90},{60,
+                90},{60,-110},{198,-110}},
+                                    color={0,0,127}));
         connect(waitBefore2.y, temp_duo.condition) annotation (Line(points={{221,-110},
                 {280,-110},{280,-130},{310,-130},{310,-122}},
                                                  color={255,0,255}));
@@ -927,15 +928,14 @@ where <strong>threshold</strong> is a parameter.
       package Tests
       extends Modelica.Icons.ExamplesPackage;
         model selec
-          hpshc_selec hpshc_selec1
+          WaitBefore waitBefore(threshold=10, t_threshold=10)
             annotation (Placement(transformation(extent={{-20,0},{0,20}})));
-          Modelica.Blocks.Sources.IntegerExpression integerExpression(y=1)
-            annotation (Placement(transformation(extent={{-80,0},{-60,20}})));
-        equation
-          connect(integerExpression.y, hpshc_selec1.u) annotation (Line(points=
-                  {{-59,10},{-40,10},{-40,10},{-22,10}}, color={255,127,0}));
           annotation (Icon(coordinateSystem(preserveAspectRatio=false)),
-              Diagram(coordinateSystem(preserveAspectRatio=false)));
+              Diagram(coordinateSystem(preserveAspectRatio=false)),
+            experiment(
+              StopTime=100,
+              Interval=1,
+              __Dymola_Algorithm="Dassl"));
         end selec;
 
         model test_pid_dec
@@ -969,17 +969,21 @@ where <strong>threshold</strong> is a parameter.
 
       model DEG_controls_parallel
         Modelica.Blocks.Interfaces.RealInput dp_DEG
-          annotation (Placement(transformation(extent={{-240,260},{-200,300}})));
+          annotation (Placement(transformation(extent={{-240,260},{-200,300}}),
+              iconTransformation(extent={{-240,120},{-200,160}})));
         Modelica.Blocks.Interfaces.RealInput FT_DEG
-          annotation (Placement(transformation(extent={{-240,220},{-200,260}})));
+          annotation (Placement(transformation(extent={{-240,220},{-200,260}}),
+              iconTransformation(extent={{-240,60},{-200,100}})));
         Modelica.Blocks.Interfaces.RealInput FT_GF1
-          annotation (Placement(transformation(extent={{-240,180},{-200,220}})));
+          annotation (Placement(transformation(extent={{-240,180},{-200,220}}),
+              iconTransformation(extent={{-240,0},{-200,40}})));
         Modelica.Blocks.Interfaces.RealInput FT_GF2
-          annotation (Placement(transformation(extent={{-240,140},{-200,180}})));
+          annotation (Placement(transformation(extent={{-240,140},{-200,180}}),
+              iconTransformation(extent={{-240,-60},{-200,-20}})));
 
         Modelica.Blocks.Interfaces.RealInput FT_TFP
           annotation (Placement(transformation(extent={{-240,100},{-200,140}}),
-              iconTransformation(extent={{-240,100},{-200,140}})));
+              iconTransformation(extent={{-240,-118},{-200,-78}})));
         inner Modelica.StateGraph.StateGraphRoot stateGraphRoot
           annotation (Placement(transformation(extent={{300,300},{320,320}})));
         Modelica.StateGraph.TransitionWithSignal transitionWithSignal
@@ -1076,7 +1080,8 @@ where <strong>threshold</strong> is a parameter.
           annotation (Placement(transformation(extent={{200,-190},{220,-170}})));
       equation
         connect(dp_DEG, waitBefore.u)
-          annotation (Line(points={{-220,280},{-2,280}},   color={0,0,127}));
+          annotation (Line(points={{-220,280},{-112,280},{-112,280},{-2,280}},
+                                                           color={0,0,127}));
         connect(FT_DEG, add.u1) annotation (Line(points={{-220,240},{-196,240},
                 {-196,256},{-182,256}},
                              color={0,0,127}));
@@ -1086,9 +1091,8 @@ where <strong>threshold</strong> is a parameter.
         connect(FT_GF1, add.u2) annotation (Line(points={{-220,200},{-190,200},
                 {-190,244},{-182,244}},
                              color={0,0,127}));
-        connect(FT_GF2, add1.u2) annotation (Line(points={{-220,160},{-140,160},
-                {-140,204},{-122,204}},
-                                  color={0,0,127}));
+        connect(FT_GF2, add1.u2) annotation (Line(points={{-220,160},{-140,160},{-140,
+                204},{-122,204}}, color={0,0,127}));
         connect(add.y, add1.u1) annotation (Line(points={{-159,250},{-140,250},
                 {-140,216},{-122,216}},
                              color={0,0,127}));
@@ -1099,20 +1103,17 @@ where <strong>threshold</strong> is a parameter.
                                         color={0,0,127}));
         connect(add1.y, greaterEqual1.u1) annotation (Line(points={{-99,210},{
                 -2,210}},                      color={0,0,127}));
-        connect(FT_GF2, greaterEqual1.u2) annotation (Line(points={{-220,160},{
-                -72,160},{-72,202},{-2,202}},
-                                        color={0,0,127}));
-        connect(FT_TFP, add2.u2) annotation (Line(points={{-220,120},{-80,120},
-                {-80,164},{-62,164}},
-                                  color={0,0,127}));
+        connect(FT_GF2, greaterEqual1.u2) annotation (Line(points={{-220,160},{-72,160},
+                {-72,202},{-2,202}},    color={0,0,127}));
+        connect(FT_TFP, add2.u2) annotation (Line(points={{-220,120},{-80,120},{-80,164},
+                {-62,164}},       color={0,0,127}));
         connect(add1.y, add2.u1) annotation (Line(points={{-99,210},{-80,210},{
                 -80,176},{-62,176}},
                                   color={0,0,127}));
         connect(add2.y, greaterEqual2.u1)
           annotation (Line(points={{-39,170},{-2,170}},    color={0,0,127}));
-        connect(FT_TFP, greaterEqual2.u2) annotation (Line(points={{-220,120},{
-                -20,120},{-20,162},{-2,162}},
-                                        color={0,0,127}));
+        connect(FT_TFP, greaterEqual2.u2) annotation (Line(points={{-220,120},{-20,120},
+                {-20,162},{-2,162}},    color={0,0,127}));
         connect(initialStep.outPort[1], transitionWithSignal.inPort)
           annotation (Line(points={{-239.5,-10},{-214,-10}}, color={0,0,0}));
         connect(GF1_start.outPort[1], GF1_start_buffer.inPort)
@@ -3329,7 +3330,7 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
       Controls_a.DEC_DEG.PID_DEC pID_DEC
         annotation (Placement(transformation(extent={{-80,0},{-60,20}})));
         Modelica.Blocks.Interfaces.RealOutput dp_cons
-        annotation (Placement(transformation(extent={{100,-10},{120,10}})));
+        annotation (Placement(transformation(extent={{120,20},{140,40}})));
       Modelica.Blocks.Interfaces.IntegerInput hpshc annotation (Placement(
             transformation(
             extent={{-20,-20},{20,20}},
@@ -3340,6 +3341,8 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
             extent={{-20,-20},{20,20}},
             rotation=270,
             origin={40,120})));
+        Modelica.Blocks.Interfaces.RealOutput FT521_DEC
+        annotation (Placement(transformation(extent={{120,-40},{140,-20}})));
     equation
       connect(jun4.port_3,CV501. port_a)
         annotation (Line(points={{-20,50},{-20,10}},      color={0,127,255}));
@@ -3373,8 +3376,9 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
         annotation (Line(points={{50,-60},{100,-60}}, color={0,127,255}));
       connect(pID_DEC.y, CV501.y) annotation (Line(points={{-59,11},{-48,11},{-48,2.22045e-15},
               {-32,2.22045e-15}}, color={0,0,127}));
-      connect(pID_DEC.dp_cons, dp_cons) annotation (Line(points={{-59,17},{30,17},{30,
-              -10},{88,-10},{88,0},{110,0}}, color={0,0,127}));
+      connect(pID_DEC.dp_cons, dp_cons) annotation (Line(points={{-59,17},{30,
+              17},{30,-10},{88,-10},{88,30},{130,30}},
+                                             color={0,0,127}));
       connect(TT521.T, pID_DEC.TT521) annotation (Line(points={{10,-49},{10,-30},{-100,
               -30},{-100,8},{-82,8}}, color={0,0,127}));
       connect(hpshc, pID_DEC.HPSHC) annotation (Line(points={{-60,120},{-60,96},{-120,
@@ -3387,6 +3391,8 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
               {80,40},{-96,40},{-96,16},{-82,16}}, color={0,0,127}));
       connect(T_ext, pID_DEC.T_ext) annotation (Line(points={{40,120},{40,90},{-112,
               90},{-112,20},{-82,20}}, color={0,0,127}));
+      connect(FT521.m_flow, FT521_DEC) annotation (Line(points={{40,-49},{40,
+              -30},{130,-30}}, color={0,0,127}));
       annotation (Diagram(coordinateSystem(extent={{-100,-100},{100,100}})), Icon(
             coordinateSystem(extent={{-100,-100},{100,120}}), graphics={
             Rectangle(
@@ -3473,12 +3479,14 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
       Controls_a.DEC_DEG.PID_DEC pID_DEC
         annotation (Placement(transformation(extent={{-80,0},{-60,20}})));
         Modelica.Blocks.Interfaces.RealOutput dp_cons
-        annotation (Placement(transformation(extent={{100,-10},{120,10}})));
+        annotation (Placement(transformation(extent={{120,20},{140,40}})));
       Modelica.Blocks.Interfaces.RealInput T_ext annotation (Placement(
             transformation(
             extent={{-20,-20},{20,20}},
             rotation=270,
             origin={0,120})));
+        Modelica.Blocks.Interfaces.RealOutput FT121_DEG
+        annotation (Placement(transformation(extent={{120,-40},{140,-20}})));
     equation
       connect(jun4.port_3,CV101. port_a)
         annotation (Line(points={{-20,50},{-20,10}},      color={0,127,255}));
@@ -3512,8 +3520,9 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
         annotation (Line(points={{50,-60},{100,-60}}, color={0,127,255}));
       connect(pID_DEC.y,CV101. y) annotation (Line(points={{-59,11},{-48,11},{-48,2.22045e-15},
               {-32,2.22045e-15}}, color={0,0,127}));
-      connect(pID_DEC.dp_cons, dp_cons) annotation (Line(points={{-59,17},{30,17},{30,
-              -10},{88,-10},{88,0},{110,0}}, color={0,0,127}));
+      connect(pID_DEC.dp_cons, dp_cons) annotation (Line(points={{-59,17},{30,
+              17},{30,-10},{88,-10},{88,30},{130,30}},
+                                             color={0,0,127}));
       connect(TT121.T, pID_DEC.TT521) annotation (Line(points={{10,-49},{10,-30},{-100,
               -30},{-100,8},{-82,8}}, color={0,0,127}));
       connect(PT111.p, pID_DEC.PT511) annotation (Line(points={{81,70},{88,70},{88,84},
@@ -3525,6 +3534,8 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
       connect(T_ext, pID_DEC.T_ext) annotation (Line(points={{0,120},{0,90},{
               -112,90},{-112,20},{-82,20}},
                                        color={0,0,127}));
+      connect(FT121.m_flow, FT121_DEG) annotation (Line(points={{40,-49},{40,
+              -30},{130,-30}}, color={0,0,127}));
       annotation (Diagram(coordinateSystem(extent={{-100,-100},{100,100}})), Icon(
             coordinateSystem(extent={{-100,-100},{100,120}}), graphics={
             Rectangle(
@@ -3794,6 +3805,11 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
         annotation (Placement(transformation(extent={{-80,-30},{-60,-10}})));
       Modelica.Blocks.Sources.RealExpression FT121_set(y=V_flow_evap_set*1025/3600)
         annotation (Placement(transformation(extent={{40,-10},{60,10}})));
+      Modelica.Blocks.Interfaces.RealOutput y annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={0,-110})));
     equation
       connect(u, electricReformulatedEIR.on) annotation (Line(points={{-120,0},
               {-80,0},{-80,3},{-12,3}},  color={255,0,255}));
@@ -3839,6 +3855,8 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
               -60},{100,-60}}, color={0,127,255}));
       connect(FT_PID.y, CV121.y) annotation (Line(points={{91,0},{100,0},{100,
               -44},{-40,-44},{-40,-48}}, color={0,0,127}));
+      connect(senMasFlo.m_flow, y) annotation (Line(points={{31,-30},{40,-30},{
+              40,-80},{0,-80},{0,-110}}, color={0,0,127}));
       annotation (Icon(graphics={
             Rectangle(
               extent={{0,-54},{100,-66}},
@@ -7174,6 +7192,12 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
               extent={{-10,10},{10,-10}},
               rotation=90,
               origin={140,-150})));
+        Modelica.Blocks.Sources.RealExpression realExpression(y=18 + 273.15)
+          annotation (Placement(transformation(extent={{-100,140},{-80,160}})));
+        Controls_a.DEC_DEG.DEC_controls_parallel dEC_controls_parallel
+          annotation (Placement(transformation(extent={{200,-40},{240,0}})));
+        Controls_a.DEC_DEG.DEG_controls_parallel dEG_controls_parallel
+          annotation (Placement(transformation(extent={{200,-100},{240,-60}})));
       equation
         connect(pem.port_b, jun.port_1) annotation (Line(points={{0,90},{40,90},
                 {40,80},{-130,80},{-130,70}}, color={0,127,255}));
@@ -7220,7 +7244,7 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
                 -122},{60,-122},{60,-140},{120,-140},{120,-90},{0,-90},{0,-62},
                 {20,-62}}, color={238,46,47}));
         connect(tFP_solo.port_b1, heat_exchanger.port_a2) annotation (Line(
-              points={{40,-62},{46,-62},{46,-26},{28,-26},{28,-16},{20,-16}},
+              points={{40,-62},{46,-62},{46,-26},{22,-26},{22,-16},{20,-16}},
               color={238,46,47}));
         connect(tFP_solo.port_b2, pompes_pec.port_a) annotation (Line(points={{
                 20,-67},{12,-67},{12,-48},{-10,-48},{-10,-110},{20,-110}},
@@ -7248,8 +7272,8 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
               points={{1,100},{20,100},{20,130},{-180,130},{-180,-14},{-2,-14}},
               color={0,0,127}));
         connect(pem.PEM_TT200, cold_exchanger.PEM_TT200) annotation (Line(
-              points={{1,100},{20,100},{20,130},{-180,130},{-180,12},{32,12},{
-                32,-14},{38,-14}}, color={0,0,127}));
+              points={{1,100},{20,100},{20,130},{-180,130},{-180,12},{28,12},{
+                28,-14},{38,-14}}, color={0,0,127}));
         connect(dEG.port_b2, jun9.port_1) annotation (Line(points={{80,-182},{
                 60,-182},{60,-200},{140,-200},{140,-160}}, color={0,127,255}));
         connect(jun9.port_2, tFP_solo.port_a4) annotation (Line(points={{140,
@@ -7260,6 +7284,35 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
           annotation (Line(points={{-40,-80},{-40,-56}}, color={0,127,255}));
         connect(jun8.port_2, gf2.port_a2) annotation (Line(points={{-50,-90},{
                 -74,-90},{-74,-56},{-80,-56}}, color={0,127,255}));
+        connect(realExpression.y, pem.T_sea) annotation (Line(points={{-79,150},
+                {-60,150},{-60,100},{-22,100}}, color={0,0,127}));
+        connect(tFP_solo.FT521_DEC, dEC_controls_parallel.FT_TFP) annotation (
+            Line(points={{43,-64},{110,-64},{110,-29},{198,-29}}, color={0,0,
+                127}));
+        connect(tFP_solo.FT121_DEG, dEG_controls_parallel.FT_TFP) annotation (
+            Line(points={{43,-76},{160,-76},{160,-89.8},{198,-89.8}}, color={0,
+                0,127}));
+        connect(gf2.y, dEG_controls_parallel.FT_GF1) annotation (Line(points={{
+                -90,-61},{-90,-80},{-160,-80},{-160,-220},{180,-220},{180,-78},
+                {198,-78}}, color={0,0,127}));
+        connect(gf1.y, dEG_controls_parallel.FT_GF2) annotation (Line(points={{
+                -50,-61},{-50,-74},{-172,-74},{-172,-226},{190,-226},{190,-84},
+                {198,-84}}, color={0,0,127}));
+        connect(dEG.dp_cons, dEG_controls_parallel.dp_DEG) annotation (Line(
+              points={{103,-173},{166,-173},{166,-66},{198,-66}}, color={0,0,
+                127}));
+        connect(dEG.FT121_DEG, dEG_controls_parallel.FT_DEG) annotation (Line(
+              points={{103,-179},{174,-179},{174,-72},{198,-72}}, color={0,0,
+                127}));
+        connect(tFP_solo.CV522_pid, heat_exchanger.TFP_CV522) annotation (Line(
+              points={{23,-57},{23,-32},{-16,-32},{-16,-6},{-2,-6}}, color={0,0,
+                127}));
+        connect(tFP_solo.CV122_pid, cold_exchanger.TFP_CV122) annotation (Line(
+              points={{37,-57},{37,-32},{32,-32},{32,-6},{38,-6}}, color={0,0,
+                127}));
+        connect(pem.PEM_TT200, tFP_solo.PEM_TT200) annotation (Line(points={{1,
+                100},{20,100},{20,130},{-180,130},{-180,-106},{8,-106},{8,-94},
+                {30,-94},{30,-82}}, color={0,0,127}));
         annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end complete_plant_b;
@@ -8692,12 +8745,26 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
         annotation (Placement(transformation(extent={{-200,160},{-180,180}})));
       Modelica.Blocks.Sources.RealExpression CV523_reg(y=211/3600)
         annotation (Placement(transformation(extent={{140,120},{160,140}})));
-      Modelica.Blocks.Interfaces.RealOutput y
-        annotation (Placement(transformation(extent={{120,50},{140,70}}),
-            iconTransformation(extent={{120,50},{140,70}})));
-      Modelica.Blocks.Interfaces.RealOutput y1
-        annotation (Placement(transformation(extent={{120,-70},{140,-50}}),
-            iconTransformation(extent={{120,-70},{140,-50}})));
+      Modelica.Blocks.Interfaces.RealOutput CV522_pid annotation (Placement(
+            transformation(extent={{120,50},{140,70}}), iconTransformation(
+            extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={-70,130})));
+      Modelica.Blocks.Interfaces.RealOutput CV122_pid annotation (Placement(
+            transformation(extent={{120,-70},{140,-50}}), iconTransformation(
+            extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={70,130})));
+      Modelica.Blocks.Interfaces.RealOutput FT521_DEC annotation (Placement(
+            transformation(extent={{40,60},{60,80}}), iconTransformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={130,60})));
+      Modelica.Blocks.Interfaces.RealOutput FT121_DEG annotation (Placement(
+            transformation(extent={{140,-180},{160,-160}}), iconTransformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={130,-60})));
     equation
       connect(port_a1, jun.port_1) annotation (Line(points={{-100,80},{-140,80},
               {-140,280},{10,280},{10,260}},
@@ -8811,16 +8878,22 @@ as <em>Real equivalent</em> of the Integer input <strong>u</strong>:
               120},{-220,120},{-220,162},{-202,162}}, color={0,0,127}));
       connect(CV523_reg.y, FT_PID_521.u_s)
         annotation (Line(points={{161,130},{198,130}}, color={0,0,127}));
-      connect(pID_Valve_cond.CV522, y) annotation (Line(points={{-179,175},{80,
-              175},{80,60},{130,60}}, color={0,0,127}));
-      connect(pID_Valve_evap.CV122, y1) annotation (Line(points={{-99,-225},{-8,
-              -225},{-8,-226},{90,-226},{90,-60},{130,-60}}, color={0,0,127}));
+      connect(pID_Valve_cond.CV522, CV522_pid) annotation (Line(points={{-179,
+              175},{80,175},{80,60},{130,60}},
+                                           color={0,0,127}));
+      connect(pID_Valve_evap.CV122, CV122_pid) annotation (Line(points={{-99,
+              -225},{-8,-225},{-8,-226},{90,-226},{90,-60},{130,-60}},
+                                                                color={0,0,127}));
       connect(TT121.port_b, TFPA.port_a2) annotation (Line(points={{50,-70},{50,
               -16},{-20,-16}}, color={0,127,255}));
       connect(XV112A.port_b, TT111.port_a) annotation (Line(points={{-50,-100},
               {-50,-160},{-60,-160}}, color={0,127,255}));
       connect(TFPA.port_b1, jun3.port_1) annotation (Line(points={{-20,-4},{70,
               -4},{70,180}}, color={238,46,47}));
+      connect(FT121.V_flow, FT121_DEG) annotation (Line(points={{61,-140},{80,
+              -140},{80,-170},{150,-170}}, color={0,0,127}));
+      connect(FT521.V_flow, FT521_DEC) annotation (Line(points={{21,90},{30,90},
+              {30,70},{50,70}}, color={0,0,127}));
       annotation (Diagram(coordinateSystem(extent={{-100,-100},{100,100}})), Icon(
             coordinateSystem(extent={{-100,-100},{100,100}}), graphics={Rectangle(
               extent={{-60,80},{60,20}},
