@@ -13406,6 +13406,18 @@ end DE_PE;
         fileName=ModelicaServices.ExternalReferences.loadResource(
             "modelica://Buildings/Data/sst/jan_20/froid_gotu_1h.txt"))
         annotation (Placement(transformation(extent={{-10,-50},{10,-30}})));
+      sst_cold_simple herm(
+        redeclare package Medium = Buildings.Media.Water,
+        eps_nom=0.68,
+        fileName=ModelicaServices.ExternalReferences.loadResource(
+            "modelica://Buildings/Data/sst/jan_20/froid_herm_1h.txt"))
+        annotation (Placement(transformation(extent={{-10,-90},{10,-70}})));
+      sst_cold_simple herm1(
+        redeclare package Medium = Buildings.Media.Water,
+        eps_nom=0.55,
+        fileName=ModelicaServices.ExternalReferences.loadResource(
+            "modelica://Buildings/Data/sst/jan_20/froid_flor_1h.txt"))
+        annotation (Placement(transformation(extent={{-10,-130},{10,-110}})));
     equation
       connect(port_a, caly.port_a) annotation (Line(points={{-100,0},{-56,0},{
               -56,50},{-10,50}}, color={0,127,255}));
@@ -13423,8 +13435,16 @@ end DE_PE;
               28},{-50,86},{-40,86},{-40,86.5}}, color={0,0,127}));
       connect(port_a, gotu.port_a) annotation (Line(points={{-100,0},{-56,0},{
               -56,-40},{-10,-40}}, color={0,127,255}));
-      connect(gotu.port_b, port_b) annotation (Line(points={{10,-40},{53,-40},{
-              53,0},{100,0}}, color={0,127,255}));
+      connect(gotu.port_b, port_b) annotation (Line(points={{10,-40},{56,-40},{
+              56,0},{100,0}}, color={0,127,255}));
+      connect(port_a, herm.port_a) annotation (Line(points={{-100,0},{-56,0},{
+              -56,-80},{-10,-80}}, color={0,127,255}));
+      connect(herm.port_b, port_b) annotation (Line(points={{10,-80},{56,-80},{
+              56,0},{100,0}}, color={0,127,255}));
+      connect(port_a, herm1.port_a) annotation (Line(points={{-100,0},{-56,0},{
+              -56,-120},{-10,-120}}, color={0,127,255}));
+      connect(herm1.port_b, port_b) annotation (Line(points={{10,-120},{56,-120},
+              {56,0},{100,0}}, color={0,127,255}));
       annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
             Rectangle(
               extent={{-60,60},{60,40}},
@@ -16430,7 +16450,7 @@ end DE_PE;
           tableOnFile=true,
           tableName="tab1",
           fileName=ModelicaServices.ExternalReferences.loadResource(
-              "modelica://Buildings/Data/sst/jan_20/froid_DOCK_ref_1h.txt"),
+              "modelica://Buildings/Data/sst/jan_20/froid_flor_ref_1h.txt"),
           columns={2,3,4,5,6,7},
           extrapolation=Modelica.Blocks.Types.Extrapolation.NoExtrapolation)
           annotation (Placement(transformation(extent={{-180,110},{-160,130}})));
@@ -16514,6 +16534,152 @@ end DE_PE;
             Interval=3600,
             __Dymola_Algorithm="Dassl"));
       end calibration_eps;
+
+      model calibration_pid
+        Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
+          tableOnFile=true,
+          tableName="tab1",
+          fileName=ModelicaServices.ExternalReferences.loadResource("modelica://Buildings/Data/sst/jan_20/froid_herm_ref_1h.txt"),
+          columns={2,3,4,5,6,7},
+          smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments)
+          annotation (Placement(transformation(extent={{-180,60},{-160,80}})));
+
+        Fluid.Sources.MassFlowSource_T boundary(
+          redeclare package Medium = Buildings.Media.Water,
+          use_m_flow_in=true,
+          use_T_in=true,
+          nPorts=1)
+          annotation (Placement(transformation(extent={{100,20},{80,40}})));
+        Fluid.Sources.Boundary_pT bou(redeclare package Medium =
+              Buildings.Media.Water, nPorts=1)
+          annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
+        Fluid.Sensors.TemperatureTwoPort T_in_sec(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+              transformation(
+              extent={{-10,10},{10,-10}},
+              rotation=180,
+              origin={50,30})));
+        Fluid.Sensors.TemperatureTwoPort T_out_sec(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+              transformation(
+              extent={{-10,10},{10,-10}},
+              rotation=180,
+              origin={-30,30})));
+        Fluid.HeatExchangers.PlateHeatExchangerEffectivenessNTU hex(
+          redeclare package Medium1 = Buildings.Media.Water,
+          redeclare package Medium2 = Buildings.Media.Water,
+          m1_flow_nominal=400000/(4185*15),
+          m2_flow_nominal=400000/(4185*15),
+          dp1_nominal(displayUnit="kPa") = 70000,
+          dp2_nominal(displayUnit="kPa") = 70000,
+          configuration=Buildings.Fluid.Types.HeatExchangerConfiguration.CounterFlow,
+          use_Q_flow_nominal=false,
+          Q_flow_nominal(displayUnit="kW") = 400000,
+          T_a1_nominal=288.15,
+          T_a2_nominal=278.15,
+          eps_nominal=0.72)
+          annotation (Placement(transformation(extent={{20,0},{0,20}})));
+
+        Fluid.Sensors.TemperatureTwoPort T_in_prim(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={-30,-50})));
+        Fluid.Sensors.TemperatureTwoPort T_out_prim(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+              transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={50,-30})));
+        Fluid.Sources.Boundary_pT bou1(redeclare package Medium =
+              Buildings.Media.Water,
+          use_T_in=true,             nPorts=2)
+          annotation (Placement(transformation(extent={{100,-40},{80,-20}})));
+        Modelica.Blocks.Math.Gain gain(k=1/3.6)
+          annotation (Placement(transformation(extent={{-140,60},{-120,80}})));
+        Modelica.Blocks.Interfaces.RealOutput temperature[4](final unit="K",
+            displayUnit="degC")
+          annotation (Placement(transformation(extent={{-180,20},{-160,40}})));
+        Fluid.Movers.FlowControlled_dp fan(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=50,
+          redeclare Fluid.Movers.Data.Generic per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          addPowerToMedium=false,
+          nominalValuesDefineDefaultPressureCurve=true,
+          dp_nominal(displayUnit="bar") = 1300000,
+          constantHead(displayUnit="bar") = 1300000) annotation (Placement(
+              transformation(extent={{-120,-60},{-100,-40}})));
+        Fluid.Actuators.Valves.TwoWayLinear val(
+          redeclare package Medium = Buildings.Media.Water,
+          m_flow_nominal=20,
+          dpValve_nominal(displayUnit="Pa") = 5000,
+          use_inputFilter=false)
+          annotation (Placement(transformation(extent={{-80,-60},{-60,-40}})));
+        Controls.Continuous.LimPID PID_T(
+          controllerType=Modelica.Blocks.Types.SimpleController.PI,
+          k=0.05,
+          Ti=15,
+          initType=Modelica.Blocks.Types.InitPID.NoInit,
+          reverseActing=false) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={-90,-10})));
+      equation
+        for k in [1:4] loop
+          temperature[k] = combiTimeTable.y[k];
+        end for;
+        connect(boundary.ports[1],T_in_sec. port_a)
+          annotation (Line(points={{80,30},{60,30}}, color={0,127,255}));
+        connect(T_in_sec.port_b,hex. port_a1) annotation (Line(points={{40,30},
+                {30,30},{30,16},{20,16}},
+                                  color={0,127,255}));
+        connect(bou.ports[1],T_out_sec. port_b)
+          annotation (Line(points={{-80,30},{-40,30}}, color={0,127,255}));
+        connect(T_out_sec.port_a,hex. port_b1) annotation (Line(points={{-20,30},
+                {-10,30},{-10,16},{0,16}},
+                                      color={0,127,255}));
+        connect(T_in_prim.port_b, hex.port_a2) annotation (Line(points={{-20,-50},
+                {-12,-50},{-12,4},{0,4}},
+                                       color={0,127,255}));
+        connect(hex.port_b2, T_out_prim.port_a) annotation (Line(points={{20,4},{
+                30,4},{30,-30},{40,-30}},
+                                    color={0,127,255}));
+        connect(T_out_prim.port_b, bou1.ports[1])
+          annotation (Line(points={{60,-30},{70,-30},{70,-28},{80,-28}},
+                                                       color={0,127,255}));
+        connect(gain.y, boundary.m_flow_in) annotation (Line(points={{-119,70},
+                {110,70},{110,38},{102,38}},
+                                    color={0,0,127}));
+        connect(combiTimeTable.y[4], boundary.T_in) annotation (Line(points={{
+                -159,70},{-150,70},{-150,100},{120,100},{120,34},{102,34}},
+              color={0,0,127}));
+        connect(fan.port_b, val.port_a)
+          annotation (Line(points={{-100,-50},{-80,-50}}, color={0,127,255}));
+        connect(val.port_b, T_in_prim.port_a) annotation (Line(points={{-60,-50},
+                {-52,-50},{-52,-50},{-40,-50}}, color={0,127,255}));
+        connect(fan.port_a, bou1.ports[2]) annotation (Line(points={{-120,-50},
+                {-140,-50},{-140,-80},{74,-80},{74,-32},{80,-32}}, color={0,127,
+                255}));
+        connect(combiTimeTable.y[1], bou1.T_in) annotation (Line(points={{-159,
+                70},{-150,70},{-150,100},{120,100},{120,-26},{102,-26}}, color=
+                {0,0,127}));
+        connect(combiTimeTable.y[3], PID_T.u_s) annotation (Line(points={{-159,
+                70},{-150,70},{-150,-10},{-102,-10}}, color={0,0,127}));
+        connect(T_out_sec.T, PID_T.u_m) annotation (Line(points={{-30,41},{-30,
+                52},{-110,52},{-110,-30},{-90,-30},{-90,-22}}, color={0,0,127}));
+        connect(PID_T.y, val.y) annotation (Line(points={{-79,-10},{-70,-10},{
+                -70,-38}}, color={0,0,127}));
+        connect(combiTimeTable.y[6], gain.u)
+          annotation (Line(points={{-159,70},{-142,70}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)),
+          experiment(
+            StopTime=13132800,
+            Interval=3600,
+            __Dymola_Algorithm="Dassl"));
+      end calibration_pid;
     end calibration;
 
     model distribution_cold_simple_bis
