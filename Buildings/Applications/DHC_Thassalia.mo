@@ -13412,7 +13412,7 @@ end DE_PE;
         fileName=ModelicaServices.ExternalReferences.loadResource(
             "modelica://Buildings/Data/sst/jan_20/froid_herm_1h.txt"))
         annotation (Placement(transformation(extent={{-10,-90},{10,-70}})));
-      sst_cold_simple herm1(
+      sst_cold_simple flor(
         redeclare package Medium = Buildings.Media.Water,
         eps_nom=0.55,
         fileName=ModelicaServices.ExternalReferences.loadResource(
@@ -13441,9 +13441,9 @@ end DE_PE;
               -56,-80},{-10,-80}}, color={0,127,255}));
       connect(herm.port_b, port_b) annotation (Line(points={{10,-80},{56,-80},{
               56,0},{100,0}}, color={0,127,255}));
-      connect(port_a, herm1.port_a) annotation (Line(points={{-100,0},{-56,0},{
-              -56,-120},{-10,-120}}, color={0,127,255}));
-      connect(herm1.port_b, port_b) annotation (Line(points={{10,-120},{56,-120},
+      connect(port_a, flor.port_a) annotation (Line(points={{-100,0},{-56,0},{-56,
+              -120},{-10,-120}}, color={0,127,255}));
+      connect(flor.port_b, port_b) annotation (Line(points={{10,-120},{56,-120},
               {56,0},{100,0}}, color={0,127,255}));
       annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
             Rectangle(
