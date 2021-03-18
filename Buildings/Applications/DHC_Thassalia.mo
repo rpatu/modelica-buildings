@@ -5169,6 +5169,49 @@ u1, else it is set equal to u3.</p>
               Diagram(coordinateSystem(preserveAspectRatio=false)));
     end test_switch;
   end Tests;
+
+    block Switch_off_bis "Switch between two Real signals"
+      extends Modelica.Blocks.Icons.PartialBooleanBlock;
+      Modelica.Blocks.Interfaces.RealInput u1
+        "Connector of first Real input signal"
+        annotation (Placement(transformation(extent={{-140,60},{-100,100}})));
+      Modelica.Blocks.Interfaces.RealInput u2
+        "Connector of second Real input signal"
+        annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
+      Modelica.Blocks.Interfaces.RealOutput y "Connector of Real output signal"
+        annotation (Placement(transformation(extent={{100,-10},{120,10}})));
+
+    equation
+      y = if u2>0 then u1 else 0;
+      annotation (
+        defaultComponentName="switch1",
+        Documentation(info="<html>
+<p>The Logical.Switch switches, depending on the
+logical connector u2 (the middle connector)
+between the two possible input signals
+u1 (upper connector) and u3 (lower connector).</p>
+<p>If u2 is <strong>true</strong>, the output signal y is set equal to
+u1, else it is set equal to u3.</p>
+</html>"),
+        Icon(coordinateSystem(
+            preserveAspectRatio=true,
+            extent={{-100,-100},{100,100}}), graphics={
+            Line(points={{12,0},{100,0}},
+              color={0,0,127}),
+            Line(points={{-100,0},{-40,0}},
+              color={255,0,255}),
+            Line(points={{-40,12},{-40,-12}},
+              color={255,0,255}),
+            Line(points={{-100,80},{-38,80}},
+              color={0,0,127}),
+            Line(points=DynamicSelect({{-38,80},{6,2}}, if u2 then {{-38,80},{6,2}} else {{-38,-80},{6,2}}),
+              color={0,0,127},
+              thickness=1),
+            Ellipse(lineColor={0,0,255},
+              pattern=LinePattern.None,
+              fillPattern=FillPattern.Solid,
+              extent={{2,-8},{18,8}})}));
+    end Switch_off_bis;
   end SST;
 
   end Controls_a;
@@ -12915,6 +12958,280 @@ end DE_PE;
             coordinateSystem(preserveAspectRatio=false)));
     end distribution_cold;
 
+    model sst_simple
+      extends Fluid.Interfaces.PartialTwoPort;
+      parameter Real eps_nom=0.72;
+      parameter Real Q_flow_set(final quantity="Power", unit="W")=400000;
+      parameter String fileName=
+          ModelicaServices.ExternalReferences.loadResource(
+          "modelica://Buildings/Data/tfp_he.txt") "File where matrix is stored"
+    annotation (Dialog(
+          loadSelector(filter="Text files (*.txt);;MATLAB MAT-files (*.mat)",
+              caption="Open file in which table is present")));
+
+      parameter Real P = 0.05
+        annotation (Dialog(group="PID"));
+      parameter Real Ti = 15
+        annotation (Dialog(group="PID"));
+
+      parameter Boolean type_SST
+        annotation (Dialog(group="PID"),choices(choice=true "SST_chaud", choice=false "SST_froid"));
+
+
+      Fluid.Sources.MassFlowSource_T boundary(redeclare package Medium =
+            Buildings.Media.Water,
+        use_m_flow_in=true,
+        use_T_in=true,             nPorts=1)
+        annotation (Placement(transformation(extent={{100,60},{80,80}})));
+      Fluid.Sources.Boundary_pT bou(redeclare package Medium =
+            Buildings.Media.Water, nPorts=1)
+        annotation (Placement(transformation(extent={{-100,60},{-80,80}})));
+      Fluid.HeatExchangers.PlateHeatExchangerEffectivenessNTU hex(redeclare
+          package
+          Medium1 =         Buildings.Media.Water, redeclare package Medium2 =
+            Buildings.Media.Water,
+        m1_flow_nominal=Q_flow_set/(4185*15),
+        m2_flow_nominal=Q_flow_set/(4185*15),
+        dp1_nominal=5000,
+        dp2_nominal=5000,
+        configuration=Buildings.Fluid.Types.HeatExchangerConfiguration.CounterFlow,
+        use_Q_flow_nominal=false,
+        eps_nominal=eps_nom)
+        annotation (Placement(transformation(extent={{20,-4},{0,16}})));
+      Fluid.Actuators.Valves.TwoWayLinear val(redeclare package Medium =
+            Buildings.Media.Water,
+        m_flow_nominal=Q_flow_set/(4185*15),
+        dpValve_nominal=5000,
+        use_inputFilter=false)
+        annotation (Placement(transformation(extent={{-40,-40},{-20,-20}})));
+      Fluid.Sensors.TemperatureTwoPort T_in_sec(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{-10,10},{10,-10}},
+            rotation=180,
+            origin={50,70})));
+      Fluid.Sensors.TemperatureTwoPort T_out_sec(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{-10,10},{10,-10}},
+            rotation=180,
+            origin={-30,70})));
+      Fluid.Sensors.TemperatureTwoPort T_out_prim(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{10,10},{-10,-10}},
+            rotation=180,
+            origin={50,-30})));
+      Fluid.Sensors.TemperatureTwoPort T_in_prim(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{10,10},{-10,-10}},
+            rotation=180,
+            origin={-70,-30})));
+      Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
+        tableOnFile=true,
+        tableName="tab1",
+        fileName=fileName,
+        columns={2,3,4})
+        annotation (Placement(transformation(extent={{-180,110},{-160,130}})));
+      Controls.Continuous.LimPID PID_T(
+        controllerType=Modelica.Blocks.Types.SimpleController.PI,
+        k=P,
+        Ti=Ti,
+        initType=Modelica.Blocks.Types.InitPID.NoInit,
+        reverseActing=type_SST)
+                             annotation (Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={-50,40})));
+      Modelica.Blocks.Interfaces.RealOutput y annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={0,110})));
+      Controls_a.SST.Switch_off_bis switch1
+        annotation (Placement(transformation(extent={{-100,30},{-80,50}})));
+    equation
+      connect(val.port_b, hex.port_a2)
+        annotation (Line(points={{-20,-30},{-10,-30},{-10,0},{0,0}},
+                                                 color={0,127,255}));
+      connect(boundary.ports[1], T_in_sec.port_a)
+        annotation (Line(points={{80,70},{60,70}}, color={0,127,255}));
+      connect(T_in_sec.port_b, hex.port_a1) annotation (Line(points={{40,70},{30,70},
+              {30,12},{20,12}}, color={0,127,255}));
+      connect(bou.ports[1], T_out_sec.port_b)
+        annotation (Line(points={{-80,70},{-40,70}}, color={0,127,255}));
+      connect(T_out_sec.port_a, hex.port_b1) annotation (Line(points={{-20,70},{-10,
+              70},{-10,12},{0,12}}, color={0,127,255}));
+      connect(hex.port_b2, T_out_prim.port_a) annotation (Line(points={{20,0},{
+              30,0},{30,-30},{40,-30}},
+                                     color={0,127,255}));
+      connect(T_out_prim.port_b, port_b) annotation (Line(points={{60,-30},{80,
+              -30},{80,0},{100,0}},
+                               color={0,127,255}));
+      connect(T_in_prim.port_b, val.port_a)
+        annotation (Line(points={{-60,-30},{-40,-30}}, color={0,127,255}));
+      connect(T_out_sec.T, PID_T.u_m) annotation (Line(points={{-30,81},{-30,90},{-120,
+              90},{-120,20},{-50,20},{-50,28}},       color={0,0,127}));
+      connect(port_a, T_in_prim.port_a) annotation (Line(points={{-100,0},{-90,
+              0},{-90,-30},{-80,-30}}, color={0,127,255}));
+      connect(combiTimeTable.y[1], boundary.m_flow_in) annotation (Line(points=
+              {{-159,120},{120,120},{120,78},{102,78}}, color={0,0,127}));
+      connect(combiTimeTable.y[2], boundary.T_in) annotation (Line(points={{
+              -159,120},{120,120},{120,74},{102,74}}, color={0,0,127}));
+      connect(val.y_actual, y) annotation (Line(points={{-25,-23},{-20,-23},{
+              -20,40},{0,40},{0,110}}, color={0,0,127}));
+      connect(PID_T.y, val.y)
+        annotation (Line(points={{-39,40},{-30,40},{-30,-18}}, color={0,0,127}));
+      connect(switch1.y, PID_T.u_s)
+        annotation (Line(points={{-79,40},{-62,40}}, color={0,0,127}));
+      connect(combiTimeTable.y[1], switch1.u2) annotation (Line(points={{-159,120},{
+              -130,120},{-130,40},{-102,40}}, color={0,0,127}));
+      connect(combiTimeTable.y[2], switch1.u1) annotation (Line(points={{-159,120},{
+              -130,120},{-130,48},{-102,48}}, color={0,0,127}));
+      annotation (Icon(graphics={
+            Rectangle(
+              extent={{-100,100},{-90,80}},
+              lineColor={0,0,0},
+              fillColor={244,125,35},
+              fillPattern=FillPattern.Solid),
+            Line(points={{-100,-60}}, color={28,108,200}),
+            Line(points={{-100,0},{-100,20},{100,20},{100,0}}, color={0,0,0}),
+            Rectangle(extent={{-100,100},{-80,80}}, lineColor={0,0,0}),
+            Rectangle(extent={{-100,94},{-80,80}}, lineColor={0,0,0}),
+            Rectangle(extent={{-100,88},{-80,80}}, lineColor={0,0,0}),
+            Line(points={{-60,100},{-60,40},{60,40},{60,100}}, color={0,0,0}),
+            Rectangle(
+              extent={{-40,-40},{40,-100}},
+              lineColor={0,0,0},
+              fillColor={255,255,255},
+              fillPattern=FillPattern.Solid),
+            Polygon(
+              points={{-40,-40},{0,-10},{40,-40},{-40,-40}},
+              lineColor={0,0,0},
+              fillColor={255,255,255},
+              fillPattern=FillPattern.Solid),
+            Polygon(
+              points={{-40,60},{-40,0},{40,0},{-40,60}},
+              lineColor={28,108,200},
+              fillColor={238,46,47},
+              fillPattern=FillPattern.Solid),
+            Polygon(
+              points={{-40,30},{-40,-30},{40,-30},{-40,30}},
+              lineColor={28,108,200},
+              fillColor={28,108,200},
+              fillPattern=FillPattern.Solid,
+              origin={0,30},
+              rotation=180)}));
+    end sst_simple;
+
+    model sst_prim
+      extends Fluid.Interfaces.PartialTwoPort;
+      parameter Real eps_nom=0.72;
+      parameter Real Q_flow_set(final quantity="Power", unit="W")=400000;
+      parameter String fileName=
+          ModelicaServices.ExternalReferences.loadResource(
+          "modelica://Buildings/Data/tfp_he.txt") "File where matrix is stored"
+    annotation (Dialog(
+          loadSelector(filter="Text files (*.txt);;MATLAB MAT-files (*.mat)",
+              caption="Open file in which table is present")));
+
+      parameter Real P = 0.05
+        annotation (Dialog(group="PID"));
+          parameter Real Ti = 15
+        annotation (Dialog(group="PID"));
+      Fluid.Actuators.Valves.TwoWayLinear val(redeclare package Medium =
+            Buildings.Media.Water,
+        m_flow_nominal=Q_flow_set/(4185*15),
+        dpValve_nominal=5000,
+        use_inputFilter=false)
+        annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
+      Fluid.Sensors.TemperatureTwoPort T_out_prim(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{10,10},{-10,-10}},
+            rotation=180,
+            origin={50,0})));
+      Fluid.Sensors.TemperatureTwoPort T_in_prim(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=100) annotation (Placement(
+            transformation(
+            extent={{10,10},{-10,-10}},
+            rotation=180,
+            origin={-70,0})));
+      Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
+        tableOnFile=true,
+        tableName="tab1",
+        fileName=fileName,
+        columns={2,3,4})
+        annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
+      Fluid.MixingVolumes.MixingVolume vol(nPorts=2) annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={22,50})));
+      HeatTransfer.Sources.PrescribedHeatFlow preHeaFlo
+        annotation (Placement(transformation(extent={{-40,60},{-20,80}})));
+      Fluid.Sensors.MassFlowRate senMasFlo
+        annotation (Placement(transformation(extent={{-50,-10},{-30,10}})));
+      Controls.Continuous.LimPID PID_T(
+        controllerType=Modelica.Blocks.Types.SimpleController.PI,
+        k=P,
+        Ti=Ti,
+        initType=Modelica.Blocks.Types.InitPID.NoInit,
+        reverseActing=true)  annotation (Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={-40,40})));
+    equation
+      connect(T_out_prim.port_b, port_b) annotation (Line(points={{60,
+              -6.66134e-16},{80,-6.66134e-16},{80,0},{100,0}},
+                               color={0,127,255}));
+      connect(port_a, T_in_prim.port_a) annotation (Line(points={{-100,0},{-90,
+              0},{-90,1.77636e-15},{-80,1.77636e-15}},
+                                       color={0,127,255}));
+      connect(preHeaFlo.port, vol.heatPort) annotation (Line(points={{-20,70},{
+              2,70},{2,50},{12,50}}, color={191,0,0}));
+      connect(T_in_prim.port_b, senMasFlo.port_a)
+        annotation (Line(points={{-60,0},{-50,0}}, color={0,127,255}));
+      connect(senMasFlo.port_b, val.port_a)
+        annotation (Line(points={{-30,0},{-20,0}}, color={0,127,255}));
+      connect(val.port_b, vol.ports[1])
+        annotation (Line(points={{0,0},{20,0},{20,40}}, color={0,127,255}));
+      connect(T_out_prim.port_a, vol.ports[2])
+        annotation (Line(points={{40,0},{24,0},{24,40}}, color={0,127,255}));
+      connect(combiTimeTable.y[1], PID_T.u_s) annotation (Line(points={{-79,90},
+              {-70,90},{-70,40},{-52,40}}, color={0,0,127}));
+      connect(combiTimeTable.y[2], preHeaFlo.Q_flow) annotation (Line(points={{
+              -79,90},{-60,90},{-60,70},{-40,70}}, color={0,0,127}));
+      connect(senMasFlo.m_flow, PID_T.u_m)
+        annotation (Line(points={{-40,11},{-40,28}}, color={0,0,127}));
+      connect(PID_T.y, val.y) annotation (Line(points={{-29,40},{-10,40},{-10,
+              12}}, color={0,0,127}));
+      annotation (Icon(graphics={
+            Rectangle(
+              extent={{-100,100},{-90,80}},
+              lineColor={0,0,0},
+              fillColor={244,125,35},
+              fillPattern=FillPattern.Solid),
+            Line(points={{-100,-60}}, color={28,108,200}),
+            Line(points={{-100,0},{-100,20},{100,20},{100,0}}, color={0,0,0}),
+            Rectangle(extent={{-100,100},{-80,80}}, lineColor={0,0,0}),
+            Rectangle(extent={{-100,94},{-80,80}}, lineColor={0,0,0}),
+            Rectangle(extent={{-100,88},{-80,80}}, lineColor={0,0,0}),
+            Polygon(
+              points={{-40,60},{-40,0},{40,0},{-40,60}},
+              lineColor={28,108,200},
+              fillColor={238,46,47},
+              fillPattern=FillPattern.Solid),
+            Polygon(
+              points={{-40,30},{-40,-30},{40,-30},{-40,30}},
+              lineColor={28,108,200},
+              fillColor={28,108,200},
+              fillPattern=FillPattern.Solid,
+              origin={0,30},
+              rotation=180)}));
+    end sst_prim;
+
     model sst_hot_simple
       extends Fluid.Interfaces.PartialTwoPort;
       parameter Real eps_nom=0.72;
@@ -13233,15 +13550,9 @@ end DE_PE;
             extent={{-10,-10},{10,10}},
             rotation=90,
             origin={0,110})));
-      sst_hot_simple nexi(
-        redeclare package Medium = Buildings.Media.Water,
-        eps_nom=0.84,
-        fileName=ModelicaServices.ExternalReferences.loadResource(
-            "modelica://Buildings/Data/sst/jan_20/chaud_nexi_1h.txt"))
-        annotation (Placement(transformation(extent={{-10,40},{10,60}})));
       sst_hot_simple gotu(
         redeclare package Medium = Buildings.Media.Water,
-        eps_nom=0.84,
+        eps_nom=0.82,
         fileName=ModelicaServices.ExternalReferences.loadResource(
             "modelica://Buildings/Data/sst/jan_20/chaud_gotu_1h.txt"))
         annotation (Placement(transformation(extent={{-10,0},{10,20}})));
@@ -13251,17 +13562,18 @@ end DE_PE;
         fileName=ModelicaServices.ExternalReferences.loadResource(
             "modelica://Buildings/Data/sst/jan_20/chaud_DOCK_1h.txt"))
         annotation (Placement(transformation(extent={{-10,-40},{10,-20}})));
+      sst_hot_simple nexi(
+        redeclare package Medium = Buildings.Media.Water,
+        eps_nom=0.84,
+        fileName=ModelicaServices.ExternalReferences.loadResource(
+            "modelica://Buildings/Data/sst/jan_20/chaud_nexi_1h.txt"))
+        annotation (Placement(transformation(extent={{-10,40},{10,60}})));
     equation
       connect(minMax.yMax, y)
         annotation (Line(points={{-19,96},{0,96},{0,110}}, color={0,0,127}));
-      connect(port_a, nexi.port_a) annotation (Line(points={{-100,0},{-56,0},{
-              -56,50},{-10,50}}, color={0,127,255}));
-      connect(nexi.port_b, port_b) annotation (Line(points={{10,50},{56,50},{56,
-              0},{100,0}}, color={0,127,255}));
-      connect(nexi.y, minMax.u[1]) annotation (Line(points={{0,61},{0,70},{-60,
-              70},{-60,94.6667},{-40,94.6667}}, color={0,0,127}));
-      connect(gotu.y, minMax.u[2]) annotation (Line(points={{0,21},{0,34},{-46,
-              34},{-46,90},{-40,90}}, color={0,0,127}));
+      connect(gotu.y, minMax.u[1]) annotation (Line(points={{0,21},{0,34},{-46,
+              34},{-46,94.6667},{-40,94.6667}},
+                                      color={0,0,127}));
       connect(port_a, gotu.port_a) annotation (Line(points={{-100,0},{-56,0},{
               -56,10},{-10,10}}, color={0,127,255}));
       connect(gotu.port_b, port_b) annotation (Line(points={{10,10},{56,10},{56,
@@ -13270,8 +13582,15 @@ end DE_PE;
               -56,-30},{-10,-30}}, color={0,127,255}));
       connect(docks.port_b, port_b) annotation (Line(points={{10,-30},{56,-30},
               {56,0},{100,0}}, color={0,127,255}));
-      connect(docks.y, minMax.u[3]) annotation (Line(points={{0,-19},{0,-12},{
-              -40,-12},{-40,85.3333}}, color={0,0,127}));
+      connect(docks.y, minMax.u[2]) annotation (Line(points={{0,-19},{0,-18},{
+              -72,-18},{-72,98},{-40,98},{-40,90}},
+                                       color={0,0,127}));
+      connect(port_a, nexi.port_a) annotation (Line(points={{-100,0},{-56,0},{
+              -56,50},{-10,50}}, color={0,127,255}));
+      connect(nexi.port_b, port_b) annotation (Line(points={{10,50},{56,50},{56,
+              0},{100,0}}, color={0,127,255}));
+      connect(nexi.y, minMax.u[3]) annotation (Line(points={{0,61},{0,66},{-58,
+              66},{-58,85.3333},{-40,85.3333}}, color={0,0,127}));
       annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
             Rectangle(
               extent={{-60,60},{60,40}},
@@ -16395,6 +16714,39 @@ end DE_PE;
               Line(points={{40,-10},{40,-40}}, color={238,46,47})}),   Diagram(
               coordinateSystem(preserveAspectRatio=false)));
       end chaud;
+
+      model aaa
+
+      parameter Boolean SST_chaud=hot annotation(choices(choice=true "hot", choice=false "cold"));
+        Controls.Continuous.LimPID PID_T(
+          controllerType=Modelica.Blocks.Types.SimpleController.PI,
+          k=0.1,
+          Ti=15,
+          initType=Modelica.Blocks.Types.InitPID.NoInit,
+          reverseActing=SST_chaud)
+                               annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={-10,10})));
+        Modelica.Blocks.Sources.RealExpression realExpression(y=10)
+          annotation (Placement(transformation(extent={{-60,0},{-40,20}})));
+        Modelica.Blocks.Sources.RealExpression realExpression1
+          annotation (Placement(transformation(extent={{-40,-40},{-20,-20}})));
+      equation
+        connect(realExpression1.y, PID_T.u_m)
+          annotation (Line(points={{-19,-30},{-10,-30},{-10,-2}}, color={0,0,127}));
+        connect(realExpression.y, PID_T.u_s)
+          annotation (Line(points={{-39,10},{-22,10}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end aaa;
+
+      model aaa_0
+        aaa aaa1(SST_chaud=true)
+          annotation (Placement(transformation(extent={{-40,20},{-20,40}})));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end aaa_0;
     end Tests;
 
     package calibration
