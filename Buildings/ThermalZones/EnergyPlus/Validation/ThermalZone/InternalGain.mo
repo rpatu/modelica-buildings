@@ -28,6 +28,7 @@ model InternalGain
     qLat_flow=5)
     "Zone with only latent heat gains from Modelica"
     annotation (Placement(transformation(extent={{-10,-60},{10,-40}})));
+
 protected
   model OneZoneWithGainExposed
     "Internal model for building with one thermal zone"
@@ -38,7 +39,7 @@ protected
       "Convective sensible internal heat gain";
     parameter Modelica.SIunits.HeatFlux qLat_flow
       "Latent internal heat gain";
-    OneZone bui(
+    Examples.SingleFamilyHouse.Unconditioned bui(
       m_flow_nominal=bui.VRoo*10*0.3/3600,
       qIntGai(
         final k={qRad_flow,qSen_flow,qLat_flow}),
