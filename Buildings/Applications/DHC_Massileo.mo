@@ -480,6 +480,1035 @@ HW")}),                                                Diagram(coordinateSystem(
     end Mode;
   end Controls;
 
+package ECS
+  extends Modelica.Icons.VariantsPackage;
+  package Tests
+    extends Modelica.Icons.ExamplesPackage;
+    model ballon
+      Fluid.Storage.StratifiedEnhanced tan1(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=25,
+        VTan=5,
+        hTan=5,
+        dIns=0.05)
+        annotation (Placement(transformation(extent={{0,20},{20,40}})));
+      Fluid.Sources.Boundary_pT bou(
+        redeclare package Medium = Media.Water,
+        use_T_in=true,
+        T=333.15,
+        nPorts=2)
+        annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
+      Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{-70,20},{-50,40}})));
+      Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{40,20},{60,40}})));
+      Fluid.HeatExchangers.ConstantEffectiveness hex(
+        redeclare package Medium1 = Media.Water,
+        redeclare package Medium2 = Media.Water,
+        m1_flow_nominal=25,
+        m2_flow_nominal=20,
+        dp1_nominal=1000,
+        dp2_nominal=1000)
+        annotation (Placement(transformation(extent={{80,0},{100,20}})));
+      Fluid.Sources.MassFlowSource_T boundary1(
+        redeclare package Medium = Media.Water,
+        m_flow=25,
+        T=288.15,
+        nPorts=1)
+        annotation (Placement(transformation(extent={{160,-20},{140,0}})));
+      Fluid.Sensors.TemperatureTwoPort senTem2(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{120,40},{140,60}})));
+      Fluid.Sources.Boundary_pT bou1(
+        redeclare package Medium = Media.Water,
+        T=293.15,
+        nPorts=1)
+        annotation (Placement(transformation(extent={{180,40},{160,60}})));
+      Fluid.Sensors.TemperatureTwoPort senTem3(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{-20,-40},{-40,-20}})));
+      Fluid.Movers.FlowControlled_dp fan(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=25,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos30slash1to4 per,
+        inputType=Buildings.Fluid.Types.InputType.Constant,
+        addPowerToMedium=false,
+        dp_nominal=1000,
+        constantHead=1000)
+        annotation (Placement(transformation(extent={{-120,20},{-100,40}})));
+      Modelica.Blocks.Sources.Step step(
+        height=-20,
+        offset=60 + 273.15,
+        startTime=200000) annotation (Placement(transformation(extent={{-140,
+                -40},{-120,-20}})));
+    equation
+      connect(senTem.port_b, tan1.port_a)
+        annotation (Line(points={{-50,30},{0,30}}, color={0,127,255}));
+      connect(senTem1.port_a, tan1.port_b)
+        annotation (Line(points={{40,30},{20,30}}, color={0,127,255}));
+      connect(senTem1.port_b, hex.port_a1) annotation (Line(points={{60,30},{
+              70,30},{70,16},{80,16}}, color={0,127,255}));
+      connect(hex.port_b1, senTem2.port_a) annotation (Line(points={{100,16},
+              {110,16},{110,50},{120,50}}, color={0,127,255}));
+      connect(hex.port_a2, boundary1.ports[1]) annotation (Line(points={{100,
+              4},{120,4},{120,-10},{140,-10}}, color={0,127,255}));
+      connect(senTem2.port_b, bou1.ports[1]) annotation (Line(points={{140,50},
+              {150,50},{150,50},{160,50}}, color={0,127,255}));
+      connect(hex.port_b2, senTem3.port_a) annotation (Line(points={{80,4},{0,
+              4},{0,-30},{-20,-30}}, color={0,127,255}));
+      connect(senTem3.port_b, bou.ports[1]) annotation (Line(points={{-40,-30},
+              {-60,-30},{-60,-28},{-80,-28}}, color={0,127,255}));
+      connect(fan.port_b, senTem.port_a)
+        annotation (Line(points={{-100,30},{-70,30}}, color={0,127,255}));
+      connect(step.y, bou.T_in) annotation (Line(points={{-119,-30},{-112,-30},
+              {-112,-26},{-102,-26}}, color={0,0,127}));
+      connect(bou.ports[2], fan.port_a) annotation (Line(points={{-80,-32},{
+              -80,0},{-180,0},{-180,30},{-120,30}}, color={0,127,255}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end ballon;
+
+    model ballon_b
+      Fluid.Storage.StratifiedEnhanced tan1(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=25,
+        VTan=20,
+        hTan=5,
+        dIns=0.05)
+        annotation (Placement(transformation(extent={{0,20},{20,40}})));
+      Fluid.Sources.Boundary_pT bou(
+        redeclare package Medium = Media.Water,
+        use_T_in=true,
+        T=333.15,
+        nPorts=2)
+        annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
+      Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{-70,20},{-50,40}})));
+      Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{40,20},{60,40}})));
+      Fluid.Movers.FlowControlled_dp fan(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=25,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos30slash1to4 per,
+        inputType=Buildings.Fluid.Types.InputType.Constant,
+        addPowerToMedium=false,
+        dp_nominal=1000,
+        constantHead=1000)
+        annotation (Placement(transformation(extent={{-120,20},{-100,40}})));
+      Modelica.Blocks.Sources.Step step(
+        height=-20,
+        offset=60 + 273.15,
+        startTime=200000) annotation (Placement(transformation(extent={{-140,
+                -40},{-120,-20}})));
+      Fluid.Actuators.Valves.TwoWayLinear val(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=25,
+        dpValve_nominal=100)
+        annotation (Placement(transformation(extent={{20,-42},{0,-22}})));
+      Modelica.Blocks.Sources.RealExpression realExpression(y=1)
+        annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
+    equation
+      connect(senTem.port_b, tan1.port_a)
+        annotation (Line(points={{-50,30},{0,30}}, color={0,127,255}));
+      connect(senTem1.port_a, tan1.port_b)
+        annotation (Line(points={{40,30},{20,30}}, color={0,127,255}));
+      connect(fan.port_b, senTem.port_a)
+        annotation (Line(points={{-100,30},{-70,30}}, color={0,127,255}));
+      connect(step.y, bou.T_in) annotation (Line(points={{-119,-30},{-112,-30},
+              {-112,-26},{-102,-26}}, color={0,0,127}));
+      connect(bou.ports[1], fan.port_a) annotation (Line(points={{-80,-28},{
+              -70,-28},{-70,0},{-180,0},{-180,30},{-120,30}}, color={0,127,
+              255}));
+      connect(bou.ports[2], val.port_b)
+        annotation (Line(points={{-80,-32},{0,-32}}, color={0,127,255}));
+      connect(val.port_a, senTem1.port_b) annotation (Line(points={{20,-32},{
+              84,-32},{84,30},{60,30}}, color={0,127,255}));
+      connect(realExpression.y, val.y)
+        annotation (Line(points={{1,0},{10,0},{10,-20}}, color={0,0,127}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end ballon_b;
+
+    model ballon_c
+      Fluid.Storage.StratifiedEnhanced tan1(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=25,
+        VTan=5,
+        hTan=5,
+        dIns=0.05)
+        annotation (Placement(transformation(extent={{-30,20},{-10,40}})));
+      Fluid.Sources.Boundary_pT bou(
+        redeclare package Medium = Media.Water,
+        use_T_in=true,
+        T=333.15,
+        nPorts=3)
+        annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
+      Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{-70,20},{-50,40}})));
+      Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{40,20},{60,40}})));
+      Fluid.HeatExchangers.ConstantEffectiveness hex(
+        redeclare package Medium1 = Media.Water,
+        redeclare package Medium2 = Media.Water,
+        m1_flow_nominal=25,
+        m2_flow_nominal=20,
+        dp1_nominal=1000,
+        dp2_nominal=1000)
+        annotation (Placement(transformation(extent={{80,0},{100,20}})));
+      Fluid.Sources.MassFlowSource_T boundary1(
+        redeclare package Medium = Media.Water,
+        m_flow=25,
+        T=288.15,
+        nPorts=1)
+        annotation (Placement(transformation(extent={{160,-20},{140,0}})));
+      Fluid.Sensors.TemperatureTwoPort senTem2(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{120,40},{140,60}})));
+      Fluid.Sources.Boundary_pT bou1(
+        redeclare package Medium = Media.Water,
+        T=293.15,
+        nPorts=1)
+        annotation (Placement(transformation(extent={{180,40},{160,60}})));
+      Fluid.Sensors.TemperatureTwoPort senTem3(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{-40,-40},{-60,-20}})));
+      Fluid.Movers.FlowControlled_dp fan(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=25,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos30slash1to4 per,
+        inputType=Buildings.Fluid.Types.InputType.Constant,
+        addPowerToMedium=false,
+        dp_nominal=1000,
+        constantHead=1000)
+        annotation (Placement(transformation(extent={{-120,20},{-100,40}})));
+      Modelica.Blocks.Sources.Step step(
+        height=-20,
+        offset=60 + 273.15,
+        startTime=200000) annotation (Placement(transformation(extent={{-140,
+                -40},{-120,-20}})));
+      Fluid.Movers.FlowControlled_dp fan1(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=25,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos30slash1to4 per,
+        inputType=Buildings.Fluid.Types.InputType.Constant,
+        addPowerToMedium=false,
+        dp_nominal=1000,
+        constantHead=1000)
+        annotation (Placement(transformation(extent={{12,20},{32,40}})));
+      Fluid.Actuators.Valves.TwoWayLinear val(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=25,
+        dpValve_nominal=100)
+        annotation (Placement(transformation(extent={{20,-80},{0,-60}})));
+      Fluid.Actuators.Valves.TwoWayLinear val1(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=25,
+        dpValve_nominal=100)
+        annotation (Placement(transformation(extent={{-10,-40},{-30,-20}})));
+      Modelica.Blocks.Sources.Step step1(
+        height=-1,
+        offset=1,
+        startTime=200000)
+        annotation (Placement(transformation(extent={{-46,-10},{-26,10}})));
+      Modelica.Blocks.Sources.Step step2(
+        height=1,
+        offset=0,
+        startTime=200000)
+        annotation (Placement(transformation(extent={{-46,-94},{-26,-74}})));
+    equation
+      connect(senTem.port_b, tan1.port_a)
+        annotation (Line(points={{-50,30},{-30,30}}, color={0,127,255}));
+      connect(senTem1.port_b, hex.port_a1) annotation (Line(points={{60,30},{
+              70,30},{70,16},{80,16}}, color={0,127,255}));
+      connect(hex.port_b1, senTem2.port_a) annotation (Line(points={{100,16},
+              {110,16},{110,50},{120,50}}, color={0,127,255}));
+      connect(hex.port_a2, boundary1.ports[1]) annotation (Line(points={{100,
+              4},{120,4},{120,-10},{140,-10}}, color={0,127,255}));
+      connect(senTem2.port_b, bou1.ports[1]) annotation (Line(points={{140,50},
+              {150,50},{150,50},{160,50}}, color={0,127,255}));
+      connect(senTem3.port_b, bou.ports[1]) annotation (Line(points={{-60,-30},{-74,
+              -30},{-74,-27.3333},{-80,-27.3333}},      color={0,127,255}));
+      connect(fan.port_b, senTem.port_a)
+        annotation (Line(points={{-100,30},{-70,30}}, color={0,127,255}));
+      connect(step.y, bou.T_in) annotation (Line(points={{-119,-30},{-112,-30},
+              {-112,-26},{-102,-26}}, color={0,0,127}));
+      connect(bou.ports[2], fan.port_a) annotation (Line(points={{-80,-30},{
+              -80,0},{-180,0},{-180,30},{-120,30}}, color={0,127,255}));
+      connect(tan1.port_b, fan1.port_a)
+        annotation (Line(points={{-10,30},{12,30}}, color={0,127,255}));
+      connect(fan1.port_b, senTem1.port_a)
+        annotation (Line(points={{32,30},{40,30}}, color={0,127,255}));
+      connect(hex.port_b2, val.port_a) annotation (Line(points={{80,4},{72,4},
+              {72,2},{46,2},{46,-70},{20,-70}}, color={0,127,255}));
+      connect(val.port_b, bou.ports[3]) annotation (Line(points={{0,-70},{-80,-70},
+              {-80,-32.6667}},      color={0,127,255}));
+      connect(tan1.port_b, val1.port_a) annotation (Line(points={{-10,30},{2,
+              30},{2,-30},{-10,-30}}, color={0,127,255}));
+      connect(val1.port_b, senTem3.port_a)
+        annotation (Line(points={{-30,-30},{-40,-30}}, color={0,127,255}));
+      connect(step1.y, val1.y) annotation (Line(points={{-25,0},{-20,0},{-20,
+              -18}}, color={0,0,127}));
+      connect(step2.y, val.y) annotation (Line(points={{-25,-84},{-12,-84},{
+              -12,-46},{10,-46},{10,-58}}, color={0,0,127}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end ballon_c;
+
+    model ballon_d
+      Fluid.Sources.Boundary_pT bou(
+        redeclare package Medium = Media.Water,
+        use_T_in=false,
+        T=333.15,
+        nPorts=2)
+        annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
+      Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{-60,20},{-40,40}})));
+      Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{42,42},{62,62}})));
+      Fluid.HeatExchangers.ConstantEffectiveness hex(
+        redeclare package Medium1 = Media.Water,
+        redeclare package Medium2 = Media.Water,
+        m1_flow_nominal=25,
+        m2_flow_nominal=20,
+        dp1_nominal=1000,
+        dp2_nominal=1000)
+        annotation (Placement(transformation(extent={{80,0},{100,20}})));
+      Fluid.Sources.MassFlowSource_T boundary1(
+        redeclare package Medium = Media.Water,
+        m_flow=2,
+        T=288.15,
+        nPorts=1) annotation (Placement(transformation(extent={{160,-20},{140,0}})));
+      Fluid.Sensors.TemperatureTwoPort senTem2(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{60,-40},{40,-20}})));
+      Fluid.Sources.Boundary_pT bou1(
+        redeclare package Medium = Media.Water,
+        T=293.15,
+        nPorts=1) annotation (Placement(transformation(extent={{10,-40},{30,
+                -20}})));
+      Fluid.Sensors.TemperatureTwoPort senTem3(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{-40,-40},{-60,-20}})));
+      Fluid.Storage.StratifiedEnhancedInternalHex tan1(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=25,
+        VTan=5,
+        hTan=2,
+        dIns=0.1,
+        nSeg=12,
+        hHex_a=1,
+        hHex_b=0.1,
+        Q_flow_nominal=500000,
+        TTan_nominal=332.15,
+        THex_nominal=333.15,
+        mHex_flow_nominal=25,
+        redeclare package MediumHex =Media.Water)
+        annotation (Placement(transformation(extent={{-20,20},{0,40}})));
+      Fluid.Sensors.TemperatureTwoPort senTem4(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{70,90},{50,110}})));
+      Fluid.Movers.FlowControlled_m_flow fan(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=50,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
+        inputType=Buildings.Fluid.Types.InputType.Continuous,
+        addPowerToMedium=false,
+        dp_nominal=50000,
+        constantMassFlowRate=25)
+        annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
+      Modelica.Blocks.Sources.Step step(
+        height=-25,
+        offset=25,
+        startTime=200000)
+        annotation (Placement(transformation(extent={{-160,80},{-140,100}})));
+      Fluid.Sources.Boundary_pT bou2(
+        redeclare package Medium = Media.Water,
+        use_T_in=true,
+        T=293.15,
+        nPorts=2) annotation (Placement(transformation(extent={{-10,-10},{10,
+                10}},
+            rotation=270,
+            origin={12,118})));
+      Fluid.Movers.FlowControlled_m_flow fan1(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=50,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
+        inputType=Buildings.Fluid.Types.InputType.Continuous,
+        addPowerToMedium=false,
+        dp_nominal=50000,
+        constantMassFlowRate=10)
+        annotation (Placement(transformation(extent={{30,20},{10,40}})));
+      Modelica.Blocks.Sources.Step step1(
+        height=1,
+        offset=0,
+        startTime=150000)
+        annotation (Placement(transformation(extent={{-16,60},{4,80}})));
+      Modelica.Blocks.Sources.Step step2(
+        height=25,
+        offset=0,
+        startTime=205000)
+        annotation (Placement(transformation(extent={{-160,40},{-140,60}})));
+      Modelica.Blocks.Math.MultiSum multiSum(nu=2)
+        annotation (Placement(transformation(extent={{-112,64},{-100,76}})));
+    equation
+      connect(senTem1.port_b, hex.port_a1) annotation (Line(points={{62,52},{
+              76,52},{76,16},{80,16}},
+                                color={0,127,255}));
+      connect(hex.port_a2, boundary1.ports[1]) annotation (Line(points={{100,4},{120,
+              4},{120,-10},{140,-10}}, color={0,127,255}));
+      connect(senTem3.port_b, bou.ports[1]) annotation (Line(points={{-60,-30},
+              {-70,-30},{-70,-28},{-80,-28}},
+                                         color={0,127,255}));
+      connect(senTem.port_b, tan1.portHex_a) annotation (Line(points={{-40,30},{-30,
+              30},{-30,26.2},{-20,26.2}}, color={0,127,255}));
+      connect(senTem3.port_a, tan1.portHex_b) annotation (Line(points={{-40,-30},{-20,
+              -30},{-20,22}}, color={0,127,255}));
+      connect(bou.ports[2], fan.port_a) annotation (Line(points={{-80,-32},{
+              -80,10},{-116,10},{-116,30},{-100,30}}, color={0,127,255}));
+      connect(fan.port_b, senTem.port_a)
+        annotation (Line(points={{-80,30},{-60,30}}, color={0,127,255}));
+      connect(senTem2.port_a, hex.port_b2) annotation (Line(points={{60,-30},
+              {70,-30},{70,4},{80,4}}, color={0,127,255}));
+      connect(bou1.ports[1], senTem2.port_b)
+        annotation (Line(points={{30,-30},{40,-30}}, color={0,127,255}));
+      connect(hex.port_b1, senTem4.port_a) annotation (Line(points={{100,16},
+              {108,16},{108,100},{70,100}}, color={0,127,255}));
+      connect(senTem4.port_b, bou2.ports[1]) annotation (Line(points={{50,100},
+              {14,100},{14,108}}, color={0,127,255}));
+      connect(senTem4.T, bou2.T_in) annotation (Line(points={{60,111},{60,140},
+              {16,140},{16,130}}, color={0,0,127}));
+      connect(step1.y, fan1.m_flow_in)
+        annotation (Line(points={{5,70},{20,70},{20,42}}, color={0,0,127}));
+      connect(fan1.port_b, tan1.port_b)
+        annotation (Line(points={{10,30},{0,30}}, color={0,127,255}));
+      connect(bou2.ports[2], fan1.port_a) annotation (Line(points={{10,108},{
+              10,108},{10,80},{34,80},{34,30},{30,30}}, color={0,127,255}));
+      connect(tan1.port_a, senTem1.port_a) annotation (Line(points={{-20,30},
+              {-26,30},{-26,52},{42,52}}, color={0,127,255}));
+      connect(step2.y, multiSum.u[1]) annotation (Line(points={{-139,50},{
+              -126,50},{-126,72.1},{-112,72.1}}, color={0,0,127}));
+      connect(step.y, multiSum.u[2]) annotation (Line(points={{-139,90},{-126,
+              90},{-126,67.9},{-112,67.9}}, color={0,0,127}));
+      connect(multiSum.y, fan.m_flow_in) annotation (Line(points={{-98.98,70},
+              {-90,70},{-90,42}}, color={0,0,127}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)),
+        experiment(
+          StopTime=400000,
+          Interval=200,
+          __Dymola_Algorithm="Dassl"));
+    end ballon_d;
+
+    model ballon_f
+      Fluid.Sources.Boundary_pT bou(
+        redeclare package Medium = Media.Water,
+        use_T_in=false,
+        T=333.15,
+        nPorts=2)
+        annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
+      Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{-60,20},{-40,40}})));
+      Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{42,42},{62,62}})));
+      Fluid.HeatExchangers.ConstantEffectiveness hex(
+        redeclare package Medium1 = Media.Water,
+        redeclare package Medium2 = Media.Water,
+        m1_flow_nominal=25,
+        m2_flow_nominal=20,
+        dp1_nominal=1000,
+        dp2_nominal=1000)
+        annotation (Placement(transformation(extent={{80,0},{100,20}})));
+      Fluid.Sources.MassFlowSource_T boundary1(
+        redeclare package Medium = Media.Water,
+        m_flow=2,
+        T=288.15,
+        nPorts=1) annotation (Placement(transformation(extent={{160,-20},{140,0}})));
+      Fluid.Sensors.TemperatureTwoPort senTem2(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{60,-40},{40,-20}})));
+      Fluid.Sources.Boundary_pT bou1(
+        redeclare package Medium = Media.Water,
+        T=293.15,
+        nPorts=1) annotation (Placement(transformation(extent={{10,-40},{30,
+                -20}})));
+      Fluid.Sensors.TemperatureTwoPort senTem3(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{-40,-40},{-60,-20}})));
+      Fluid.Storage.StratifiedEnhancedInternalHex tan1(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=25,
+        VTan=5,
+        hTan=2,
+        dIns=0.1,
+        nSeg=10,
+        hHex_a=1,
+        hHex_b=0.1,
+        Q_flow_nominal=500000,
+        TTan_nominal=332.15,
+        THex_nominal=333.15,
+        mHex_flow_nominal=25,
+        redeclare package MediumHex =Media.Water)
+        annotation (Placement(transformation(extent={{-8,20},{-28,40}})));
+      Fluid.Sensors.TemperatureTwoPort senTem4(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{70,90},{50,110}})));
+      Fluid.Movers.FlowControlled_m_flow fan(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=50,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
+        inputType=Buildings.Fluid.Types.InputType.Continuous,
+        addPowerToMedium=false,
+        dp_nominal=50000,
+        constantMassFlowRate=25)
+        annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
+      Modelica.Blocks.Sources.Step step(
+        height=-50,
+        offset=50,
+        startTime=201600)
+        annotation (Placement(transformation(extent={{-120,62},{-100,82}})));
+      Fluid.Sources.Boundary_pT bou2(
+        redeclare package Medium = Media.Water,
+        use_T_in=true,
+        T=293.15,
+        nPorts=2) annotation (Placement(transformation(extent={{-10,-10},{10,
+                10}},
+            rotation=270,
+            origin={12,118})));
+      Fluid.Movers.FlowControlled_m_flow fan1(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=50,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
+        inputType=Buildings.Fluid.Types.InputType.Continuous,
+        addPowerToMedium=false,
+        dp_nominal=50000,
+        constantMassFlowRate=10)
+        annotation (Placement(transformation(extent={{32,0},{12,20}})));
+      Modelica.Blocks.Sources.Step step1(
+        height=0.5,
+        offset=0,
+        startTime=150000)
+        annotation (Placement(transformation(extent={{-20,60},{0,80}})));
+    equation
+      connect(hex.port_a2, boundary1.ports[1]) annotation (Line(points={{100,4},{120,
+              4},{120,-10},{140,-10}}, color={0,127,255}));
+      connect(senTem3.port_b, bou.ports[1]) annotation (Line(points={{-60,-30},
+              {-70,-30},{-70,-28},{-80,-28}},
+                                         color={0,127,255}));
+      connect(bou.ports[2], fan.port_a) annotation (Line(points={{-80,-32},{
+              -80,10},{-116,10},{-116,30},{-100,30}}, color={0,127,255}));
+      connect(fan.port_b, senTem.port_a)
+        annotation (Line(points={{-80,30},{-60,30}}, color={0,127,255}));
+      connect(step.y, fan.m_flow_in) annotation (Line(points={{-99,72},{-90,
+              72},{-90,42}}, color={0,0,127}));
+      connect(senTem2.port_a, hex.port_b2) annotation (Line(points={{60,-30},
+              {70,-30},{70,4},{80,4}}, color={0,127,255}));
+      connect(bou1.ports[1], senTem2.port_b)
+        annotation (Line(points={{30,-30},{40,-30}}, color={0,127,255}));
+      connect(hex.port_b1, senTem4.port_a) annotation (Line(points={{100,16},
+              {108,16},{108,100},{70,100}}, color={0,127,255}));
+      connect(senTem4.port_b, bou2.ports[1]) annotation (Line(points={{50,100},
+              {14,100},{14,108}}, color={0,127,255}));
+      connect(senTem4.T, bou2.T_in) annotation (Line(points={{60,111},{60,140},
+              {16,140},{16,130}}, color={0,0,127}));
+      connect(senTem.port_b, tan1.port_a) annotation (Line(points={{-40,30},{
+              -34,30},{-34,46},{-2,46},{-2,30},{-8,30}}, color={0,127,255}));
+      connect(tan1.port_b, senTem3.port_a) annotation (Line(points={{-28,30},
+              {-28,-30},{-40,-30}}, color={0,127,255}));
+      connect(fan1.port_b, tan1.portHex_b) annotation (Line(points={{12,10},{
+              8,10},{8,12},{-8,12},{-8,22}}, color={0,127,255}));
+      connect(tan1.portHex_a, senTem1.port_a) annotation (Line(points={{-8,
+              26.2},{0,26.2},{0,26},{10,26},{10,52},{42,52}}, color={0,127,
+              255}));
+      connect(senTem1.port_b, hex.port_a1) annotation (Line(points={{62,52},{
+              64,52},{64,16},{80,16}}, color={0,127,255}));
+      connect(bou2.ports[2], fan1.port_a) annotation (Line(points={{10,108},{
+              10,62},{36,62},{36,10},{32,10}}, color={0,127,255}));
+      connect(step1.y, fan1.m_flow_in) annotation (Line(points={{1,70},{6,70},
+              {6,42},{22,42},{22,22}}, color={0,0,127}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end ballon_f;
+
+    model sst_ecs
+      Fluid.Sources.Boundary_pT bou(
+        redeclare package Medium = Media.Water,
+        use_T_in=false,
+        T=333.15,
+        nPorts=1)
+        annotation (Placement(transformation(extent={{-220,-40},{-200,-20}})));
+      Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
+            Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{-60,0},{-40,20}})));
+      Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
+            Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{60,-40},{80,-20}})));
+      Fluid.HeatExchangers.ConstantEffectiveness hex(
+        redeclare package Medium1 = Media.Water,
+        redeclare package Medium2 = Media.Water,
+        m1_flow_nominal=25,
+        m2_flow_nominal=20,
+        dp1_nominal=1000,
+        dp2_nominal=1000,
+        eps=(55 - 15)/(56 - 15))
+        annotation (Placement(transformation(extent={{100,-60},{120,-40}})));
+      Fluid.Sources.MassFlowSource_T boundary1(
+        redeclare package Medium = Media.Water,
+        use_m_flow_in=true,
+        m_flow=2,
+        T=288.15,
+        nPorts=1) annotation (Placement(transformation(extent={{260,-100},{
+                240,-80}})));
+      Fluid.Sensors.TemperatureTwoPort senTem2(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{80,-100},{60,-80}})));
+      Fluid.Sources.Boundary_pT bou1(
+        redeclare package Medium = Media.Water,
+        T=293.15,
+        nPorts=1) annotation (Placement(transformation(extent={{20,-100},{40,
+                -80}})));
+      Fluid.Sensors.TemperatureTwoPort senTem3(redeclare package Medium =
+            Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{-60,-40},{-80,-20}})));
+      Fluid.Storage.StratifiedEnhancedInternalHex tan1(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=25,
+        VTan=15,
+        hTan=2,
+        dIns=0.1,
+        nSeg=12,
+        hHex_a=1,
+        hHex_b=0.1,
+        Q_flow_nominal=500000,
+        TTan_nominal=332.15,
+        THex_nominal=333.15,
+        mHex_flow_nominal=25,
+        redeclare package MediumHex =Media.Water)
+        annotation (Placement(transformation(extent={{-20,20},{0,40}})));
+      Fluid.Sensors.TemperatureTwoPort senTem4(redeclare package Medium =
+            Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{70,90},{50,110}})));
+      Fluid.Sources.Boundary_pT bou2(
+        redeclare package Medium = Media.Water,
+        T=293.15,
+        nPorts=1) annotation (Placement(transformation(extent={{-10,-10},{10,
+                10}},
+            rotation=0,
+            origin={30,-30})));
+      Modelica.Thermal.HeatTransfer.Sensors.TemperatureSensor temperatureSensor
+        annotation (Placement(transformation(extent={{-260,60},{-240,80}})));
+      Modelica.Blocks.Logical.Hysteresis hysteresis(uLow=56 + 273.15, uHigh=
+            59 + 273.15)
+        annotation (Placement(transformation(extent={{-220,60},{-200,80}})));
+      Buildings.Controls.OBC.CDL.Conversions.BooleanToReal booToRea(realTrue=
+            0, realFalse=1)
+        annotation (Placement(transformation(extent={{-180,60},{-160,80}})));
+      Modelica.Blocks.Sources.CombiTimeTable combiTimeTable1(
+        tableOnFile=true,
+        tableName="tab1",
+        fileName=ModelicaServices.ExternalReferences.loadResource(
+            "modelica://Buildings/Data/sst/test_nexi.txt"),
+        columns={2,3})
+        annotation (Placement(transformation(extent={{342,-100},{322,-80}})));
+      Modelica.Blocks.Math.Gain gain2(k=1/(4185*(55 - 15))) annotation (
+          Placement(transformation(extent={{300,-100},{280,-80}})));
+      Fluid.Sources.MassFlowSource_T boundary2(
+        redeclare package Medium = Media.Water,
+        use_m_flow_in=true,
+        m_flow=2,
+        use_T_in=true,
+        T=288.15,
+        nPorts=1) annotation (Placement(transformation(extent={{40,20},{20,40}})));
+      Modelica.Blocks.Math.Gain gain1(k=(55 - 15)/(56 - 36))
+                                                            annotation (
+          Placement(transformation(extent={{100,20},{80,40}})));
+      Fluid.HeatExchangers.ConstantEffectiveness hex1(
+        redeclare package Medium1 = Media.Water,
+        redeclare package Medium2 = Media.Water,
+        m1_flow_nominal=25,
+        m2_flow_nominal=20,
+        dp1_nominal=1000,
+        dp2_nominal=1000,
+        eps=0.95)
+        annotation (Placement(transformation(extent={{180,-60},{200,-40}})));
+      Fluid.Sources.Boundary_pT bou3(
+        redeclare package Medium = Media.Water,
+        use_T_in=false,
+        T=333.15,
+        nPorts=1)
+        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={230,10})));
+      Fluid.Sources.MassFlowSource_T boundary3(
+        redeclare package Medium = Media.Water,
+        use_m_flow_in=true,
+        m_flow=2,
+        T=333.15,
+        nPorts=1) annotation (Placement(transformation(extent={{-100,0},{-80,
+                20}})));
+      Modelica.Blocks.Math.Gain gain3(k=30/3.6)             annotation (
+          Placement(transformation(extent={{10,-10},{-10,10}},
+            rotation=180,
+            origin={-130,70})));
+      DHC_Thassalia.Controls_a.opposite opposite
+        annotation (Placement(transformation(extent={{140,120},{160,140}})));
+      Modelica.Blocks.Math.Gain gain4(k=15/3.6)             annotation (
+          Placement(transformation(extent={{10,-10},{-10,10}},
+            rotation=90,
+            origin={170,50})));
+      Fluid.Sources.MassFlowSource_T boundary4(
+        redeclare package Medium = Media.Water,
+        use_m_flow_in=true,
+        m_flow=2,
+        T=319.15,
+        nPorts=1) annotation (Placement(transformation(extent={{-10,-10},{10,
+                10}},
+            rotation=270,
+            origin={162,10})));
+      Fluid.Sensors.TemperatureTwoPort senTem5(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{156,-66},{136,-46}})));
+      Fluid.Sensors.TemperatureTwoPort senTem6(redeclare package Medium =
+            Media.Water, m_flow_nominal=25)
+        annotation (Placement(transformation(extent={{206,-54},{226,-34}})));
+    equation
+      connect(senTem3.port_b, bou.ports[1]) annotation (Line(points={{-80,-30},
+              {-100,-30},{-100,-30},{-200,-30}},
+                                         color={0,127,255}));
+      connect(senTem.port_b, tan1.portHex_a) annotation (Line(points={{-40,10},
+              {-30,10},{-30,26.2},{-20,26.2}},
+                                          color={0,127,255}));
+      connect(senTem3.port_a, tan1.portHex_b) annotation (Line(points={{-60,-30},
+              {-20,-30},{-20,22}},
+                              color={0,127,255}));
+      connect(senTem2.port_a, hex.port_b2) annotation (Line(points={{80,-90},
+              {90,-90},{90,-56},{100,-56}},
+                                       color={0,127,255}));
+      connect(bou1.ports[1], senTem2.port_b)
+        annotation (Line(points={{40,-90},{60,-90}}, color={0,127,255}));
+      connect(hex.port_b1, senTem4.port_a) annotation (Line(points={{120,-44},
+              {128,-44},{128,100},{70,100}},color={0,127,255}));
+      connect(tan1.heaPorVol[2], temperatureSensor.port) annotation (Line(
+            points={{-10,29.55},{-10,40},{-280,40},{-280,70},{-260,70}},
+            color={191,0,0}));
+      connect(temperatureSensor.T, hysteresis.u)
+        annotation (Line(points={{-240,70},{-222,70}}, color={0,0,127}));
+      connect(hysteresis.y, booToRea.u)
+        annotation (Line(points={{-199,70},{-182,70}}, color={255,0,255}));
+      connect(boundary1.m_flow_in, gain2.y) annotation (Line(points={{262,-82},
+              {270,-82},{270,-90},{279,-90}}, color={0,0,127}));
+      connect(combiTimeTable1.y[1], gain2.u)
+        annotation (Line(points={{321,-90},{302,-90}}, color={0,0,127}));
+      connect(bou2.ports[1], senTem1.port_a) annotation (Line(points={{40,-30},
+              {50,-30},{50,-30},{60,-30}}, color={0,127,255}));
+      connect(senTem1.port_b, hex.port_a1) annotation (Line(points={{80,-30},
+              {90,-30},{90,-44},{100,-44}}, color={0,127,255}));
+      connect(senTem1.T, boundary2.T_in) annotation (Line(points={{70,-19},{
+              70,0},{50,0},{50,34},{42,34}}, color={0,0,127}));
+      connect(boundary2.ports[1], tan1.port_b)
+        annotation (Line(points={{20,30},{0,30}}, color={0,127,255}));
+      connect(tan1.port_a, senTem4.port_b) annotation (Line(points={{-20,30},
+              {-30,30},{-30,100},{50,100}}, color={0,127,255}));
+      connect(boundary2.m_flow_in, gain1.y) annotation (Line(points={{42,38},
+              {60,38},{60,30},{79,30}}, color={0,0,127}));
+      connect(gain1.u, gain2.y) annotation (Line(points={{102,30},{274,30},{
+              274,-90},{279,-90}}, color={0,0,127}));
+      connect(hex1.port_a2, boundary1.ports[1]) annotation (Line(points={{200,
+              -56},{212,-56},{212,-90},{240,-90}}, color={0,127,255}));
+      connect(boundary3.ports[1], senTem.port_a)
+        annotation (Line(points={{-80,10},{-60,10}}, color={0,127,255}));
+      connect(booToRea.y, gain3.u)
+        annotation (Line(points={{-158,70},{-142,70}}, color={0,0,127}));
+      connect(gain3.y, boundary3.m_flow_in) annotation (Line(points={{-119,70},
+              {-110,70},{-110,18},{-102,18}}, color={0,0,127}));
+      connect(booToRea.y, opposite.u) annotation (Line(points={{-158,70},{
+              -152,70},{-152,130},{138,130}}, color={0,0,127}));
+      connect(opposite.y, gain4.u) annotation (Line(points={{161,130},{170,
+              130},{170,62}}, color={0,0,127}));
+      connect(gain4.y, boundary4.m_flow_in)
+        annotation (Line(points={{170,39},{170,22}}, color={0,0,127}));
+      connect(boundary4.ports[1], hex1.port_a1) annotation (Line(points={{162,
+              -3.55271e-15},{162,-44},{180,-44}}, color={0,127,255}));
+      connect(hex.port_a2, senTem5.port_b)
+        annotation (Line(points={{120,-56},{136,-56}}, color={0,127,255}));
+      connect(senTem5.port_a, hex1.port_b2)
+        annotation (Line(points={{156,-56},{180,-56}}, color={0,127,255}));
+      connect(hex1.port_b1, senTem6.port_a)
+        annotation (Line(points={{200,-44},{206,-44}}, color={0,127,255}));
+      connect(senTem6.port_b, bou3.ports[1]) annotation (Line(points={{226,
+              -44},{230,-44},{230,-3.55271e-15}}, color={0,127,255}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)),
+        experiment(
+          StopTime=400000,
+          Interval=200,
+          __Dymola_Algorithm="Dassl"));
+    end sst_ecs;
+
+    model timetable
+      Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
+        tableOnFile=true,
+        tableName="tab1",
+        fileName=ModelicaServices.ExternalReferences.loadResource(
+            "modelica://Buildings/Data/sst/jan_20/test_cast.txt"),
+        columns={2,3})
+        annotation (Placement(transformation(extent={{-40,0},{-20,20}})));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end timetable;
+
+    model stratified
+      Fluid.Sources.MassFlowSource_T boundary3(
+          redeclare package Medium = Media.Water,
+          use_m_flow_in=true,
+          m_flow=5,
+          T=333.15,
+          nPorts=1)
+                  annotation (Placement(transformation(extent={{-100,40},{-80,
+                  60}})));
+      Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
+              Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+      Fluid.Sensors.TemperatureTwoPort senTem3(redeclare package Medium =
+              Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{-20,-40},{-40,-20}})));
+      Fluid.Sources.Boundary_pT bou(
+          redeclare package Medium = Media.Water,
+          use_T_in=false,
+          T=333.15,
+          nPorts=1)
+        annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
+        Fluid.Storage.StratifiedEnhanced tan1(
+          redeclare package Medium = Media.Water,
+          m_flow_nominal=20,
+          VTan=10,
+          hTan=10,
+          dIns=0.05,
+          nSeg=10)
+          annotation (Placement(transformation(extent={{20,0},{40,20}})));
+        Fluid.FixedResistances.Junction jun(
+          redeclare package Medium = Media.Water,
+          m_flow_nominal={5,-5,-5},
+          dp_nominal={0,0,0})
+          annotation (Placement(transformation(extent={{0,40},{20,60}})));
+        Fluid.FixedResistances.Junction jun1(
+          redeclare package Medium = Media.Water,
+          m_flow_nominal={5,5,-5},
+          dp_nominal={0,0,0}) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=180,
+              origin={50,-30})));
+      Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
+              Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{90,40},{110,60}})));
+      Fluid.Sensors.TemperatureTwoPort senTem2(redeclare package Medium =
+              Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{100,-40},{80,-20}})));
+        Fluid.Sources.PropertySource_T proSou(use_T_in=true, redeclare package
+            Medium = Media.Water) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={150,10})));
+        Modelica.Blocks.Math.Add add
+          annotation (Placement(transformation(extent={{200,60},{220,80}})));
+        Modelica.Blocks.Sources.RealExpression realExpression(y=-10)
+          annotation (Placement(transformation(extent={{160,50},{180,70}})));
+        Fluid.Movers.FlowControlled_m_flow fan(
+          redeclare package Medium = Media.Water,
+          m_flow_nominal=2,
+          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to8 per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          dp_nominal=1000,
+          constantMassFlowRate=2)
+          annotation (Placement(transformation(extent={{50,40},{70,60}})));
+        Modelica.Blocks.Sources.Step step(
+          height=-5,
+          offset=5,
+          startTime=10000)
+          annotation (Placement(transformation(extent={{-160,40},{-140,60}})));
+    equation
+        connect(boundary3.ports[1], senTem.port_a) annotation (Line(points={{
+                -80,50},{-71,50},{-71,50},{-60,50}}, color={0,127,255}));
+        connect(senTem.port_b, jun.port_1)
+          annotation (Line(points={{-40,50},{0,50}}, color={0,127,255}));
+        connect(jun.port_3, tan1.port_a) annotation (Line(points={{10,40},{10,
+                10},{20,10}}, color={0,127,255}));
+        connect(tan1.port_b, jun1.port_3) annotation (Line(points={{40,10},{50,
+                10},{50,-20}}, color={0,127,255}));
+        connect(bou.ports[1], senTem3.port_b)
+          annotation (Line(points={{-80,-30},{-40,-30}}, color={0,127,255}));
+        connect(senTem3.port_a, jun1.port_2)
+          annotation (Line(points={{-20,-30},{40,-30}}, color={0,127,255}));
+        connect(jun1.port_1, senTem2.port_b)
+          annotation (Line(points={{60,-30},{80,-30}}, color={0,127,255}));
+        connect(senTem1.port_b, proSou.port_a) annotation (Line(points={{110,50},
+                {150,50},{150,20}}, color={0,127,255}));
+        connect(proSou.port_b, senTem2.port_a) annotation (Line(points={{150,
+                -3.55271e-15},{150,-30},{100,-30}}, color={0,127,255}));
+        connect(realExpression.y, add.u2) annotation (Line(points={{181,60},{
+                188,60},{188,64},{198,64}}, color={0,0,127}));
+        connect(senTem1.T, add.u1) annotation (Line(points={{100,61},{100,76},{
+                198,76}}, color={0,0,127}));
+        connect(add.y, proSou.T_in) annotation (Line(points={{221,70},{236,70},
+                {236,14},{162,14}}, color={0,0,127}));
+        connect(jun.port_2, fan.port_a)
+          annotation (Line(points={{20,50},{50,50}}, color={0,127,255}));
+        connect(fan.port_b, senTem1.port_a)
+          annotation (Line(points={{70,50},{90,50}}, color={0,127,255}));
+        connect(step.y, boundary3.m_flow_in) annotation (Line(points={{-139,50},
+                {-120,50},{-120,58},{-102,58}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+    end stratified;
+
+    model stratified_0
+      Fluid.Sources.MassFlowSource_T boundary3(
+          redeclare package Medium = Media.Water,
+          m_flow=5,
+          T=333.15,
+          nPorts=1)
+                  annotation (Placement(transformation(extent={{-100,40},{-80,
+                  60}})));
+      Fluid.Sources.Boundary_pT bou(
+          redeclare package Medium = Media.Water,
+          use_T_in=false,
+          T=333.15,
+          nPorts=1)
+        annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
+      Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
+              Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{80,40},{100,60}})));
+      Fluid.Sensors.TemperatureTwoPort senTem2(redeclare package Medium =
+              Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{100,-40},{80,-20}})));
+        Fluid.Sources.PropertySource_T proSou(use_T_in=true, redeclare package
+            Medium = Media.Water) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={150,10})));
+        Modelica.Blocks.Math.Add add
+          annotation (Placement(transformation(extent={{200,60},{220,80}})));
+        Modelica.Blocks.Sources.RealExpression realExpression(y=-10)
+          annotation (Placement(transformation(extent={{160,50},{180,70}})));
+    equation
+        connect(senTem1.port_b, proSou.port_a) annotation (Line(points={{100,50},
+                {150,50},{150,20}}, color={0,127,255}));
+        connect(proSou.port_b, senTem2.port_a) annotation (Line(points={{150,
+                -3.55271e-15},{150,-30},{100,-30}}, color={0,127,255}));
+        connect(realExpression.y, add.u2) annotation (Line(points={{181,60},{
+                188,60},{188,64},{198,64}}, color={0,0,127}));
+        connect(senTem1.T, add.u1) annotation (Line(points={{90,61},{90,76},{
+                198,76},{198,76}}, color={0,0,127}));
+        connect(add.y, proSou.T_in) annotation (Line(points={{221,70},{236,70},
+                {236,14},{162,14}}, color={0,0,127}));
+        connect(boundary3.ports[1], senTem1.port_a) annotation (Line(points={{
+                -80,50},{0,50},{0,50},{80,50}}, color={0,127,255}));
+        connect(senTem2.port_b, bou.ports[1]) annotation (Line(points={{80,-30},
+                {0,-30},{0,-30},{-80,-30}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+    end stratified_0;
+
+    model stratified_1
+      Fluid.Sources.MassFlowSource_T boundary3(
+          redeclare package Medium = Media.Water,
+          use_m_flow_in=true,
+          m_flow=5,
+          T=333.15,
+          nPorts=1)
+                  annotation (Placement(transformation(extent={{-100,40},{-80,
+                  60}})));
+      Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
+              Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+      Fluid.Sensors.TemperatureTwoPort senTem3(redeclare package Medium =
+              Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{-20,-40},{-40,-20}})));
+      Fluid.Sources.Boundary_pT bou(
+          redeclare package Medium = Media.Water,
+          use_T_in=false,
+          T=333.15,
+          nPorts=1)
+        annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
+        Fluid.Storage.StratifiedEnhanced tan1(
+          redeclare package Medium = Media.Water,
+          m_flow_nominal=20,
+          VTan=10,
+          hTan=10,
+          dIns=0.05,
+          nSeg=10)
+          annotation (Placement(transformation(extent={{20,0},{40,20}})));
+      Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
+              Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{90,40},{110,60}})));
+      Fluid.Sensors.TemperatureTwoPort senTem2(redeclare package Medium =
+              Media.Water, m_flow_nominal=5)
+        annotation (Placement(transformation(extent={{100,-40},{80,-20}})));
+        Fluid.Sources.PropertySource_T proSou(use_T_in=true, redeclare package
+            Medium = Media.Water) annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={150,10})));
+        Modelica.Blocks.Math.Add add
+          annotation (Placement(transformation(extent={{180,60},{200,80}})));
+        Modelica.Blocks.Sources.RealExpression realExpression(y=-10)
+          annotation (Placement(transformation(extent={{140,50},{160,70}})));
+        Fluid.Movers.FlowControlled_m_flow fan(
+          redeclare package Medium = Media.Water,
+          m_flow_nominal=2,
+          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to8 per,
+          inputType=Buildings.Fluid.Types.InputType.Constant,
+          dp_nominal=1000,
+          constantMassFlowRate=2)
+          annotation (Placement(transformation(extent={{50,40},{70,60}})));
+        Modelica.Blocks.Sources.Step step(
+          height=-5,
+          offset=5,
+          startTime=10000)
+          annotation (Placement(transformation(extent={{-160,40},{-140,60}})));
+    equation
+        connect(boundary3.ports[1], senTem.port_a) annotation (Line(points={{
+                -80,50},{-71,50},{-71,50},{-60,50}}, color={0,127,255}));
+        connect(bou.ports[1], senTem3.port_b)
+          annotation (Line(points={{-80,-30},{-40,-30}}, color={0,127,255}));
+        connect(senTem1.port_b, proSou.port_a) annotation (Line(points={{110,50},
+                {150,50},{150,20}}, color={0,127,255}));
+        connect(proSou.port_b, senTem2.port_a) annotation (Line(points={{150,
+                -3.55271e-15},{150,-30},{100,-30}}, color={0,127,255}));
+        connect(realExpression.y, add.u2) annotation (Line(points={{161,60},{
+                168,60},{168,64},{178,64}}, color={0,0,127}));
+        connect(senTem1.T, add.u1) annotation (Line(points={{100,61},{100,76},{
+                178,76}}, color={0,0,127}));
+        connect(add.y, proSou.T_in) annotation (Line(points={{201,70},{220,70},
+                {220,14},{162,14}}, color={0,0,127}));
+        connect(fan.port_b, senTem1.port_a)
+          annotation (Line(points={{70,50},{90,50}}, color={0,127,255}));
+        connect(step.y, boundary3.m_flow_in) annotation (Line(points={{-139,50},
+                {-120,50},{-120,58},{-102,58}}, color={0,0,127}));
+        connect(senTem.port_b, tan1.port_a) annotation (Line(points={{-40,50},{
+                10,50},{10,10},{20,10}}, color={0,127,255}));
+        connect(tan1.port_a, fan.port_a) annotation (Line(points={{20,10},{10,
+                10},{10,50},{50,50}}, color={0,127,255}));
+        connect(tan1.port_b, senTem3.port_a) annotation (Line(points={{40,10},{
+                52,10},{52,-30},{-20,-30}}, color={0,127,255}));
+        connect(tan1.port_b, senTem2.port_b) annotation (Line(points={{40,10},{
+                52,10},{52,-30},{80,-30}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+    end stratified_1;
+  end Tests;
+end ECS;
+
+
     package SST_Main
     extends Modelica.Icons.VariantsPackage;
       model SST_basic
@@ -528,7 +1557,7 @@ HW")}),                                                Diagram(coordinateSystem(
   package SST
     extends Modelica.Icons.VariantsPackage;
 
-    model SST_ECS
+    model SST_ECS_HE
       extends Fluid.Interfaces.PartialTwoPortInterface;
 
       parameter String fileName=
@@ -760,7 +1789,254 @@ HW")}),                                                Diagram(coordinateSystem(
               lineColor={244,125,35},
               fillColor={244,125,35},
               fillPattern=FillPattern.Solid)}));
-    end SST_ECS;
+    end SST_ECS_HE;
+
+    model SST_ECS_stratified
+      extends Fluid.Interfaces.PartialTwoPortInterface;
+
+      parameter String fileName=
+          ModelicaServices.ExternalReferences.loadResource(
+          "modelica://Buildings/Data/tfp_he.txt") "File where matrix is stored"
+    annotation (Dialog(
+          loadSelector(filter="Text files (*.txt);;MATLAB MAT-files (*.mat)",
+              caption="Open file in which table is present")));
+
+      Fluid.HeatExchangers.ConstantEffectiveness hex1(
+        redeclare package Medium1 = Media.Water,
+        redeclare package Medium2 = Media.Water,
+        m1_flow_nominal=50,
+        m2_flow_nominal=50,
+        dp1_nominal=10000,
+        dp2_nominal=10000,
+        eps=0.9)
+        annotation (Placement(transformation(extent={{-20,110},{-40,130}})));
+      Fluid.Actuators.Valves.TwoWayLinear val_storage(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=70/3.6,
+        dpValve_nominal=5000,
+        use_inputFilter=false)
+        annotation (Placement(transformation(extent={{-60,-10},{-40,10}})));
+      Fluid.Actuators.Valves.TwoWayLinear val_preheat(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=10,
+        dpValve_nominal=5000,
+        use_inputFilter=false)
+        annotation (Placement(transformation(extent={{-80,80},{-60,100}})));
+      Fluid.HeatExchangers.ConstantEffectiveness hex2(
+        redeclare package Medium1 = Media.Water,
+        redeclare package Medium2 = Media.Water,
+        m1_flow_nominal=50,
+        m2_flow_nominal=50,
+        dp1_nominal=10000,
+        dp2_nominal=10000,
+        eps=0.9)
+        annotation (Placement(transformation(extent={{140,106},{120,126}})));
+      Fluid.Sources.MassFlowSource_T boundary(
+        redeclare package Medium = Media.Water,
+        use_m_flow_in=true,
+        m_flow=0.5,
+        T=288.15,
+        nPorts=1)
+        annotation (Placement(transformation(extent={{-100,160},{-80,180}})));
+      Fluid.Sources.Boundary_pT bou1(redeclare package Medium = Media.Water,
+          nPorts=1)
+        annotation (Placement(transformation(extent={{200,160},{180,180}})));
+      Fluid.Sensors.TemperatureTwoPort T_sec_intermediate(redeclare package
+          Medium =
+            Media.Water, m_flow_nominal=50)
+        annotation (Placement(transformation(extent={{10,140},{30,160}})));
+      Fluid.Sensors.TemperatureTwoPort T_sec_out(redeclare package Medium =
+            Media.Water, m_flow_nominal=50)
+        annotation (Placement(transformation(extent={{120,160},{140,180}})));
+      Fluid.Sensors.TemperatureTwoPort T_prim_in(redeclare package Medium =
+            Media.Water, m_flow_nominal=50)
+        annotation (Placement(transformation(extent={{80,100},{100,120}})));
+      Fluid.Sensors.TemperatureTwoPort T_prim_out(redeclare package Medium =
+            Media.Water, m_flow_nominal=50)
+        annotation (Placement(transformation(extent={{170,100},{190,120}})));
+      Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
+        tableOnFile=true,
+        tableName="tab1",
+        fileName=fileName,
+        columns={2,3})
+        annotation (Placement(transformation(extent={{-200,160},{-180,180}})));
+
+      Modelica.Thermal.HeatTransfer.Sensors.TemperatureSensor temperatureSensor
+        annotation (Placement(transformation(extent={{80,-62},{100,-42}})));
+      Modelica.Blocks.Logical.Hysteresis hysteresis(uLow=56 + 273.15, uHigh=60
+             + 273.15)
+        annotation (Placement(transformation(extent={{120,-62},{140,-42}})));
+      Buildings.Controls.OBC.CDL.Conversions.BooleanToReal booToRea(realTrue=0,
+          realFalse=1)
+        annotation (Placement(transformation(extent={{160,-62},{180,-42}})));
+      Modelica.Blocks.Interfaces.RealOutput y_storage annotation (Placement(
+            transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={0,210}), iconTransformation(
+            extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={0,110})));
+      Buildings.Controls.Continuous.LimPID pid_storage(
+        controllerType=Modelica.Blocks.Types.SimpleController.PI,
+        k=0.05,
+        Ti=15,
+        yMax=1)
+        annotation (Placement(transformation(extent={{260,-60},{280,-40}})));
+      Buildings.Controls.Continuous.LimPID pid_preheat(
+        controllerType=Modelica.Blocks.Types.SimpleController.PI,
+        k=0.05,
+        Ti=15,
+        yMax=1)
+        annotation (Placement(transformation(extent={{300,-160},{320,-140}})));
+      Fluid.Sensors.MassFlowRate senMasFlo(redeclare package Medium =
+            Media.Water)
+        annotation (Placement(transformation(extent={{40,-40},{60,-20}})));
+      Fluid.Sensors.MassFlowRate senMasFlo1(redeclare package Medium =
+            Media.Water)
+        annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={170,20})));
+      Modelica.Blocks.Math.Product product1
+        annotation (Placement(transformation(extent={{200,-90},{220,-70}})));
+      Modelica.Blocks.Sources.RealExpression realExpression1(y=66/3.6)
+        annotation (Placement(transformation(extent={{140,-100},{160,-80}})));
+      Modelica.Blocks.Math.Product product2
+        annotation (Placement(transformation(extent={{240,-160},{260,-140}})));
+      DHC_Thassalia.Controls_a.opposite opposite
+        annotation (Placement(transformation(extent={{200,-154},{220,-134}})));
+      Modelica.Blocks.Sources.RealExpression realExpression2(y=66/3.6)
+        annotation (Placement(transformation(extent={{200,-178},{220,-158}})));
+      Modelica.Blocks.Math.Gain gain2(k=1/(4185*(55 - 15))) annotation (
+          Placement(transformation(extent={{-160,160},{-140,180}})));
+      Fluid.Storage.StratifiedEnhanced tan1(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=20,
+        VTan=10,
+        hTan=10,
+        dIns=0.05,
+        nSeg=10)
+        annotation (Placement(transformation(extent={{100,40},{120,60}})));
+      Fluid.FixedResistances.Junction jun(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal={5,-5,-5},
+        dp_nominal={0,0,0}) annotation (Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=90,
+            origin={30,50})));
+      Fluid.Movers.FlowControlled_m_flow fan(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=2,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to8 per,
+        inputType=Buildings.Fluid.Types.InputType.Constant,
+        dp_nominal=1000,
+        constantMassFlowRate=2)
+        annotation (Placement(transformation(extent={{40,100},{60,120}})));
+      Fluid.FixedResistances.Junction jun1(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal={5,5,-5},
+        dp_nominal={0,0,0}) annotation (Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=270,
+            origin={170,50})));
+    equation
+      connect(port_a, val_storage.port_a)
+        annotation (Line(points={{-100,0},{-60,0}}, color={0,127,255}));
+      connect(port_a, val_preheat.port_a)
+        annotation (Line(points={{-100,0},{-100,90},{-80,90}}, color={0,127,255}));
+      connect(val_preheat.port_b, hex1.port_a2) annotation (Line(points={{-60,90},
+              {-54,90},{-54,114},{-40,114}},
+                                      color={0,127,255}));
+      connect(boundary.ports[1], hex1.port_a1) annotation (Line(points={{-80,170},
+              {-10,170},{-10,126},{-20,126}},
+                                            color={0,127,255}));
+      connect(hex1.port_b1, T_sec_intermediate.port_a) annotation (Line(points={{-40,126},
+              {-50,126},{-50,150},{10,150}},    color={0,127,255}));
+      connect(T_sec_intermediate.port_b, hex2.port_a1) annotation (Line(points={{30,150},
+              {150,150},{150,122},{140,122}}, color={0,127,255}));
+      connect(hex2.port_b1, T_sec_out.port_a) annotation (Line(points={{120,122},
+              {110,122},{110,170},{120,170}},
+                                  color={0,127,255}));
+      connect(T_sec_out.port_b, bou1.ports[1])
+        annotation (Line(points={{140,170},{180,170}}, color={0,127,255}));
+      connect(T_prim_in.port_b, hex2.port_a2)
+        annotation (Line(points={{100,110},{120,110}},
+                                                   color={0,127,255}));
+      connect(hex2.port_b2, T_prim_out.port_a)
+        annotation (Line(points={{140,110},{170,110}},
+                                                    color={0,127,255}));
+      connect(temperatureSensor.T, hysteresis.u)
+        annotation (Line(points={{100,-52},{118,-52}}, color={0,0,127}));
+      connect(hysteresis.y, booToRea.u)
+        annotation (Line(points={{141,-52},{158,-52}}, color={255,0,255}));
+      connect(hex1.port_b2, senMasFlo.port_a) annotation (Line(points={{-20,114},
+              {-10,114},{-10,-30},{40,-30}},
+                                       color={0,127,255}));
+      connect(senMasFlo.port_b, port_b)
+        annotation (Line(points={{60,-30},{100,-30},{100,0}}, color={0,127,255}));
+      connect(senMasFlo1.port_b, port_b)
+        annotation (Line(points={{170,10},{170,0},{100,0}},
+                                                  color={0,127,255}));
+      connect(booToRea.y, product1.u1) annotation (Line(points={{182,-52},{190,-52},
+              {190,-74},{198,-74}}, color={0,0,127}));
+      connect(realExpression1.y, product1.u2) annotation (Line(points={{161,-90},{180,
+              -90},{180,-86},{198,-86}}, color={0,0,127}));
+      connect(product1.y, pid_storage.u_s) annotation (Line(points={{221,-80},{240,-80},
+              {240,-50},{258,-50}}, color={0,0,127}));
+      connect(senMasFlo1.m_flow, pid_storage.u_m) annotation (Line(points={{181,20},
+              {320,20},{320,-110},{270,-110},{270,-62}},      color={0,0,127}));
+      connect(pid_storage.y, val_storage.y) annotation (Line(points={{281,-50},
+              {300,-50},{300,-100},{-30,-100},{-30,20},{-50,20},{-50,12}},
+                                                                      color={0,0,127}));
+      connect(opposite.y, product2.u1)
+        annotation (Line(points={{221,-144},{238,-144}}, color={0,0,127}));
+      connect(booToRea.y, opposite.u) annotation (Line(points={{182,-52},{190,-52},{
+              190,-144},{198,-144}}, color={0,0,127}));
+      connect(senMasFlo.m_flow, pid_preheat.u_m) annotation (Line(points={{50,-19},
+              {50,-16},{30,-16},{30,-190},{310,-190},{310,-162}},color={0,0,127}));
+      connect(product2.y, pid_preheat.u_s)
+        annotation (Line(points={{261,-150},{298,-150}}, color={0,0,127}));
+      connect(realExpression2.y, product2.u2) annotation (Line(points={{221,-168},{228.5,
+              -168},{228.5,-156},{238,-156}}, color={0,0,127}));
+      connect(pid_preheat.y, val_preheat.y) annotation (Line(points={{321,-150},
+              {340,-150},{340,-180},{-90,-180},{-90,110},{-70,110},{-70,102}},
+                                                                       color={0,0,127}));
+      connect(val_storage.y_actual, y_storage) annotation (Line(points={{-45,7},
+              {-20,7},{-20,80},{0,80},{0,210}},
+                                           color={0,0,127}));
+      connect(gain2.y, boundary.m_flow_in) annotation (Line(points={{-139,170},
+              {-120,170},{-120,178},{-102,178}}, color={0,0,127}));
+      connect(combiTimeTable.y[2], gain2.u)
+        annotation (Line(points={{-179,170},{-162,170}}, color={0,0,127}));
+      connect(tan1.port_b, jun1.port_3)
+        annotation (Line(points={{120,50},{160,50}}, color={0,127,255}));
+      connect(T_prim_out.port_b, jun1.port_1) annotation (Line(points={{190,110},
+              {200,110},{200,70},{170,70},{170,60}}, color={0,127,255}));
+      connect(jun.port_3, tan1.port_a)
+        annotation (Line(points={{40,50},{100,50}}, color={0,127,255}));
+      connect(jun1.port_2, senMasFlo1.port_a)
+        annotation (Line(points={{170,40},{170,30}}, color={0,127,255}));
+      connect(val_storage.port_b, jun.port_1)
+        annotation (Line(points={{-40,0},{30,0},{30,40}}, color={0,127,255}));
+      connect(jun.port_2, fan.port_a) annotation (Line(points={{30,60},{30,110},
+              {40,110}}, color={0,127,255}));
+      connect(fan.port_b, T_prim_in.port_a)
+        annotation (Line(points={{60,110},{80,110}}, color={0,127,255}));
+      connect(tan1.heaPorVol[2], temperatureSensor.port) annotation (Line(
+            points={{110,49.58},{110,20},{70,20},{70,-52},{80,-52}}, color={191,
+              0,0}));
+      annotation (Diagram(coordinateSystem(extent={{-200,-200},{200,200}})),Icon(
+            coordinateSystem(extent={{-200,-200},{200,200}}),
+            graphics={Rectangle(
+              extent={{-40,60},{40,0}},
+              lineColor={238,46,47},
+              fillColor={238,46,47},
+              fillPattern=FillPattern.Solid), Rectangle(
+              extent={{-40,0},{40,-60}},
+              lineColor={244,125,35},
+              fillColor={244,125,35},
+              fillPattern=FillPattern.Solid)}));
+    end SST_ECS_stratified;
 
     model SST_SH
       extends Fluid.Interfaces.PartialTwoPortInterface;
@@ -973,909 +2249,119 @@ HW")}),                                                Diagram(coordinateSystem(
             coordinateSystem(preserveAspectRatio=false)));
     end SST_cold;
 
-    package Tests
-      extends
-          Modelica.Icons.ExamplesPackage;
-      model ballon
-        Fluid.Storage.StratifiedEnhanced tan1(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=25,
-          VTan=5,
-          hTan=5,
-          dIns=0.05)
-          annotation (Placement(transformation(extent={{0,20},{20,40}})));
-        Fluid.Sources.Boundary_pT bou(
-          redeclare package Medium = Media.Water,
-          use_T_in=true,
-          T=333.15,
-          nPorts=2)
-          annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
-        Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{-70,20},{-50,40}})));
-        Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{40,20},{60,40}})));
-        Fluid.HeatExchangers.ConstantEffectiveness hex(
-          redeclare package Medium1 = Media.Water,
-          redeclare package Medium2 = Media.Water,
-          m1_flow_nominal=25,
-          m2_flow_nominal=20,
-          dp1_nominal=1000,
-          dp2_nominal=1000)
-          annotation (Placement(transformation(extent={{80,0},{100,20}})));
-        Fluid.Sources.MassFlowSource_T boundary1(
-          redeclare package Medium = Media.Water,
-          m_flow=25,
-          T=288.15,
-          nPorts=1)
-          annotation (Placement(transformation(extent={{160,-20},{140,0}})));
-        Fluid.Sensors.TemperatureTwoPort senTem2(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{120,40},{140,60}})));
-        Fluid.Sources.Boundary_pT bou1(
-          redeclare package Medium = Media.Water,
-          T=293.15,
-          nPorts=1)
-          annotation (Placement(transformation(extent={{180,40},{160,60}})));
-        Fluid.Sensors.TemperatureTwoPort senTem3(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{-20,-40},{-40,-20}})));
-        Fluid.Movers.FlowControlled_dp fan(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=25,
-          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos30slash1to4 per,
-          inputType=Buildings.Fluid.Types.InputType.Constant,
-          addPowerToMedium=false,
-          dp_nominal=1000,
-          constantHead=1000)
-          annotation (Placement(transformation(extent={{-120,20},{-100,40}})));
-        Modelica.Blocks.Sources.Step step(
-          height=-20,
-          offset=60 + 273.15,
-          startTime=200000) annotation (Placement(transformation(extent={{-140,
-                  -40},{-120,-20}})));
-      equation
-        connect(senTem.port_b, tan1.port_a)
-          annotation (Line(points={{-50,30},{0,30}}, color={0,127,255}));
-        connect(senTem1.port_a, tan1.port_b)
-          annotation (Line(points={{40,30},{20,30}}, color={0,127,255}));
-        connect(senTem1.port_b, hex.port_a1) annotation (Line(points={{60,30},{
-                70,30},{70,16},{80,16}}, color={0,127,255}));
-        connect(hex.port_b1, senTem2.port_a) annotation (Line(points={{100,16},
-                {110,16},{110,50},{120,50}}, color={0,127,255}));
-        connect(hex.port_a2, boundary1.ports[1]) annotation (Line(points={{100,
-                4},{120,4},{120,-10},{140,-10}}, color={0,127,255}));
-        connect(senTem2.port_b, bou1.ports[1]) annotation (Line(points={{140,50},
-                {150,50},{150,50},{160,50}}, color={0,127,255}));
-        connect(hex.port_b2, senTem3.port_a) annotation (Line(points={{80,4},{0,
-                4},{0,-30},{-20,-30}}, color={0,127,255}));
-        connect(senTem3.port_b, bou.ports[1]) annotation (Line(points={{-40,-30},
-                {-60,-30},{-60,-28},{-80,-28}}, color={0,127,255}));
-        connect(fan.port_b, senTem.port_a)
-          annotation (Line(points={{-100,30},{-70,30}}, color={0,127,255}));
-        connect(step.y, bou.T_in) annotation (Line(points={{-119,-30},{-112,-30},
-                {-112,-26},{-102,-26}}, color={0,0,127}));
-        connect(bou.ports[2], fan.port_a) annotation (Line(points={{-80,-32},{
-                -80,0},{-180,0},{-180,30},{-120,30}}, color={0,127,255}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-      end ballon;
+  package Tests
+    extends Modelica.Icons.ExamplesPackage;
 
-      model ballon_b
-        Fluid.Storage.StratifiedEnhanced tan1(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=25,
-          VTan=20,
-          hTan=5,
-          dIns=0.05)
-          annotation (Placement(transformation(extent={{0,20},{20,40}})));
-        Fluid.Sources.Boundary_pT bou(
-          redeclare package Medium = Media.Water,
-          use_T_in=true,
-          T=333.15,
-          nPorts=2)
-          annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
-        Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{-70,20},{-50,40}})));
-        Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{40,20},{60,40}})));
-        Fluid.Movers.FlowControlled_dp fan(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=25,
-          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos30slash1to4 per,
-          inputType=Buildings.Fluid.Types.InputType.Constant,
-          addPowerToMedium=false,
-          dp_nominal=1000,
-          constantHead=1000)
-          annotation (Placement(transformation(extent={{-120,20},{-100,40}})));
-        Modelica.Blocks.Sources.Step step(
-          height=-20,
-          offset=60 + 273.15,
-          startTime=200000) annotation (Placement(transformation(extent={{-140,
-                  -40},{-120,-20}})));
-        Fluid.Actuators.Valves.TwoWayLinear val(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=25,
-          dpValve_nominal=100)
-          annotation (Placement(transformation(extent={{20,-42},{0,-22}})));
-        Modelica.Blocks.Sources.RealExpression realExpression(y=1)
-          annotation (Placement(transformation(extent={{-20,-10},{0,10}})));
-      equation
-        connect(senTem.port_b, tan1.port_a)
-          annotation (Line(points={{-50,30},{0,30}}, color={0,127,255}));
-        connect(senTem1.port_a, tan1.port_b)
-          annotation (Line(points={{40,30},{20,30}}, color={0,127,255}));
-        connect(fan.port_b, senTem.port_a)
-          annotation (Line(points={{-100,30},{-70,30}}, color={0,127,255}));
-        connect(step.y, bou.T_in) annotation (Line(points={{-119,-30},{-112,-30},
-                {-112,-26},{-102,-26}}, color={0,0,127}));
-        connect(bou.ports[1], fan.port_a) annotation (Line(points={{-80,-28},{
-                -70,-28},{-70,0},{-180,0},{-180,30},{-120,30}}, color={0,127,
-                255}));
-        connect(bou.ports[2], val.port_b)
-          annotation (Line(points={{-80,-32},{0,-32}}, color={0,127,255}));
-        connect(val.port_a, senTem1.port_b) annotation (Line(points={{20,-32},{
-                84,-32},{84,30},{60,30}}, color={0,127,255}));
-        connect(realExpression.y, val.y)
-          annotation (Line(points={{1,0},{10,0},{10,-20}}, color={0,0,127}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-      end ballon_b;
+    model test_sst_sh
+      SST.SST_SH sST_SH(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=10,
+        fileName=ModelicaServices.ExternalReferences.loadResource("modelica://Buildings/Data/sst/jan_20/test_cast.txt"),
+        hex(eps_nominal=0.7))
+        annotation (Placement(transformation(extent={{20,20},{40,40}})));
 
-      model ballon_c
-        Fluid.Storage.StratifiedEnhanced tan1(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=25,
-          VTan=5,
-          hTan=5,
-          dIns=0.05)
-          annotation (Placement(transformation(extent={{-30,20},{-10,40}})));
-        Fluid.Sources.Boundary_pT bou(
-          redeclare package Medium = Media.Water,
-          use_T_in=true,
-          T=333.15,
-          nPorts=3)
-          annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
-        Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{-70,20},{-50,40}})));
-        Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{40,20},{60,40}})));
-        Fluid.HeatExchangers.ConstantEffectiveness hex(
-          redeclare package Medium1 = Media.Water,
-          redeclare package Medium2 = Media.Water,
-          m1_flow_nominal=25,
-          m2_flow_nominal=20,
-          dp1_nominal=1000,
-          dp2_nominal=1000)
-          annotation (Placement(transformation(extent={{80,0},{100,20}})));
-        Fluid.Sources.MassFlowSource_T boundary1(
-          redeclare package Medium = Media.Water,
-          m_flow=25,
-          T=288.15,
-          nPorts=1)
-          annotation (Placement(transformation(extent={{160,-20},{140,0}})));
-        Fluid.Sensors.TemperatureTwoPort senTem2(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{120,40},{140,60}})));
-        Fluid.Sources.Boundary_pT bou1(
-          redeclare package Medium = Media.Water,
-          T=293.15,
-          nPorts=1)
-          annotation (Placement(transformation(extent={{180,40},{160,60}})));
-        Fluid.Sensors.TemperatureTwoPort senTem3(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{-40,-40},{-60,-20}})));
-        Fluid.Movers.FlowControlled_dp fan(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=25,
-          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos30slash1to4 per,
-          inputType=Buildings.Fluid.Types.InputType.Constant,
-          addPowerToMedium=false,
-          dp_nominal=1000,
-          constantHead=1000)
-          annotation (Placement(transformation(extent={{-120,20},{-100,40}})));
-        Modelica.Blocks.Sources.Step step(
-          height=-20,
-          offset=60 + 273.15,
-          startTime=200000) annotation (Placement(transformation(extent={{-140,
-                  -40},{-120,-20}})));
-        Fluid.Movers.FlowControlled_dp fan1(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=25,
-          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos30slash1to4 per,
-          inputType=Buildings.Fluid.Types.InputType.Constant,
-          addPowerToMedium=false,
-          dp_nominal=1000,
-          constantHead=1000)
-          annotation (Placement(transformation(extent={{12,20},{32,40}})));
-        Fluid.Actuators.Valves.TwoWayLinear val(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=25,
-          dpValve_nominal=100)
-          annotation (Placement(transformation(extent={{20,-80},{0,-60}})));
-        Fluid.Actuators.Valves.TwoWayLinear val1(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=25,
-          dpValve_nominal=100)
-          annotation (Placement(transformation(extent={{-10,-40},{-30,-20}})));
-        Modelica.Blocks.Sources.Step step1(
-          height=-1,
-          offset=1,
-          startTime=200000)
-          annotation (Placement(transformation(extent={{-46,-10},{-26,10}})));
-        Modelica.Blocks.Sources.Step step2(
-          height=1,
-          offset=0,
-          startTime=200000)
-          annotation (Placement(transformation(extent={{-46,-94},{-26,-74}})));
-      equation
-        connect(senTem.port_b, tan1.port_a)
-          annotation (Line(points={{-50,30},{-30,30}}, color={0,127,255}));
-        connect(senTem1.port_b, hex.port_a1) annotation (Line(points={{60,30},{
-                70,30},{70,16},{80,16}}, color={0,127,255}));
-        connect(hex.port_b1, senTem2.port_a) annotation (Line(points={{100,16},
-                {110,16},{110,50},{120,50}}, color={0,127,255}));
-        connect(hex.port_a2, boundary1.ports[1]) annotation (Line(points={{100,
-                4},{120,4},{120,-10},{140,-10}}, color={0,127,255}));
-        connect(senTem2.port_b, bou1.ports[1]) annotation (Line(points={{140,50},
-                {150,50},{150,50},{160,50}}, color={0,127,255}));
-        connect(senTem3.port_b, bou.ports[1]) annotation (Line(points={{-60,-30},
-                {-74,-30},{-74,-27.3333},{-80,-27.3333}}, color={0,127,255}));
-        connect(fan.port_b, senTem.port_a)
-          annotation (Line(points={{-100,30},{-70,30}}, color={0,127,255}));
-        connect(step.y, bou.T_in) annotation (Line(points={{-119,-30},{-112,-30},
-                {-112,-26},{-102,-26}}, color={0,0,127}));
-        connect(bou.ports[2], fan.port_a) annotation (Line(points={{-80,-30},{
-                -80,0},{-180,0},{-180,30},{-120,30}}, color={0,127,255}));
-        connect(tan1.port_b, fan1.port_a)
-          annotation (Line(points={{-10,30},{12,30}}, color={0,127,255}));
-        connect(fan1.port_b, senTem1.port_a)
-          annotation (Line(points={{32,30},{40,30}}, color={0,127,255}));
-        connect(hex.port_b2, val.port_a) annotation (Line(points={{80,4},{72,4},
-                {72,2},{46,2},{46,-70},{20,-70}}, color={0,127,255}));
-        connect(val.port_b, bou.ports[3]) annotation (Line(points={{0,-70},{-80,
-                -70},{-80,-32.6667}}, color={0,127,255}));
-        connect(tan1.port_b, val1.port_a) annotation (Line(points={{-10,30},{2,
-                30},{2,-30},{-10,-30}}, color={0,127,255}));
-        connect(val1.port_b, senTem3.port_a)
-          annotation (Line(points={{-30,-30},{-40,-30}}, color={0,127,255}));
-        connect(step1.y, val1.y) annotation (Line(points={{-25,0},{-20,0},{-20,
-                -18}}, color={0,0,127}));
-        connect(step2.y, val.y) annotation (Line(points={{-25,-84},{-12,-84},{
-                -12,-46},{10,-46},{10,-58}}, color={0,0,127}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-      end ballon_c;
+      Fluid.Sources.Boundary_pT bou(
+        redeclare package Medium = Media.Water,
+        use_T_in=false,
+        T=319.15,
+        nPorts=2)                                            annotation (
+          Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={-90,30})));
+      Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
+            Media.Water, m_flow_nominal=10)
+        annotation (Placement(transformation(extent={{-20,-20},{-40,0}})));
+      Fluid.Movers.FlowControlled_dp fan(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=10,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to6 per,
+        inputType=Buildings.Fluid.Types.InputType.Constant,
+        addPowerToMedium=false,
+        dp_nominal=2000,
+        constantHead=2000)
+        annotation (Placement(transformation(extent={{-40,20},{-20,40}})));
+    equation
+      connect(bou.ports[1], fan.port_a) annotation (Line(points={{-80,32},{
+              -60,32},{-60,30},{-40,30}}, color={0,127,255}));
+      connect(fan.port_b, sST_SH.port_a) annotation (Line(points={{-20,30},{0,
+              30},{0,30},{20,30}}, color={0,127,255}));
+      connect(sST_SH.port_b, senTem.port_a) annotation (Line(points={{40,30},
+              {50,30},{50,-10},{-20,-10}}, color={0,127,255}));
+      connect(senTem.port_b, bou.ports[2]) annotation (Line(points={{-40,-10},
+              {-62,-10},{-62,28},{-80,28}}, color={0,127,255}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end test_sst_sh;
 
-      model ballon_d
-        Fluid.Sources.Boundary_pT bou(
-          redeclare package Medium = Media.Water,
-          use_T_in=false,
-          T=333.15,
-          nPorts=2)
-          annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
-        Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{-60,20},{-40,40}})));
-        Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{42,42},{62,62}})));
-        Fluid.HeatExchangers.ConstantEffectiveness hex(
-          redeclare package Medium1 = Media.Water,
-          redeclare package Medium2 = Media.Water,
-          m1_flow_nominal=25,
-          m2_flow_nominal=20,
-          dp1_nominal=1000,
-          dp2_nominal=1000)
-          annotation (Placement(transformation(extent={{80,0},{100,20}})));
-        Fluid.Sources.MassFlowSource_T boundary1(
-          redeclare package Medium = Media.Water,
-          m_flow=2,
-          T=288.15,
-          nPorts=1) annotation (Placement(transformation(extent={{160,-20},{140,0}})));
-        Fluid.Sensors.TemperatureTwoPort senTem2(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{60,-40},{40,-20}})));
-        Fluid.Sources.Boundary_pT bou1(
-          redeclare package Medium = Media.Water,
-          T=293.15,
-          nPorts=1) annotation (Placement(transformation(extent={{10,-40},{30,
-                  -20}})));
-        Fluid.Sensors.TemperatureTwoPort senTem3(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{-40,-40},{-60,-20}})));
-        Fluid.Storage.StratifiedEnhancedInternalHex tan1(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=25,
-          VTan=5,
-          hTan=2,
-          dIns=0.1,
-          nSeg=12,
-          hHex_a=1,
-          hHex_b=0.1,
-          Q_flow_nominal=500000,
-          TTan_nominal=332.15,
-          THex_nominal=333.15,
-          mHex_flow_nominal=25,
-          redeclare package MediumHex =Media.Water)
-          annotation (Placement(transformation(extent={{-20,20},{0,40}})));
-        Fluid.Sensors.TemperatureTwoPort senTem4(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{70,90},{50,110}})));
-        Fluid.Movers.FlowControlled_m_flow fan(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=50,
-          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
-          inputType=Buildings.Fluid.Types.InputType.Continuous,
-          addPowerToMedium=false,
-          dp_nominal=50000,
-          constantMassFlowRate=25)
-          annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
-        Modelica.Blocks.Sources.Step step(
-          height=-25,
-          offset=25,
-          startTime=200000)
-          annotation (Placement(transformation(extent={{-160,80},{-140,100}})));
-        Fluid.Sources.Boundary_pT bou2(
-          redeclare package Medium = Media.Water,
-          use_T_in=true,
-          T=293.15,
-          nPorts=2) annotation (Placement(transformation(extent={{-10,-10},{10,
-                  10}},
-              rotation=270,
-              origin={12,118})));
-        Fluid.Movers.FlowControlled_m_flow fan1(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=50,
-          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
-          inputType=Buildings.Fluid.Types.InputType.Continuous,
-          addPowerToMedium=false,
-          dp_nominal=50000,
-          constantMassFlowRate=10)
-          annotation (Placement(transformation(extent={{30,20},{10,40}})));
-        Modelica.Blocks.Sources.Step step1(
-          height=1,
-          offset=0,
-          startTime=150000)
-          annotation (Placement(transformation(extent={{-16,60},{4,80}})));
-        Modelica.Blocks.Sources.Step step2(
-          height=25,
-          offset=0,
-          startTime=205000)
-          annotation (Placement(transformation(extent={{-160,40},{-140,60}})));
-        Modelica.Blocks.Math.MultiSum multiSum(nu=2)
-          annotation (Placement(transformation(extent={{-112,64},{-100,76}})));
-      equation
-        connect(senTem1.port_b, hex.port_a1) annotation (Line(points={{62,52},{
-                76,52},{76,16},{80,16}},
-                                  color={0,127,255}));
-        connect(hex.port_a2, boundary1.ports[1]) annotation (Line(points={{100,4},{120,
-                4},{120,-10},{140,-10}}, color={0,127,255}));
-        connect(senTem3.port_b, bou.ports[1]) annotation (Line(points={{-60,-30},
-                {-70,-30},{-70,-28},{-80,-28}},
-                                           color={0,127,255}));
-        connect(senTem.port_b, tan1.portHex_a) annotation (Line(points={{-40,30},{-30,
-                30},{-30,26.2},{-20,26.2}}, color={0,127,255}));
-        connect(senTem3.port_a, tan1.portHex_b) annotation (Line(points={{-40,-30},{-20,
-                -30},{-20,22}}, color={0,127,255}));
-        connect(bou.ports[2], fan.port_a) annotation (Line(points={{-80,-32},{
-                -80,10},{-116,10},{-116,30},{-100,30}}, color={0,127,255}));
-        connect(fan.port_b, senTem.port_a)
-          annotation (Line(points={{-80,30},{-60,30}}, color={0,127,255}));
-        connect(senTem2.port_a, hex.port_b2) annotation (Line(points={{60,-30},
-                {70,-30},{70,4},{80,4}}, color={0,127,255}));
-        connect(bou1.ports[1], senTem2.port_b)
-          annotation (Line(points={{30,-30},{40,-30}}, color={0,127,255}));
-        connect(hex.port_b1, senTem4.port_a) annotation (Line(points={{100,16},
-                {108,16},{108,100},{70,100}}, color={0,127,255}));
-        connect(senTem4.port_b, bou2.ports[1]) annotation (Line(points={{50,100},
-                {14,100},{14,108}}, color={0,127,255}));
-        connect(senTem4.T, bou2.T_in) annotation (Line(points={{60,111},{60,140},
-                {16,140},{16,130}}, color={0,0,127}));
-        connect(step1.y, fan1.m_flow_in)
-          annotation (Line(points={{5,70},{20,70},{20,42}}, color={0,0,127}));
-        connect(fan1.port_b, tan1.port_b)
-          annotation (Line(points={{10,30},{0,30}}, color={0,127,255}));
-        connect(bou2.ports[2], fan1.port_a) annotation (Line(points={{10,108},{
-                10,108},{10,80},{34,80},{34,30},{30,30}}, color={0,127,255}));
-        connect(tan1.port_a, senTem1.port_a) annotation (Line(points={{-20,30},
-                {-26,30},{-26,52},{42,52}}, color={0,127,255}));
-        connect(step2.y, multiSum.u[1]) annotation (Line(points={{-139,50},{
-                -126,50},{-126,72.1},{-112,72.1}}, color={0,0,127}));
-        connect(step.y, multiSum.u[2]) annotation (Line(points={{-139,90},{-126,
-                90},{-126,67.9},{-112,67.9}}, color={0,0,127}));
-        connect(multiSum.y, fan.m_flow_in) annotation (Line(points={{-98.98,70},
-                {-90,70},{-90,42}}, color={0,0,127}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)),
-          experiment(
-            StopTime=400000,
-            Interval=200,
-            __Dymola_Algorithm="Dassl"));
-      end ballon_d;
+    model test_sst_cold
+      Fluid.Sources.Boundary_pT bou(
+        redeclare package Medium = Media.Water,
+        use_T_in=false,
+        T=278.15,
+        nPorts=2)                                            annotation (
+          Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={-90,30})));
+      Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
+            Media.Water, m_flow_nominal=10)
+        annotation (Placement(transformation(extent={{-20,-20},{-40,0}})));
+      Fluid.Movers.FlowControlled_dp fan(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=10,
+        redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to6 per,
+        inputType=Buildings.Fluid.Types.InputType.Constant,
+        addPowerToMedium=false,
+        dp_nominal=2000,
+        constantHead=2000)
+        annotation (Placement(transformation(extent={{-40,20},{-20,40}})));
+      SST.SST_cold sST_cold(
+        redeclare package Medium = Media.Water,
+        m_flow_nominal=10,
+        fileName=ModelicaServices.ExternalReferences.loadResource("modelica://Buildings/Data/sst/jan_20/test_cast_froid.txt"),
+        hex(eps_nominal=0.95))
+        annotation (Placement(transformation(extent={{0,20},{20,40}})));
 
-      model ballon_f
-        Fluid.Sources.Boundary_pT bou(
-          redeclare package Medium = Media.Water,
-          use_T_in=false,
-          T=333.15,
-          nPorts=2)
-          annotation (Placement(transformation(extent={{-100,-40},{-80,-20}})));
-        Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{-60,20},{-40,40}})));
-        Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{42,42},{62,62}})));
-        Fluid.HeatExchangers.ConstantEffectiveness hex(
-          redeclare package Medium1 = Media.Water,
-          redeclare package Medium2 = Media.Water,
-          m1_flow_nominal=25,
-          m2_flow_nominal=20,
-          dp1_nominal=1000,
-          dp2_nominal=1000)
-          annotation (Placement(transformation(extent={{80,0},{100,20}})));
-        Fluid.Sources.MassFlowSource_T boundary1(
-          redeclare package Medium = Media.Water,
-          m_flow=2,
-          T=288.15,
-          nPorts=1) annotation (Placement(transformation(extent={{160,-20},{140,0}})));
-        Fluid.Sensors.TemperatureTwoPort senTem2(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{60,-40},{40,-20}})));
-        Fluid.Sources.Boundary_pT bou1(
-          redeclare package Medium = Media.Water,
-          T=293.15,
-          nPorts=1) annotation (Placement(transformation(extent={{10,-40},{30,
-                  -20}})));
-        Fluid.Sensors.TemperatureTwoPort senTem3(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{-40,-40},{-60,-20}})));
-        Fluid.Storage.StratifiedEnhancedInternalHex tan1(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=25,
-          VTan=5,
-          hTan=2,
-          dIns=0.1,
-          nSeg=10,
-          hHex_a=1,
-          hHex_b=0.1,
-          Q_flow_nominal=500000,
-          TTan_nominal=332.15,
-          THex_nominal=333.15,
-          mHex_flow_nominal=25,
-          redeclare package MediumHex =Media.Water)
-          annotation (Placement(transformation(extent={{-8,20},{-28,40}})));
-        Fluid.Sensors.TemperatureTwoPort senTem4(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{70,90},{50,110}})));
-        Fluid.Movers.FlowControlled_m_flow fan(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=50,
-          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
-          inputType=Buildings.Fluid.Types.InputType.Continuous,
-          addPowerToMedium=false,
-          dp_nominal=50000,
-          constantMassFlowRate=25)
-          annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
-        Modelica.Blocks.Sources.Step step(
-          height=-50,
-          offset=50,
-          startTime=201600)
-          annotation (Placement(transformation(extent={{-120,62},{-100,82}})));
-        Fluid.Sources.Boundary_pT bou2(
-          redeclare package Medium = Media.Water,
-          use_T_in=true,
-          T=293.15,
-          nPorts=2) annotation (Placement(transformation(extent={{-10,-10},{10,
-                  10}},
-              rotation=270,
-              origin={12,118})));
-        Fluid.Movers.FlowControlled_m_flow fan1(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=50,
-          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to4 per,
-          inputType=Buildings.Fluid.Types.InputType.Continuous,
-          addPowerToMedium=false,
-          dp_nominal=50000,
-          constantMassFlowRate=10)
-          annotation (Placement(transformation(extent={{32,0},{12,20}})));
-        Modelica.Blocks.Sources.Step step1(
-          height=0.5,
-          offset=0,
-          startTime=150000)
-          annotation (Placement(transformation(extent={{-20,60},{0,80}})));
-      equation
-        connect(hex.port_a2, boundary1.ports[1]) annotation (Line(points={{100,4},{120,
-                4},{120,-10},{140,-10}}, color={0,127,255}));
-        connect(senTem3.port_b, bou.ports[1]) annotation (Line(points={{-60,-30},
-                {-70,-30},{-70,-28},{-80,-28}},
-                                           color={0,127,255}));
-        connect(bou.ports[2], fan.port_a) annotation (Line(points={{-80,-32},{
-                -80,10},{-116,10},{-116,30},{-100,30}}, color={0,127,255}));
-        connect(fan.port_b, senTem.port_a)
-          annotation (Line(points={{-80,30},{-60,30}}, color={0,127,255}));
-        connect(step.y, fan.m_flow_in) annotation (Line(points={{-99,72},{-90,
-                72},{-90,42}}, color={0,0,127}));
-        connect(senTem2.port_a, hex.port_b2) annotation (Line(points={{60,-30},
-                {70,-30},{70,4},{80,4}}, color={0,127,255}));
-        connect(bou1.ports[1], senTem2.port_b)
-          annotation (Line(points={{30,-30},{40,-30}}, color={0,127,255}));
-        connect(hex.port_b1, senTem4.port_a) annotation (Line(points={{100,16},
-                {108,16},{108,100},{70,100}}, color={0,127,255}));
-        connect(senTem4.port_b, bou2.ports[1]) annotation (Line(points={{50,100},
-                {14,100},{14,108}}, color={0,127,255}));
-        connect(senTem4.T, bou2.T_in) annotation (Line(points={{60,111},{60,140},
-                {16,140},{16,130}}, color={0,0,127}));
-        connect(senTem.port_b, tan1.port_a) annotation (Line(points={{-40,30},{
-                -34,30},{-34,46},{-2,46},{-2,30},{-8,30}}, color={0,127,255}));
-        connect(tan1.port_b, senTem3.port_a) annotation (Line(points={{-28,30},
-                {-28,-30},{-40,-30}}, color={0,127,255}));
-        connect(fan1.port_b, tan1.portHex_b) annotation (Line(points={{12,10},{
-                8,10},{8,12},{-8,12},{-8,22}}, color={0,127,255}));
-        connect(tan1.portHex_a, senTem1.port_a) annotation (Line(points={{-8,
-                26.2},{0,26.2},{0,26},{10,26},{10,52},{42,52}}, color={0,127,
-                255}));
-        connect(senTem1.port_b, hex.port_a1) annotation (Line(points={{62,52},{
-                64,52},{64,16},{80,16}}, color={0,127,255}));
-        connect(bou2.ports[2], fan1.port_a) annotation (Line(points={{10,108},{
-                10,62},{36,62},{36,10},{32,10}}, color={0,127,255}));
-        connect(step1.y, fan1.m_flow_in) annotation (Line(points={{1,70},{6,70},
-                {6,42},{22,42},{22,22}}, color={0,0,127}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-      end ballon_f;
+    equation
+      connect(bou.ports[1], fan.port_a) annotation (Line(points={{-80,32},{
+              -60,32},{-60,30},{-40,30}}, color={0,127,255}));
+      connect(senTem.port_b, bou.ports[2]) annotation (Line(points={{-40,-10},
+              {-62,-10},{-62,28},{-80,28}}, color={0,127,255}));
+      connect(fan.port_b, sST_cold.port_a) annotation (Line(points={{-20,30},
+              {-10,30},{-10,30},{0,30}}, color={0,127,255}));
+      connect(sST_cold.port_b, senTem.port_a) annotation (Line(points={{20,30},
+              {30,30},{30,-10},{-20,-10}}, color={0,127,255}));
+      annotation (
+        Icon(coordinateSystem(preserveAspectRatio=false)),
+        Diagram(coordinateSystem(preserveAspectRatio=false)),
+        experiment(
+          StartTime=11221200,
+          StopTime=11394000,
+          Interval=3600,
+          __Dymola_Algorithm="Dassl"));
+    end test_sst_cold;
 
-      model sst_ecs
-        Fluid.Sources.Boundary_pT bou(
-          redeclare package Medium = Media.Water,
-          use_T_in=false,
-          T=333.15,
-          nPorts=1)
-          annotation (Placement(transformation(extent={{-220,-40},{-200,-20}})));
-        Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
-              Media.Water, m_flow_nominal=5)
-          annotation (Placement(transformation(extent={{-60,0},{-40,20}})));
-        Fluid.Sensors.TemperatureTwoPort senTem1(redeclare package Medium =
-              Media.Water, m_flow_nominal=5)
-          annotation (Placement(transformation(extent={{60,-40},{80,-20}})));
-        Fluid.HeatExchangers.ConstantEffectiveness hex(
-          redeclare package Medium1 = Media.Water,
-          redeclare package Medium2 = Media.Water,
-          m1_flow_nominal=25,
-          m2_flow_nominal=20,
-          dp1_nominal=1000,
-          dp2_nominal=1000,
-          eps=(55 - 15)/(56 - 15))
-          annotation (Placement(transformation(extent={{100,-60},{120,-40}})));
-        Fluid.Sources.MassFlowSource_T boundary1(
-          redeclare package Medium = Media.Water,
-          use_m_flow_in=true,
-          m_flow=2,
-          T=288.15,
-          nPorts=1) annotation (Placement(transformation(extent={{260,-100},{
-                  240,-80}})));
-        Fluid.Sensors.TemperatureTwoPort senTem2(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{80,-100},{60,-80}})));
-        Fluid.Sources.Boundary_pT bou1(
-          redeclare package Medium = Media.Water,
-          T=293.15,
-          nPorts=1) annotation (Placement(transformation(extent={{20,-100},{40,
-                  -80}})));
-        Fluid.Sensors.TemperatureTwoPort senTem3(redeclare package Medium =
-              Media.Water, m_flow_nominal=5)
-          annotation (Placement(transformation(extent={{-60,-40},{-80,-20}})));
-        Fluid.Storage.StratifiedEnhancedInternalHex tan1(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=25,
-          VTan=15,
-          hTan=2,
-          dIns=0.1,
-          nSeg=12,
-          hHex_a=1,
-          hHex_b=0.1,
-          Q_flow_nominal=500000,
-          TTan_nominal=332.15,
-          THex_nominal=333.15,
-          mHex_flow_nominal=25,
-          redeclare package MediumHex =Media.Water)
-          annotation (Placement(transformation(extent={{-20,20},{0,40}})));
-        Fluid.Sensors.TemperatureTwoPort senTem4(redeclare package Medium =
-              Media.Water, m_flow_nominal=5)
-          annotation (Placement(transformation(extent={{70,90},{50,110}})));
-        Fluid.Sources.Boundary_pT bou2(
-          redeclare package Medium = Media.Water,
-          T=293.15,
-          nPorts=1) annotation (Placement(transformation(extent={{-10,-10},{10,
-                  10}},
-              rotation=0,
-              origin={30,-30})));
-        Modelica.Thermal.HeatTransfer.Sensors.TemperatureSensor temperatureSensor
-          annotation (Placement(transformation(extent={{-260,60},{-240,80}})));
-        Modelica.Blocks.Logical.Hysteresis hysteresis(uLow=56 + 273.15, uHigh=
-              59 + 273.15)
-          annotation (Placement(transformation(extent={{-220,60},{-200,80}})));
-        Buildings.Controls.OBC.CDL.Conversions.BooleanToReal booToRea(realTrue=
-              0, realFalse=1)
-          annotation (Placement(transformation(extent={{-180,60},{-160,80}})));
-        Modelica.Blocks.Sources.CombiTimeTable combiTimeTable1(
-          tableOnFile=true,
-          tableName="tab1",
-          fileName=ModelicaServices.ExternalReferences.loadResource(
-              "modelica://Buildings/Data/sst/test_nexi.txt"),
-          columns={2,3})
-          annotation (Placement(transformation(extent={{342,-100},{322,-80}})));
-        Modelica.Blocks.Math.Gain gain2(k=1/(4185*(55 - 15))) annotation (
-            Placement(transformation(extent={{300,-100},{280,-80}})));
-        Fluid.Sources.MassFlowSource_T boundary2(
-          redeclare package Medium = Media.Water,
-          use_m_flow_in=true,
-          m_flow=2,
-          use_T_in=true,
-          T=288.15,
-          nPorts=1) annotation (Placement(transformation(extent={{40,20},{20,40}})));
-        Modelica.Blocks.Math.Gain gain1(k=(55 - 15)/(56 - 36))
-                                                              annotation (
-            Placement(transformation(extent={{100,20},{80,40}})));
-        Fluid.HeatExchangers.ConstantEffectiveness hex1(
-          redeclare package Medium1 = Media.Water,
-          redeclare package Medium2 = Media.Water,
-          m1_flow_nominal=25,
-          m2_flow_nominal=20,
-          dp1_nominal=1000,
-          dp2_nominal=1000,
-          eps=0.95)
-          annotation (Placement(transformation(extent={{180,-60},{200,-40}})));
-        Fluid.Sources.Boundary_pT bou3(
-          redeclare package Medium = Media.Water,
-          use_T_in=false,
-          T=333.15,
-          nPorts=1)
-          annotation (Placement(transformation(extent={{-10,-10},{10,10}},
-              rotation=270,
-              origin={230,10})));
-        Fluid.Sources.MassFlowSource_T boundary3(
-          redeclare package Medium = Media.Water,
-          use_m_flow_in=true,
-          m_flow=2,
-          T=333.15,
-          nPorts=1) annotation (Placement(transformation(extent={{-100,0},{-80,
-                  20}})));
-        Modelica.Blocks.Math.Gain gain3(k=30/3.6)             annotation (
-            Placement(transformation(extent={{10,-10},{-10,10}},
-              rotation=180,
-              origin={-130,70})));
-        DHC_Thassalia.Controls_a.opposite opposite
-          annotation (Placement(transformation(extent={{140,120},{160,140}})));
-        Modelica.Blocks.Math.Gain gain4(k=15/3.6)             annotation (
-            Placement(transformation(extent={{10,-10},{-10,10}},
-              rotation=90,
-              origin={170,50})));
-        Fluid.Sources.MassFlowSource_T boundary4(
-          redeclare package Medium = Media.Water,
-          use_m_flow_in=true,
-          m_flow=2,
-          T=319.15,
-          nPorts=1) annotation (Placement(transformation(extent={{-10,-10},{10,
-                  10}},
-              rotation=270,
-              origin={162,10})));
-        Fluid.Sensors.TemperatureTwoPort senTem5(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{156,-66},{136,-46}})));
-        Fluid.Sensors.TemperatureTwoPort senTem6(redeclare package Medium =
-              Media.Water, m_flow_nominal=25)
-          annotation (Placement(transformation(extent={{206,-54},{226,-34}})));
-      equation
-        connect(senTem3.port_b, bou.ports[1]) annotation (Line(points={{-80,-30},
-                {-100,-30},{-100,-30},{-200,-30}},
-                                           color={0,127,255}));
-        connect(senTem.port_b, tan1.portHex_a) annotation (Line(points={{-40,10},
-                {-30,10},{-30,26.2},{-20,26.2}},
-                                            color={0,127,255}));
-        connect(senTem3.port_a, tan1.portHex_b) annotation (Line(points={{-60,-30},
-                {-20,-30},{-20,22}},
-                                color={0,127,255}));
-        connect(senTem2.port_a, hex.port_b2) annotation (Line(points={{80,-90},
-                {90,-90},{90,-56},{100,-56}},
-                                         color={0,127,255}));
-        connect(bou1.ports[1], senTem2.port_b)
-          annotation (Line(points={{40,-90},{60,-90}}, color={0,127,255}));
-        connect(hex.port_b1, senTem4.port_a) annotation (Line(points={{120,-44},
-                {128,-44},{128,100},{70,100}},color={0,127,255}));
-        connect(tan1.heaPorVol[2], temperatureSensor.port) annotation (Line(
-              points={{-10,29.55},{-10,40},{-280,40},{-280,70},{-260,70}},
-              color={191,0,0}));
-        connect(temperatureSensor.T, hysteresis.u)
-          annotation (Line(points={{-240,70},{-222,70}}, color={0,0,127}));
-        connect(hysteresis.y, booToRea.u)
-          annotation (Line(points={{-199,70},{-182,70}}, color={255,0,255}));
-        connect(boundary1.m_flow_in, gain2.y) annotation (Line(points={{262,-82},
-                {270,-82},{270,-90},{279,-90}}, color={0,0,127}));
-        connect(combiTimeTable1.y[1], gain2.u)
-          annotation (Line(points={{321,-90},{302,-90}}, color={0,0,127}));
-        connect(bou2.ports[1], senTem1.port_a) annotation (Line(points={{40,-30},
-                {50,-30},{50,-30},{60,-30}}, color={0,127,255}));
-        connect(senTem1.port_b, hex.port_a1) annotation (Line(points={{80,-30},
-                {90,-30},{90,-44},{100,-44}}, color={0,127,255}));
-        connect(senTem1.T, boundary2.T_in) annotation (Line(points={{70,-19},{
-                70,0},{50,0},{50,34},{42,34}}, color={0,0,127}));
-        connect(boundary2.ports[1], tan1.port_b)
-          annotation (Line(points={{20,30},{0,30}}, color={0,127,255}));
-        connect(tan1.port_a, senTem4.port_b) annotation (Line(points={{-20,30},
-                {-30,30},{-30,100},{50,100}}, color={0,127,255}));
-        connect(boundary2.m_flow_in, gain1.y) annotation (Line(points={{42,38},
-                {60,38},{60,30},{79,30}}, color={0,0,127}));
-        connect(gain1.u, gain2.y) annotation (Line(points={{102,30},{274,30},{
-                274,-90},{279,-90}}, color={0,0,127}));
-        connect(hex1.port_a2, boundary1.ports[1]) annotation (Line(points={{200,
-                -56},{212,-56},{212,-90},{240,-90}}, color={0,127,255}));
-        connect(boundary3.ports[1], senTem.port_a)
-          annotation (Line(points={{-80,10},{-60,10}}, color={0,127,255}));
-        connect(booToRea.y, gain3.u)
-          annotation (Line(points={{-158,70},{-142,70}}, color={0,0,127}));
-        connect(gain3.y, boundary3.m_flow_in) annotation (Line(points={{-119,70},
-                {-110,70},{-110,18},{-102,18}}, color={0,0,127}));
-        connect(booToRea.y, opposite.u) annotation (Line(points={{-158,70},{
-                -152,70},{-152,130},{138,130}}, color={0,0,127}));
-        connect(opposite.y, gain4.u) annotation (Line(points={{161,130},{170,
-                130},{170,62}}, color={0,0,127}));
-        connect(gain4.y, boundary4.m_flow_in)
-          annotation (Line(points={{170,39},{170,22}}, color={0,0,127}));
-        connect(boundary4.ports[1], hex1.port_a1) annotation (Line(points={{162,
-                -3.55271e-15},{162,-44},{180,-44}}, color={0,127,255}));
-        connect(hex.port_a2, senTem5.port_b)
-          annotation (Line(points={{120,-56},{136,-56}}, color={0,127,255}));
-        connect(senTem5.port_a, hex1.port_b2)
-          annotation (Line(points={{156,-56},{180,-56}}, color={0,127,255}));
-        connect(hex1.port_b1, senTem6.port_a)
-          annotation (Line(points={{200,-44},{206,-44}}, color={0,127,255}));
-        connect(senTem6.port_b, bou3.ports[1]) annotation (Line(points={{226,
-                -44},{230,-44},{230,-3.55271e-15}}, color={0,127,255}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)),
-          experiment(
-            StopTime=400000,
-            Interval=200,
-            __Dymola_Algorithm="Dassl"));
-      end sst_ecs;
-
-      model sst_ch
-        SST_SH sST_SH
-          annotation (Placement(transformation(extent={{-20,20},{0,40}})));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-      end sst_ch;
-
-      model timetable
-        Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
-          tableOnFile=true,
-          tableName="tab1",
-          fileName=ModelicaServices.ExternalReferences.loadResource(
-              "modelica://Buildings/Data/sst/jan_20/test_cast.txt"),
-          columns={2,3})
-          annotation (Placement(transformation(extent={{-40,0},{-20,20}})));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-      end timetable;
-
-      model test_sst_sh
-        SST_SH sST_SH(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=10,
-          fileName=ModelicaServices.ExternalReferences.loadResource(
-              "modelica://Buildings/Data/sst/jan_20/test_cast.txt"),
-          hex(eps_nominal=0.7))
-          annotation (Placement(transformation(extent={{20,20},{40,40}})));
-        Fluid.Sources.Boundary_pT bou(
-          redeclare package Medium = Media.Water,
-          use_T_in=false,
-          T=319.15,
-          nPorts=2)                                            annotation (
-            Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=0,
-              origin={-90,30})));
-        Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
-              Media.Water, m_flow_nominal=10)
-          annotation (Placement(transformation(extent={{-20,-20},{-40,0}})));
-        Fluid.Movers.FlowControlled_dp fan(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=10,
-          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to6 per,
-          inputType=Buildings.Fluid.Types.InputType.Constant,
-          addPowerToMedium=false,
-          dp_nominal=2000,
-          constantHead=2000)
-          annotation (Placement(transformation(extent={{-40,20},{-20,40}})));
-      equation
-        connect(bou.ports[1], fan.port_a) annotation (Line(points={{-80,32},{
-                -60,32},{-60,30},{-40,30}}, color={0,127,255}));
-        connect(fan.port_b, sST_SH.port_a) annotation (Line(points={{-20,30},{0,
-                30},{0,30},{20,30}}, color={0,127,255}));
-        connect(sST_SH.port_b, senTem.port_a) annotation (Line(points={{40,30},
-                {50,30},{50,-10},{-20,-10}}, color={0,127,255}));
-        connect(senTem.port_b, bou.ports[2]) annotation (Line(points={{-40,-10},
-                {-62,-10},{-62,28},{-80,28}}, color={0,127,255}));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-      end test_sst_sh;
-
-      model test_sst_cold
-        Fluid.Sources.Boundary_pT bou(
-          redeclare package Medium = Media.Water,
-          use_T_in=false,
-          T=278.15,
-          nPorts=2)                                            annotation (
-            Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=0,
-              origin={-90,30})));
-        Fluid.Sensors.TemperatureTwoPort senTem(redeclare package Medium =
-              Media.Water, m_flow_nominal=10)
-          annotation (Placement(transformation(extent={{-20,-20},{-40,0}})));
-        Fluid.Movers.FlowControlled_dp fan(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=10,
-          redeclare Fluid.Movers.Data.Pumps.Wilo.Stratos25slash1to6 per,
-          inputType=Buildings.Fluid.Types.InputType.Constant,
-          addPowerToMedium=false,
-          dp_nominal=2000,
-          constantHead=2000)
-          annotation (Placement(transformation(extent={{-40,20},{-20,40}})));
-        SST_cold sST_cold(
-          redeclare package Medium = Media.Water,
-          m_flow_nominal=10,
-          fileName=ModelicaServices.ExternalReferences.loadResource(
-              "modelica://Buildings/Data/sst/jan_20/test_cast_froid.txt"),
-          hex(eps_nominal=0.95))
-          annotation (Placement(transformation(extent={{0,20},{20,40}})));
-      equation
-        connect(bou.ports[1], fan.port_a) annotation (Line(points={{-80,32},{
-                -60,32},{-60,30},{-40,30}}, color={0,127,255}));
-        connect(senTem.port_b, bou.ports[2]) annotation (Line(points={{-40,-10},
-                {-62,-10},{-62,28},{-80,28}}, color={0,127,255}));
-        connect(fan.port_b, sST_cold.port_a) annotation (Line(points={{-20,30},
-                {-10,30},{-10,30},{0,30}}, color={0,127,255}));
-        connect(sST_cold.port_b, senTem.port_a) annotation (Line(points={{20,30},
-                {30,30},{30,-10},{-20,-10}}, color={0,127,255}));
-        annotation (
-          Icon(coordinateSystem(preserveAspectRatio=false)),
-          Diagram(coordinateSystem(preserveAspectRatio=false)),
-          experiment(
-            StartTime=11221200,
-            StopTime=11394000,
-            Interval=3600,
-            __Dymola_Algorithm="Dassl"));
-      end test_sst_cold;
-
-      model nveau_pb
-        Fluid.Sources.MassFlowSource_T boundary(
-          redeclare package Medium = Media.Water,
-          use_m_flow_in=true,
-          m_flow=0.5,
-          T=288.15,
-          nPorts=1)
-          annotation (Placement(transformation(extent={{0,20},{20,40}})));
-        Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
-          tableOnFile=true,
-          tableName="tab1",
-          fileName=fileName,
-          columns={2})
-          annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
-        Modelica.Blocks.Math.Gain gain2(k=1/(4185*(55 - 15))) annotation (
-            Placement(transformation(extent={{-60,20},{-40,40}})));
-        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
-              coordinateSystem(preserveAspectRatio=false)));
-      end nveau_pb;
-    end Tests;
-
+    model nveau_pb
+      Fluid.Sources.MassFlowSource_T boundary(
+        redeclare package Medium = Media.Water,
+        use_m_flow_in=true,
+        m_flow=0.5,
+        T=288.15,
+        nPorts=1)
+        annotation (Placement(transformation(extent={{0,20},{20,40}})));
+      Modelica.Blocks.Sources.CombiTimeTable combiTimeTable(
+        tableOnFile=true,
+        tableName="tab1",
+        fileName=fileName,
+        columns={2})
+        annotation (Placement(transformation(extent={{-100,20},{-80,40}})));
+      Modelica.Blocks.Math.Gain gain2(k=1/(4185*(55 - 15))) annotation (
+          Placement(transformation(extent={{-60,20},{-40,40}})));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end nveau_pb;
+  end Tests;
   end SST;
 
 package TFP
@@ -2192,7 +2678,7 @@ end TFP;
           dp_nominal=100000,
           constantHead=1000) annotation (Placement(transformation(extent={{-140,
                   100},{-120,120}})));
-        SST.SST_ECS sST_ECS(
+        SST.SST_ECS_HE sST_ECS(
           redeclare package Medium = Media.Water,
           m_flow_nominal=10,
           fileName=ModelicaServices.ExternalReferences.loadResource(
@@ -2385,8 +2871,8 @@ end TFP;
             color={0,140,72},
             thickness=0.5));
         connect(bou2.ports[3], senTem4.port_a) annotation (Line(
-            points={{-200,107.333},{-196,107.333},{-196,108},{-192,108},{-192,
-                110},{-180,110}},
+            points={{-200,107.333},{-196,107.333},{-196,108},{-192,108},{-192,110},
+                {-180,110}},
             color={0,140,72},
             thickness=0.5));
         connect(senTem4.port_b, fan2.port_a) annotation (Line(
@@ -2471,7 +2957,7 @@ end TFP;
           dp_nominal=100000,
           constantHead=1000) annotation (Placement(transformation(extent={{-160,
                   100},{-140,120}})));
-        SST.SST_ECS sST_ECS(
+        SST.SST_ECS_HE sST_ECS(
           redeclare package Medium = Media.Water,
           m_flow_nominal=10,
           fileName=ModelicaServices.ExternalReferences.loadResource(
@@ -2740,8 +3226,8 @@ end TFP;
       end mult_t;
 
       model cast_ter
-        DHC_Thassalia.DEC_DEG.DEC_simpler dEC_simpler(redeclare package Medium1
-            = Media.Water, redeclare package Medium2 = Media.Water)
+        DHC_Thassalia.DEC_DEG.DEC_simpler dEC_simpler(redeclare package Medium1 =
+              Media.Water, redeclare package Medium2 = Media.Water)
           annotation (Placement(transformation(extent={{200,40},{220,60}})));
         Fluid.Movers.FlowControlled_m_flow fan(
           redeclare package Medium = Media.Water,
@@ -2758,7 +3244,7 @@ end TFP;
               extent={{-10,-10},{10,10}},
               rotation=270,
               origin={110,70})));
-        SST.SST_ECS sST_ECS(
+        SST.SST_ECS_HE sST_ECS(
           redeclare package Medium = Media.Water,
           m_flow_nominal=10,
           fileName=ModelicaServices.ExternalReferences.loadResource(
