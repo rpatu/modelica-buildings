@@ -2026,16 +2026,33 @@ end ECS;
             points={{110,49.58},{110,20},{70,20},{70,-52},{80,-52}}, color={191,
               0,0}));
       annotation (Diagram(coordinateSystem(extent={{-200,-200},{200,200}})),Icon(
-            coordinateSystem(extent={{-200,-200},{200,200}}),
-            graphics={Rectangle(
-              extent={{-40,60},{40,0}},
+            coordinateSystem(extent={{-100,-100},{100,100}}), graphics={
+            Rectangle(
+              extent={{-60,80},{-52,-20}},
               lineColor={238,46,47},
               fillColor={238,46,47},
-              fillPattern=FillPattern.Solid), Rectangle(
-              extent={{-40,0},{40,-60}},
-              lineColor={244,125,35},
+              fillPattern=FillPattern.Solid),
+            Rectangle(
+              extent={{-52,80},{40,72}},
+              lineColor={238,46,47},
+              fillColor={238,46,47},
+              fillPattern=FillPattern.Solid),
+            Line(points={{-40,60},{-40,20}},  color={28,108,200}),
+            Line(points={{-20,60},{-20,20}},  color={28,108,200}),
+            Line(points={{40,60},{40,20}},  color={28,108,200}),
+            Line(points={{20,60},{20,20}},  color={28,108,200}),
+            Line(points={{0,60},{0,20}},  color={28,108,200}),
+            Rectangle(
+              extent={{-40,-60},{-10,-100}},
+              lineColor={28,108,200},
               fillColor={244,125,35},
-              fillPattern=FillPattern.Solid)}));
+              fillPattern=FillPattern.Solid),
+            Rectangle(extent={{20,-60},{50,-100}},lineColor={28,108,200},
+              fillColor={238,46,47},
+              fillPattern=FillPattern.Solid),
+            Line(points={{-10,-80},{20,-80}}, color={28,108,200}),
+            Line(points={{50,-80},{80,-80}}, color={28,108,200}),
+            Line(points={{-80,-80},{-40,-80}}, color={28,108,200})}));
     end SST_ECS_stratified;
 
     model SST_SH
@@ -2361,7 +2378,161 @@ end ECS;
       annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
             coordinateSystem(preserveAspectRatio=false)));
     end nveau_pb;
+
+    model test_pre
+      Fluid.Sources.Boundary_pT bou(
+        redeclare package Medium = Buildings.Media.Water,
+          T=308.15,
+        nPorts=1)
+        annotation (Placement(transformation(extent={{60,40},{40,60}})));
+        pre_heating pre_heating1(
+          redeclare package Medium = Media.Water,
+          P_max=35000,
+          fileName=ModelicaServices.ExternalReferences.loadResource(
+              "modelica://Buildings/Data/sst/test_nexi.txt"))
+          annotation (Placement(transformation(extent={{-20,40},{0,60}})));
+        Fluid.Sources.MassFlowSource_T boundary(
+          redeclare package Medium = Media.Water,
+          m_flow=1,
+          T=333.15,
+          nPorts=1)
+          annotation (Placement(transformation(extent={{-80,40},{-60,60}})));
+    equation
+        connect(pre_heating1.port_b, bou.ports[1]) annotation (Line(points={{0,
+                50},{20,50},{20,50},{40,50}}, color={0,127,255}));
+        connect(pre_heating1.port_a, boundary.ports[1])
+          annotation (Line(points={{-20,50},{-60,50}}, color={0,127,255}));
+      annotation (
+        Icon(coordinateSystem(preserveAspectRatio=false)),
+        Diagram(coordinateSystem(preserveAspectRatio=false)),
+        experiment(
+          StopTime=90000,
+          Interval=3600,
+          __Dymola_Algorithm="Dassl"));
+    end test_pre;
   end Tests;
+
+    model pre_heating
+    extends Fluid.Interfaces.PartialTwoPort;
+    parameter Modelica.SIunits.HeatFlowRate P_max(displayUnit="kW");
+    parameter Real eps = 0.8;
+
+      parameter String fileName=
+          ModelicaServices.ExternalReferences.loadResource(
+          "modelica://Buildings/Data/tfp_he.txt") "File where matrix is stored"
+    annotation (Dialog(
+          loadSelector(filter="Text files (*.txt);;MATLAB MAT-files (*.mat)",
+              caption="Open file in which table is present")));
+
+      Fluid.HeatExchangers.ConstantEffectiveness hex(
+        redeclare package Medium1 = Buildings.Media.Water,
+        redeclare package Medium2 = Buildings.Media.Water,
+        m1_flow_nominal=P_max/(4185*(58 - 45)),
+        m2_flow_nominal=P_max/(4185*(55 - 15)),
+        dp1_nominal=1000,
+        dp2_nominal=1000,
+        eps=eps)
+        annotation (Placement(transformation(extent={{0,-20},{20,0}})));
+      Fluid.Sources.MassFlowSource_T boundary(
+        redeclare package Medium = Buildings.Media.Water,
+        use_m_flow_in=true,
+        use_T_in=false,
+        T=304.15,
+        nPorts=1) annotation (Placement(transformation(extent={{20,-100},{0,-80}})));
+      Fluid.Sources.Boundary_pT bou(redeclare package Medium =
+            Buildings.Media.Water,  nPorts=1)
+        annotation (Placement(transformation(extent={{-100,-100},{-80,-80}})));
+      Fluid.Sensors.TemperatureTwoPort Tconso_out(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=P_max/(4185*(55 - 16)) + 0.01
+            *P_max/(4185*(55 - 50)))
+        annotation (Placement(transformation(extent={{-50,-100},{-70,-80}})));
+      Fluid.Sensors.TemperatureTwoPort Tconso_in(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=P_max/(4185*(55 - 16)) + 0.01
+            *P_max/(4185*(55 - 50))) annotation (Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={10,-40})));
+      Fluid.Sensors.TemperatureTwoPort Tecs_out(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=P_max/(4185*(55 - 50)))
+        annotation (Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={60,10})));
+      Fluid.Sensors.TemperatureTwoPort Tecs_in(redeclare package Medium =
+            Buildings.Media.Water, m_flow_nominal=P_max/(4185*(55 - 50)))
+                                               annotation (Placement(transformation(
+            extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={-40,10})));
+      Modelica.Blocks.Sources.CombiTimeTable combiTimeTable1(
+        tableOnFile=true,
+        tableName="tab1",
+        fileName=fileName,
+        columns={2})
+        annotation (Placement(transformation(extent={{140,-100},{120,-80}})));
+      Modelica.Blocks.Math.Gain gain(k=1/(4185*(55 - 16)))
+        annotation (Placement(transformation(extent={{60,-100},{40,-80}})));
+      Modelica.Blocks.Math.Add add(k2=-1)
+        annotation (Placement(transformation(extent={{100,-100},{80,-80}})));
+      Modelica.Blocks.Sources.RealExpression realExpression1(y=0.01*P_max)
+        annotation (Placement(transformation(extent={{140,-140},{120,-120}})));
+    equation
+      connect(hex.port_b2, Tconso_out.port_a) annotation (Line(points={{0,-16},
+              {-46,-16},{-46,-90},{-50,-90}},
+                                           color={0,127,255}));
+      connect(bou.ports[1], Tconso_out.port_b)
+        annotation (Line(points={{-80,-90},{-70,-90}}, color={0,127,255}));
+      connect(hex.port_b1, Tecs_out.port_a)
+        annotation (Line(points={{20,-4},{30,-4},{30,10},{50,10}},
+                                                   color={0,127,255}));
+      connect(Tecs_out.port_b, port_b) annotation (Line(points={{70,10},{82,10},
+              {82,0},{100,0}}, color={0,127,255}));
+      connect(Tecs_in.port_b, hex.port_a1)
+        annotation (Line(points={{-30,10},{-6,10},{-6,-4},{0,-4}},
+                                                   color={0,127,255}));
+      connect(Tconso_in.port_b, hex.port_a2) annotation (Line(points={{20,-40},
+              {40,-40},{40,-16},{20,-16}},
+                                       color={0,127,255}));
+      connect(boundary.ports[1], Tconso_in.port_a) annotation (Line(points={{0,-90},
+              {-12,-90},{-12,-40},{0,-40}}, color={0,127,255}));
+      connect(port_a, Tecs_in.port_a) annotation (Line(points={{-100,0},{-70,0},
+              {-70,10},{-50,10}}, color={0,127,255}));
+      connect(gain.u,add. y)
+        annotation (Line(points={{62,-90},{79,-90}}, color={0,0,127}));
+      connect(add.u1, combiTimeTable1.y[1]) annotation (Line(points={{102,-84},
+              {110,-84},{110,-90},{119,-90}}, color={0,0,127}));
+      connect(realExpression1.y,add. u2) annotation (Line(points={{119,-130},{
+              110,-130},{110,-96},{102,-96}},
+                                    color={0,0,127}));
+      connect(boundary.m_flow_in, gain.y) annotation (Line(points={{22,-82},{32,
+              -82},{32,-90},{39,-90}}, color={0,0,127}));
+      annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
+            Rectangle(
+              extent={{-60,100},{-52,0}},
+              lineColor={238,46,47},
+              fillColor={238,46,47},
+              fillPattern=FillPattern.Solid),
+            Rectangle(
+              extent={{-52,100},{40,92}},
+              lineColor={238,46,47},
+              fillColor={238,46,47},
+              fillPattern=FillPattern.Solid),
+            Line(points={{-40,80},{-40,40}},  color={28,108,200}),
+            Line(points={{-20,80},{-20,40}},  color={28,108,200}),
+            Line(points={{40,80},{40,40}},  color={28,108,200}),
+            Line(points={{20,80},{20,40}},  color={28,108,200}),
+            Line(points={{0,80},{0,40}},  color={28,108,200}),
+            Rectangle(
+              extent={{-40,-40},{-10,-80}},
+              lineColor={28,108,200},
+              fillColor={238,46,47},
+              fillPattern=FillPattern.Solid),
+            Rectangle(extent={{20,-40},{50,-80}}, lineColor={28,108,200}),
+            Line(points={{-10,-60},{20,-60}}, color={28,108,200}),
+            Line(points={{50,-60},{80,-60}}, color={28,108,200}),
+            Line(points={{-80,-60},{-40,-60}}, color={28,108,200})}),Diagram(
+            coordinateSystem(preserveAspectRatio=false)));
+    end pre_heating;
   end SST;
 
 package TFP
