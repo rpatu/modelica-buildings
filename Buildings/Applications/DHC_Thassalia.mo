@@ -47388,6 +47388,141 @@ First implementation.
               coordinateSystem(preserveAspectRatio=false)));
       end eq_0;
     end alg_equ;
+
+    package radiant_slab
+      model rad
+        Fluid.Sources.Boundary_pT bou1(
+          redeclare package Medium = Buildings.Media.Water,
+          T=293.15,
+          nPorts=1) annotation (Placement(transformation(extent={{80,-20},{60,0}})));
+           Modelica.Blocks.Sources.CombiTimeTable data_input(
+          tableOnFile=true,
+          tableName="tab1",
+          smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
+          fileName=ModelicaServices.ExternalReferences.loadResource("modelica://Buildings/Data/sst/test_nexi.txt"),
+          columns={2,4})
+                       annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={-130,50})));
+
+        Modelica.Thermal.HeatTransfer.Sources.PrescribedHeatFlow preHea
+        "Prescribed heat flow"
+          annotation (Placement(transformation(extent={{-80,40},{-60,60}})));
+      public
+        Modelica.Thermal.HeatTransfer.Sensors.TemperatureSensor temperatureSensor
+          annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={-10,90})));
+            parameter HeatTransfer.Data.OpaqueConstructions.Generic layers(nLay=3, material={
+              Buildings.HeatTransfer.Data.Solids.Generic(
+              x=0.08,
+              k=1.13,
+              c=1000,
+              d=1400,
+              nSta=5),Buildings.HeatTransfer.Data.Solids.Generic(
+              x=0.05,
+              k=0.04,
+              c=1400,
+              d=10),Buildings.HeatTransfer.Data.Solids.Generic(
+              x=0.2,
+              k=1.8,
+              c=1100,
+              d=2400)});
+        IDEAS.Fluid.HeatExchangers.RadiantSlab.EmbeddedPipe embeddedPipe(
+          redeclare package Medium = IDEAS.Media.Water,
+          redeclare
+            IDEAS.Fluid.HeatExchangers.RadiantSlab.BaseClasses.RadiantSlabChar
+            RadSlaCha,
+          m_flow_nominal=500,
+          A_floor=6000,
+          nDiscr=10)
+          annotation (Placement(transformation(extent={{-20,-20},{0,0}})));
+        Modelica.Blocks.Sources.Constant heatingSetPoint1(k=19 + 273.15)
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={10,130})));
+        Controls.Continuous.LimPID           conPID1(
+          k=0.5,
+          Ti=10,
+          yMax=500,
+          reverseActing=true)
+          annotation (Placement(transformation(extent={{40,120},{60,140}})));
+        Fluid.Sources.MassFlowSource_T boundary(
+          redeclare package Medium = Buildings.Media.Water,
+          use_m_flow_in=true,
+          T=318.15,
+          nPorts=1)
+          annotation (Placement(transformation(extent={{-100,-20},{-80,0}})));
+        Fluid.Sensors.TemperatureTwoPort T_in_rad(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=15)
+          annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={-50,-10})));
+        Fluid.Sensors.TemperatureTwoPort T_out_rad(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=15)
+          annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={30,-10})));
+      equation
+        connect(preHea.port, temperatureSensor.port) annotation (Line(points={{-60,50},
+                {-32,50},{-32,90},{-20,90}}, color={191,0,0}));
+        connect(embeddedPipe.heatPortEmb[1], preHea.port) annotation (Line(
+              points={{-10,-0.9},{-10,50},{-60,50}}, color={191,0,0}));
+        connect(data_input.y[1], preHea.Q_flow)
+          annotation (Line(points={{-119,50},{-80,50}}, color={0,0,127}));
+        connect(heatingSetPoint1.y, conPID1.u_s)
+          annotation (Line(points={{21,130},{38,130}}, color={0,0,127}));
+        connect(temperatureSensor.T, conPID1.u_m)
+          annotation (Line(points={{0,90},{50,90},{50,118}}, color={0,0,127}));
+        connect(conPID1.y, boundary.m_flow_in) annotation (Line(points={{61,130},
+                {80,130},{80,160},{-148,160},{-148,-2},{-102,-2}}, color={0,0,
+                127}));
+        connect(boundary.ports[1], T_in_rad.port_a)
+          annotation (Line(points={{-80,-10},{-60,-10}}, color={0,127,255}));
+        connect(T_in_rad.port_b, embeddedPipe.port_a)
+          annotation (Line(points={{-40,-10},{-20,-10}}, color={0,127,255}));
+        connect(embeddedPipe.port_b, T_out_rad.port_a)
+          annotation (Line(points={{0,-10},{20,-10}}, color={0,127,255}));
+        connect(T_out_rad.port_b, bou1.ports[1])
+          annotation (Line(points={{40,-10},{60,-10}}, color={0,127,255}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end rad;
+
+      model aa
+           Modelica.Blocks.Sources.CombiTimeTable data_input(
+          tableOnFile=true,
+          tableName="tab1",
+          smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
+          fileName=ModelicaServices.ExternalReferences.loadResource(
+              "modelica://Buildings/Data/sst/test_nexi.txt"),
+          columns={2,4})
+                       annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={-90,10})));
+        Modelica.Thermal.HeatTransfer.Sources.PrescribedHeatFlow preHea
+        "Prescribed heat flow"
+          annotation (Placement(transformation(extent={{-40,0},{-20,20}})));
+      public
+        Modelica.Thermal.HeatTransfer.Sensors.TemperatureSensor temperatureSensor
+          annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={10,10})));
+      equation
+        connect(temperatureSensor.port, preHea.port)
+          annotation (Line(points={{0,10},{-20,10}}, color={191,0,0}));
+        connect(data_input.y[1], preHea.Q_flow)
+          annotation (Line(points={{-79,10},{-40,10}}, color={0,0,127}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end aa;
+    end radiant_slab;
   end Miscellaneous;
 
   package heat_exchanger
