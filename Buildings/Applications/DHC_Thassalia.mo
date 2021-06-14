@@ -25449,6 +25449,123 @@ end DE_PE;
             Interval=3600,
             __Dymola_Algorithm="Dassl"));
       end sst_chauffage_ecs_c;
+
+      model test_chauffage
+        parameter Real Q_flow_set = 600000;
+           Modelica.Blocks.Sources.CombiTimeTable data_input(
+          tableOnFile=true,
+          tableName="tab1",
+          smoothness=Modelica.Blocks.Types.Smoothness.LinearSegments,
+          fileName=ModelicaServices.ExternalReferences.loadResource("modelica://Buildings/Data/sst/test_nexi.txt"),
+          columns={2,4})
+                       annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=0,
+              origin={-110,30})));
+
+        Modelica.Thermal.HeatTransfer.Sources.PrescribedHeatFlow preHea
+        "Prescribed heat flow"
+          annotation (Placement(transformation(extent={{-80,20},{-60,40}})));
+        Fluid.HeatExchangers.Radiators.RadiatorEN442_2           rad(
+          redeclare package Medium = Buildings.Media.Water,
+          Q_flow_nominal(displayUnit="kW") = Q_flow_set,
+          T_a_nominal=333.15,
+          T_b_nominal=318.15,
+          energyDynamics=Modelica.Fluid.Types.Dynamics.FixedInitial,
+          VWat=100,
+          dp_nominal(displayUnit="bar"))
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={-10,30})));
+      public
+        Modelica.Thermal.HeatTransfer.Sensors.TemperatureSensor temperatureSensor
+          annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={-30,-30})));
+        Fluid.Sensors.TemperatureTwoPort T_in_rad(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=Q_flow_set/(4185*15))
+          annotation (Placement(transformation(
+              extent={{-10,10},{10,-10}},
+              rotation=180,
+              origin={30,-10})));
+        Controls.Continuous.LimPID           conPID1(
+          controllerType=Modelica.Blocks.Types.SimpleController.PI,
+          k=2,
+          Ti=10,
+          yMax=10,
+          reverseActing=true)
+          annotation (Placement(transformation(extent={{40,-60},{60,-40}})));
+        Modelica.Blocks.Sources.Constant heatingSetPoint1(k=20 + 273.15)
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+            rotation=0,
+            origin={10,-50})));
+        Fluid.Sensors.TemperatureTwoPort T_out_rad(redeclare package Medium =
+              Buildings.Media.Water, m_flow_nominal=Q_flow_set/(4185*15))
+          annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={30,90})));
+        Fluid.Sources.MassFlowSource_T boundary(
+          redeclare package Medium = Buildings.Media.Water,
+          use_m_flow_in=true,
+          use_T_in=false,
+          T=318.15,
+          nPorts=1) annotation (Placement(transformation(extent={{80,-20},{60,0}})));
+        Controls_a.SST.weather_compensate_sh weather_compensate_sh(Tmin_sh=311.15)
+                      annotation (Placement(transformation(extent={{-40,-100},{-20,-80}})));
+        Fluid.Sources.Boundary_pT bou(redeclare package Medium =
+              Buildings.Media.Water, nPorts=1)
+          annotation (Placement(transformation(extent={{80,80},{60,100}})));
+        BuildSysPro.Building.BuildingEnvelope.HeatTransfer.SimpleWall
+          simpleWall(redeclare
+            BuildSysPro.Utilities.Data.WallData.RT2012.Floor_MTD_UnheatedRoom
+            caracParoi)
+          annotation (Placement(transformation(extent={{-50,60},{-30,80}})));
+        Fluid.MixingVolumes.MixingVolume           vol(
+          redeclare package Medium = Buildings.Media.Air,
+          energyDynamics=Modelica.Fluid.Types.Dynamics.FixedInitial,
+          m_flow_nominal=5000*6/3600,
+          V=1000)
+          annotation (Placement(transformation(extent={{-48,120},{-28,140}})));
+      equation
+        connect(data_input.y[1],preHea. Q_flow)
+          annotation (Line(points={{-99,30},{-80,30}},     color={0,0,127}));
+        connect(heatingSetPoint1.y,conPID1. u_s)
+          annotation (Line(points={{21,-50},{38,-50}},       color={0,0,127}));
+        connect(temperatureSensor.T,conPID1. u_m) annotation (Line(points={{-20,-30},{
+                -12,-30},{-12,-68},{50,-68},{50,-62}},
+              color={0,0,127}));
+        connect(rad.port_b, T_out_rad.port_a)
+          annotation (Line(points={{-10,40},{-10,90},{20,90}}, color={0,127,255}));
+        connect(rad.port_a, T_in_rad.port_b)
+          annotation (Line(points={{-10,20},{-10,-10},{20,-10}}, color={0,127,255}));
+        connect(T_in_rad.port_a, boundary.ports[1])
+          annotation (Line(points={{40,-10},{60,-10}}, color={0,127,255}));
+        connect(data_input.y[2], weather_compensate_sh.Text) annotation (Line(points={
+                {-99,30},{-90,30},{-90,-90},{-42,-90}}, color={0,0,127}));
+        connect(conPID1.y, boundary.m_flow_in) annotation (Line(points={{61,-50},{90,-50},
+                {90,-2},{82,-2}}, color={0,0,127}));
+        connect(T_out_rad.port_b, bou.ports[1])
+          annotation (Line(points={{40,90},{60,90}}, color={0,127,255}));
+        connect(preHea.port, simpleWall.T_ext) annotation (Line(points={{-60,30},
+                {-49,30},{-49,67}}, color={191,0,0}));
+        connect(rad.heatPortRad, simpleWall.T_int) annotation (Line(points={{
+                -17.2,32},{-24,32},{-24,67},{-31,67}}, color={191,0,0}));
+        connect(rad.heatPortCon, simpleWall.T_int) annotation (Line(points={{
+                -17.2,28},{-24,28},{-24,67},{-31,67}}, color={191,0,0}));
+        connect(preHea.port, vol.heatPort) annotation (Line(points={{-60,30},{
+                -56,30},{-56,130},{-48,130}}, color={191,0,0}));
+        connect(temperatureSensor.port, preHea.port) annotation (Line(points={{
+                -40,-30},{-50,-30},{-50,30},{-60,30}}, color={191,0,0}));
+        annotation (
+          Icon(coordinateSystem(preserveAspectRatio=false)),
+          Diagram(coordinateSystem(preserveAspectRatio=false)),
+          experiment(
+            StopTime=2592000,
+            Interval=3600,
+            __Dymola_Algorithm="Dassl"));
+      end test_chauffage;
     end Tests_2;
 
     package calibration
@@ -50072,6 +50189,44 @@ First implementation.
               coordinateSystem(preserveAspectRatio=false)));
       end aa;
     end radiant_slab;
+
+    package volume_air
+      model volume
+      public
+        Modelica.Thermal.HeatTransfer.Sensors.TemperatureSensor temperatureSensor
+          annotation (Placement(transformation(
+              extent={{10,10},{-10,-10}},
+              rotation=180,
+              origin={10,30})));
+        Modelica.Blocks.Sources.RealExpression realExpression(y=0)
+          annotation (Placement(transformation(extent={{-100,0},{-80,20}})));
+        Modelica.Blocks.Sources.RealExpression realExpression1(y=-2000)
+          annotation (Placement(transformation(extent={{-100,40},{-80,60}})));
+        HeatTransfer.Sources.PrescribedHeatFlow preHeaFlo
+          annotation (Placement(transformation(extent={{-60,0},{-40,20}})));
+        HeatTransfer.Sources.PrescribedHeatFlow preHeaFlo1
+          annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+        Fluid.MixingVolumes.MixingVolume           vol(
+          redeclare package Medium = Buildings.Media.Air,
+          energyDynamics=Modelica.Fluid.Types.Dynamics.FixedInitial,
+          m_flow_nominal=5000*6/3600,
+          V=1000)
+          annotation (Placement(transformation(extent={{0,60},{20,80}})));
+      equation
+        connect(realExpression.y, preHeaFlo.Q_flow)
+          annotation (Line(points={{-79,10},{-60,10}}, color={0,0,127}));
+        connect(preHeaFlo.port, temperatureSensor.port) annotation (Line(points
+              ={{-40,10},{-30,10},{-30,30},{0,30}}, color={191,0,0}));
+        connect(realExpression1.y, preHeaFlo1.Q_flow)
+          annotation (Line(points={{-79,50},{-60,50}}, color={0,0,127}));
+        connect(preHeaFlo1.port, temperatureSensor.port) annotation (Line(
+              points={{-40,50},{-30,50},{-30,30},{0,30}}, color={191,0,0}));
+        connect(vol.heatPort, temperatureSensor.port) annotation (Line(points={
+                {0,70},{-30,70},{-30,30},{0,30}}, color={191,0,0}));
+        annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(
+              coordinateSystem(preserveAspectRatio=false)));
+      end volume;
+    end volume_air;
   end Miscellaneous;
 
   package heat_exchanger
